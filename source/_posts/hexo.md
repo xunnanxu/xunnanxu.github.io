@@ -51,23 +51,20 @@ If you've read this far, chances are you want to give it a try. Here are the ste
 
 2. Install Hexo
 
+        npm install -g hexo-cli
+        
+        // this downloads the starter pack and sets up node modules under the directory <name> for you so it may take a while
+        hexo init <name>
 
-    npm install -g hexo-cli
-    
-    // this downloads the starter pack and sets up node modules under the directory <name> for you so it may take a while
-    hexo init <name>
-
-3. Open <name>/_config.yml and there may be a few things you want to set such as the name and author. The most important things are the `url` and `root`. The details can be found [here](https://hexo.io/docs/configuration.html)
+3. Open `<name>/_config.yml` and there may be a few things you want to set such as the name and author. The most important things are the `url` and `root`. The details can be found [here](https://hexo.io/docs/configuration.html)
 
 4. By default Hexo will generate the Hello world post for you. You can preview it by starting the local server:
 
-
-     hexo server
+         hexo server
 
 5. Generate actual assets:
 
-
-     hexo generate
+         hexo generate
 
 6. Set up Github page repo: https://pages.github.com/
 
@@ -75,16 +72,16 @@ Depending on if you have a VPS, things maybe a bit different. Follow 7a if you d
 
 7a-1. Hexo by default publishes all static assets to `public`. However, Github by default expects stuff to be under root. That means, with this setup, the repo needs to be rooted at `public`:
 
-    cd public
-    git init
-    git remote add origin <repo url>
-    git pull
+        cd public
+        git init
+        git remote add origin <repo url>
+        git pull
 
 7a-2. Commit all assets:
 
-    git add --all
-    git commit -m "..."
-    git push
+        git add --all
+        git commit -m "..."
+        git push
 
 7a-3. If you have a custom domain, set CNAME pointed to your.github.io and remember to disable https enforcement in Github (since SSL will verify host name). Also don't forget to set the custom url in Github.
 
@@ -93,16 +90,16 @@ Depending on if you have a VPS, things maybe a bit different. Follow 7a if you d
 
 7b-1. If you have a VPS then you can commit all the files and just use github as the storage area since you can do backend url forwarding.
 
-    // nginx config:
-    server {
-        listen       80;
-        server_name  xcorpion.tech;
-    
-        location / {
-            proxy_set_header Host xcorpion.tech;
-            proxy_pass http://your.github.io/public/;
+        // nginx config:
+        server {
+            listen       80;
+            server_name  xcorpion.tech;
+        
+            location / {
+                proxy_set_header Host xcorpion.tech;
+                proxy_pass http://your.github.io/public/;
+            }
         }
-    }
 
 7b-2. If you have a custom domain, set A record pointed to your server IP and similarily, remember to turn off https enforcement. Also don't forget to set the custom url in Github.
 
@@ -110,17 +107,14 @@ Depending on if you have a VPS, things maybe a bit different. Follow 7a if you d
 
 - In your hexo root directory, start a new post:
 
-
-    hexo new post
+        hexo new post
 
 - Preview your post with
 
-
-    hexo server
+        hexo server
 
 - In preview mode, Hexo will watch your files and automatically update the html. However, it **will not** publish any static assets (those eventually shown in your site). So run this to let hexo do it:
 
-
-    hexo generate
+        hexo generate
 
 - Then commit the changes to your repo (You can automate this with a shell script.)

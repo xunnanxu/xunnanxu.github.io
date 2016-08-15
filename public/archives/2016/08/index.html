@@ -272,25 +272,21 @@
 <li><p>Install node (required by Hexo): <a href="https://nodejs.org/en/download/" target="_blank" rel="external">https://nodejs.org/en/download/</a></p>
 </li>
 <li><p>Install Hexo</p>
-</li>
-</ol>
 <pre><code>npm install -g hexo-cli
 
 // this downloads the starter pack and sets up node modules under the directory &lt;name&gt; for you so it may take a while
 hexo init &lt;name&gt;
-</code></pre><ol>
-<li><p>Open <name>/_config.yml and there may be a few things you want to set such as the name and author. The most important things are the <code>url</code> and <code>root</code>. The details can be found <a href="https://hexo.io/docs/configuration.html" target="_blank" rel="external">here</a></name></p>
+</code></pre></li>
+<li><p>Open <code>&lt;name&gt;/_config.yml</code> and there may be a few things you want to set such as the name and author. The most important things are the <code>url</code> and <code>root</code>. The details can be found <a href="https://hexo.io/docs/configuration.html" target="_blank" rel="external">here</a></p>
 </li>
 <li><p>By default Hexo will generate the Hello world post for you. You can preview it by starting the local server:</p>
-</li>
-</ol>
 <pre><code>hexo server
-</code></pre><ol>
-<li>Generate actual assets:</li>
-</ol>
+</code></pre></li>
+<li><p>Generate actual assets:</p>
 <pre><code>hexo generate
-</code></pre><ol>
-<li>Set up Github page repo: <a href="https://pages.github.com/" target="_blank" rel="external">https://pages.github.com/</a></li>
+</code></pre></li>
+<li><p>Set up Github page repo: <a href="https://pages.github.com/" target="_blank" rel="external">https://pages.github.com/</a></p>
+</li>
 </ol>
 <p>Depending on if you have a VPS, things maybe a bit different. Follow 7a if you do and 7b if not. The major difference is the directory structure in the repo.</p>
 <p>7a-1. Hexo by default publishes all static assets to <code>public</code>. However, Github by default expects stuff to be under root. That means, with this setup, the repo needs to be rooted at <code>public</code>:</p>
@@ -317,19 +313,17 @@ server {
 }
 </code></pre><p>7b-2. If you have a custom domain, set A record pointed to your server IP and similarily, remember to turn off https enforcement. Also don’t forget to set the custom url in Github.</p>
 <h1 id="And-that’s-it-Let’s-start-writing"><a href="#And-that’s-it-Let’s-start-writing" class="headerlink" title="And that’s it! Let’s start writing!"></a>And that’s it! Let’s start writing!</h1><ul>
-<li>In your hexo root directory, start a new post:</li>
-</ul>
+<li><p>In your hexo root directory, start a new post:</p>
 <pre><code>hexo new post
-</code></pre><ul>
-<li>Preview your post with</li>
-</ul>
+</code></pre></li>
+<li><p>Preview your post with</p>
 <pre><code>hexo server
-</code></pre><ul>
-<li>In preview mode, Hexo will watch your files and automatically update the html. However, it <strong>will not</strong> publish any static assets (those eventually shown in your site). So run this to let hexo do it:</li>
-</ul>
+</code></pre></li>
+<li><p>In preview mode, Hexo will watch your files and automatically update the html. However, it <strong>will not</strong> publish any static assets (those eventually shown in your site). So run this to let hexo do it:</p>
 <pre><code>hexo generate
-</code></pre><ul>
-<li>Then commit the changes to your repo (You can automate this with a shell script.)</li>
+</code></pre></li>
+<li><p>Then commit the changes to your repo (You can automate this with a shell script.)</p>
+</li>
 </ul>
 
                     
