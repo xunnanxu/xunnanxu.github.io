@@ -78,10 +78,10 @@ sidebar:
         #     title: global.google_plus
         #     url: https://plus.google.com/
         #     icon: google-plus
-        # linked_in:
-        #     title: global.linkedin
-        #     url: https://www.linkedin.com/profile/
-        #     icon: linkedin
+        linked_in:
+            title: global.linkedin
+            url: https://www.linkedin.com/in/xunnanxu
+            icon: linkedin
         # mail:
         #     title: global.mail
         #     url: mailto:
@@ -118,7 +118,7 @@ author:
     # or in `source/assets/images/` (production)
     # or you can use an external url
     # Overwritten by your gravatar image if `gravatar_email` is filled
-    picture:
+    picture: https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/3/000/1f0/337/28462e0.jpg
     # Your Twitter username without the @. E.g : `tranquilpeak`
     twitter:
     # Your personal google plus profile id, not your blog or business page id.
