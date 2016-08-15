@@ -1,7 +1,11 @@
 ---
 title: Get Started with Hexo Blogging System
 date: 2016-08-14 14:32:53
-tags: blog hexo
+categories:
+- Hexo
+tags:
+- blog
+- hexo
 ---
 
 # You should read this if
