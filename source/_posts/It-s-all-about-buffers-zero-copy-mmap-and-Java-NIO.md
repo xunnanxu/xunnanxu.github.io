@@ -3,7 +3,6 @@ title: "It's all about buffers: zero-copy, mmap and Java NIO"
 date: 2016-09-10 01:00:27
 categories:
 - OS
-- Java
 tags:
 - io
 - os
