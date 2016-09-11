@@ -219,6 +219,91 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title" itemprop="headline">
                     
+                        <a class="link-unstyled" href="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                            It&#39;s all about buffers: zero-copy, mmap and Java NIO
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time itemprop="datePublished" datetime="2016-09-10T01:00:27-07:00">
+	
+		    Sep 10, 2016
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/OS/">OS</a>, <a class="category-link" href="/categories/OS/Java/">Java</a>
+
+
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content" itemprop="articleBody">
+                    <p>There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one <code>InputStream</code> chunk by chunk into a small buffer (typically 8KB), and feed them into the <code>OutputStream</code>, or even better, you could create a <code>PipedInputStream</code>, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.</p>
+<h2 id="What-happens-under-the-hood"><a href="#What-happens-under-the-hood" class="headerlink" title="What happens under the hood"></a>What happens under the hood</h2><p>Well, here’s what happens when the above code is used:</p>
+<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png" alt="non_zero_copy.png" title="">
+<ol>
+<li>JVM sends read() syscall. </li>
+<li>OS context switches to kernel mode and reads data into the input socket buffer.</li>
+<li>OS kernel then copies data into user buffer, and context switches back to user mode. read() returns.</li>
+<li>JVM processes code logic and sends write() syscall.</li>
+<li>OS context switches to kernel mode and copies data from user buffer to output socket buffer.</li>
+<li>OS returns to user mode and logic in JVM continues.</li>
+</ol>
+<p>This would be fine if latency and throughput aren’t your service’s concern or bottleneck, but it would be annoying if you do care, say for a static asset server. There are 4 context switches and 2 unnecessary copies for the above example.</p>
+<h2 id="OS-level-zero-copy-for-the-rescue"><a href="#OS-level-zero-copy-for-the-rescue" class="headerlink" title="OS-level zero copy for the rescue"></a>OS-level zero copy for the rescue</h2><p>Clearly in this use case, the copy from/to user space memory is totally unnecessary because we didn’t do anything other than dumping data to a different socket. Zero copy can thus be used here to save the 2 extra copies. The actual implementation doesn’t really have a standard and is up to the OS how to achieve that. Typically *nix systems will offer <code>sendfile()</code>. Its man page can be found <a href="http://man7.org/linux/man-pages/man2/sendfile.2.html" target="_blank" rel="external">here</a>. Some say some operating systems have broken versions of that with one of them being OSX <a href="https://blog.phusion.nl/2015/06/04/the-brokenness-of-the-sendfile-system-call/" target="_blank" rel="external">link</a>. Honestly with such low-level feature, I wouldn’t trust Apple’s BSD-like system so never tested there.</p>
+<p>With that, the diagram would be like this:</p>
+<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/zero_copy.png" alt="zero_copy.png" title="">
+<p>You may say OS still has to make a copy of the data in kernel memory space. Yes but from OS’s perspective this is already zero-copy because there’s no data copied from kernel space to user space. The reason why kernel needs to make a copy is because general hardware DMA access expects consecutive memory space (and hence the buffer). However this is avoidable if the hardware supports scatter-n-gather:</p>
+<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/scattergather.png" alt="scattergather.png" title="">
+<p>A lot of web servers do support zero-copy such as Tomcat and Apache. For example apache’s related doc can be found <a href="https://httpd.apache.org/docs/2.4/mod/core.html#enablesendfile" target="_blank" rel="external">here</a> but by default it’s off.</p>
+<p>Note: Java’s NIO offers this through <code>transferTo</code> (<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/FileChannel.html#transferTo-long-long-java.nio.channels.WritableByteChannel-" target="_blank" rel="external">doc</a>).</p>
+<h2 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a>mmap</h2><p>The problem with the above zero-copy approach is that because there’s no user mode actually involved, code cannot do anything other than piping the stream. However, there’s a more expensive yet more useful approach - mmap, short for memory-map.</p>
+<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/mmap.png" alt="mmap.png" title="">
+<p>Mmap allows code to map file to kernel memory and access that directly as if it were in the application user space, thus avoiding the unnecessary copy. As a tradeoff, that will still involve 4 context switches. But since OS maps certain chunk of file into memory, you get all benefits from OS virtual memory management - hot content can be intelligently cached efficiently, and all data are page-aligned thus no buffer copying is needed to write stuff back. However, nothing comes for free - while mmap does avoid that extra copy, it doesn’t guarantee the code will always be faster - depending on the OS implementation, there may be quite a bit of setup and teardown overhead (since it needs to find the space and maintain it in the TLB and make sure to flush it after unmapping) and page fault gets much more expensive since kernel now needs to read from hardware (like disk) to update the memory space and TLB. Hence, if performance is this critical, benchmark is always needed as abusing mmap() may yield worse performance than simply doing the copy.</p>
+<p>The corresponding class in Java is <code>MappedByteBuffer</code> from NIO package. It’s actually a variation of <code>DirectByteBuffer</code> though there’s no direct relationship between classes. The actual usage is out of scope of this post.</p>
+<h2 id="NIO-DirectByteBuffer"><a href="#NIO-DirectByteBuffer" class="headerlink" title="NIO DirectByteBuffer"></a>NIO DirectByteBuffer</h2><p>Java NIO introduces <code>ByteBuffer</code> which represents the buffer area used for channels. There are 3 main implementations of <code>ByteBuffer</code>:</p>
+<ol>
+<li><p><code>HeapByteBuffer</code></p>
+<p> This is used when <code>ByteBuffer.allocate()</code> is called. It’s called heap because it’s maintained in JVM’s heap space and hence you get all benefits like GC support and caching optimization. However, it’s not page aligned, which means if you need to talk to native code through JNI, JVM would have to make a copy to the aligned buffer space.</p>
+</li>
+<li><p><code>DirectByteBuffer</code></p>
+<p> Used when <code>ByteBuffer.allocateDirect()</code> is called. JVM will allocate memory space outside the heap space using <code>malloc()</code>. Because it’s not managed by JVM, your memory space is page-aligned and not subject to GC, which makes it perfect candidate for working with native code (e.g. when writing OpenGL stuff). However, you are then “deteriorated” to C programmer as you’ll have to allocate and deallocate memory yourself to prevent memory leak.</p>
+</li>
+<li><p><code>MappedByteBuffer</code></p>
+<p> Used when <code>FileChannel.map()</code> is called. Similar to <code>DirectByteBuffer</code> this is also outside of JVM heap. It essentially functions as a wrapper around OS mmap() system call in order for code to directly manipulate mapped physical memory data.</p>
+</li>
+</ol>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p><code>sendfile()</code> and <code>mmap()</code> offer efficient, low-latency low-level solutions to data manipulation across sockets. Again, no code should assume these are silver bullets as real world scenarios may be complex and it might not be worth the effort to switch code to them if this is not the true bottleneck. For software engineering to get the most ROI, in most cases, it’s better to “make it right” and then “make it fast”. Without the guardrails offered by JVM, it’s easy to make software much more vulnerable to crashing (I literally mean crashing, not exceptions) when it comes to complicated logic.</p>
+<h2 id="Quick-Reference"><a href="#Quick-Reference" class="headerlink" title="Quick Reference"></a>Quick Reference</h2><p><a href="https://www.ibm.com/developerworks/library/j-zerocopy/" target="_blank" rel="external">Efficient data transfer through zero copy</a> - It also covers sendfile() performance comparison.</p>
+<p><a href="http://www.ibm.com/developerworks/java/tutorials/j-nio/j-nio.html" target="_blank" rel="external">Getting started with new I/O (NIO)</a></p>
+
+                    
+                        
+                    
+                    
+                        <p>
+                            <a href="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/#post-footer" class="postShorten-excerpt_link link">
+                                Comment and share
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title" itemprop="headline">
+                    
                         <a class="link-unstyled" href="/2016/08/14/hexo/">
                             Get Started with Hexo Blogging System
                         </a>
@@ -424,6 +509,25 @@ server {
                     <hr>
                 </div>
                 
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                            <h3 class="media-heading">It&#39;s all about buffers: zero-copy, mmap and Java NIO</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 10, 2016
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
             </div>
         </div>
         <div class="modal-footer">
@@ -431,7 +535,7 @@ server {
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                1 post found
+                2 posts found
             </p>
         </div>
     </div>
