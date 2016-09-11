@@ -8,7 +8,7 @@
     <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Sun, 11 Sep 2016 21:43:27 GMT</pubDate>
+    <pubDate>Sun, 11 Sep 2016 21:50:05 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     <item>
@@ -43,7 +43,8 @@
 <p>Note: Java’s NIO offers this through <code>transferTo</code> (<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/FileChannel.html#transferTo-long-long-java.nio.channels.WritableByteChannel-" target="_blank" rel="external">doc</a>).</p>
 <h2 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a>mmap</h2><p>The problem with the above zero-copy approach is that because there’s no user mode actually involved, code cannot do anything other than piping the stream. However, there’s a more expensive yet more useful approach - mmap, short for memory-map.</p>
 <img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/mmap.png" alt="mmap.png" title="">
-<p>Mmap allows code to map file to kernel memory and access that directly as if it were in the application user space, thus avoiding the unnecessary copy. As a tradeoff, that will still involve 4 context switches. But since OS maps certain chunk of file into memory, you get all benefits from OS virtual memory management - hot content can be intelligently cached efficiently, and all data are page-aligned thus no buffer copying is needed to write stuff back. However, nothing comes for free - while mmap does avoid that extra copy, it doesn’t guarantee the code will always be faster - depending on the OS implementation, there may be quite a bit of setup and teardown overhead (since it needs to find the space and maintain it in the TLB and make sure to flush it after unmapping) and page fault gets much more expensive since kernel now needs to read from hardware (like disk) to update the memory space and TLB. Hence, if performance is this critical, benchmark is always needed as abusing mmap() may yield worse performance than simply doing the copy.</p>
+<p>Mmap allows code to map file to kernel memory and access that directly as if it were in the application user space, thus avoiding the unnecessary copy. As a tradeoff, that will still involve 4 context switches. But since OS maps certain chunk of file into memory, you get all benefits from OS virtual memory management - hot content can be intelligently cached efficiently, and all data are page-aligned thus no buffer copying is needed to write stuff back.</p>
+<p>However, nothing comes for free - while mmap does avoid that extra copy, it doesn’t guarantee the code will always be faster - depending on the OS implementation, there may be quite a bit of setup and teardown overhead (since it needs to find the space and maintain it in the TLB and make sure to flush it after unmapping) and page fault gets much more expensive since kernel now needs to read from hardware (like disk) to update the memory space and TLB. Hence, if performance is this critical, benchmark is always needed as abusing mmap() may yield worse performance than simply doing the copy.</p>
 <p>The corresponding class in Java is <code>MappedByteBuffer</code> from NIO package. It’s actually a variation of <code>DirectByteBuffer</code> though there’s no direct relationship between classes. The actual usage is out of scope of this post.</p>
 <h2 id="NIO-DirectByteBuffer"><a href="#NIO-DirectByteBuffer" class="headerlink" title="NIO DirectByteBuffer"></a>NIO DirectByteBuffer</h2><p>Java NIO introduces <code>ByteBuffer</code> which represents the buffer area used for channels. There are 3 main implementations of <code>ByteBuffer</code>:</p>
 <ol>
