@@ -8,8 +8,6 @@ tags:
 - os
 - java
 - unix
-gallery:
-	- non_zero_copy.png
 ---
 
 There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one `InputStream` chunk by chunk into a small buffer (typically 8KB), and feed them into the `OutputStream`, or even better, you could create a `PipedInputStream`, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.
