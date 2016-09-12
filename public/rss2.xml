@@ -8,7 +8,7 @@
     <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Sun, 11 Sep 2016 22:55:12 GMT</pubDate>
+    <pubDate>Mon, 12 Sep 2016 05:35:42 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     <item>
@@ -18,7 +18,17 @@
       <pubDate>Sat, 10 Sep 2016 08:00:27 GMT</pubDate>
       <description>
       
-        &lt;p&gt;There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for exam
+        &lt;p&gt;There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one &lt;code&gt;InputStream&lt;/code&gt; chunk by chunk into a small buffer (typically 8KB), and feed them into the &lt;code&gt;OutputStream&lt;/code&gt;, or even better, you could create a &lt;code&gt;PipedInputStream&lt;/code&gt;, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.&lt;/p&gt;
+&lt;h2 id=&quot;What-happens-under-the-hood&quot;&gt;&lt;a href=&quot;#What-happens-under-the-hood&quot; class=&quot;headerlink&quot; title=&quot;What happens under the hood&quot;&gt;&lt;/a&gt;What happens under the hood&lt;/h2&gt;&lt;p&gt;Well, here’s what happens when the above code is used:&lt;/p&gt;
+&lt;img src=&quot;/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png&quot; alt=&quot;non_zero_copy.png&quot; title=&quot;&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;JVM sends read() syscall. &lt;/li&gt;
+&lt;li&gt;OS context switches to kernel mode and reads data into the input socket buffer.&lt;/li&gt;
+&lt;li&gt;OS kernel then copies data into user buffer, and context switches back to user mode. read() returns.&lt;/li&gt;
+&lt;li&gt;JVM processes code logic and sends write() syscall.&lt;/li&gt;
+&lt;li&gt;OS context switches to kernel mode and copies data from user buffer to output socket buffer.&lt;/li&gt;
+&lt;li&gt;OS returns to user mode and logic in JVM continues.&lt;/li&gt;
+&lt;/ol&gt;
       
       </description>
       
@@ -33,6 +43,7 @@
 <li>OS context switches to kernel mode and copies data from user buffer to output socket buffer.</li>
 <li>OS returns to user mode and logic in JVM continues.</li>
 </ol>
+<a id="more"></a>
 <p>This would be fine if latency and throughput aren’t your service’s concern or bottleneck, but it would be annoying if you do care, say for a static asset server. There are 4 context switches and 2 unnecessary copies for the above example.</p>
 <h2 id="OS-level-zero-copy-for-the-rescue"><a href="#OS-level-zero-copy-for-the-rescue" class="headerlink" title="OS-level zero copy for the rescue"></a>OS-level zero copy for the rescue</h2><p>Clearly in this use case, the copy from/to user space memory is totally unnecessary because we didn’t do anything other than dumping data to a different socket. Zero copy can thus be used here to save the 2 extra copies. The actual implementation doesn’t really have a standard and is up to the OS how to achieve that. Typically *nix systems will offer <code>sendfile()</code>. Its man page can be found <a href="http://man7.org/linux/man-pages/man2/sendfile.2.html" target="_blank" rel="external">here</a>. Some say some operating systems have broken versions of that with one of them being OSX <a href="https://blog.phusion.nl/2015/06/04/the-brokenness-of-the-sendfile-system-call/" target="_blank" rel="external">link</a>. Honestly with such low-level feature, I wouldn’t trust Apple’s BSD-like system so never tested there.</p>
 <p>With that, the diagram would be like this:</p>
@@ -73,7 +84,15 @@
       <pubDate>Sun, 14 Aug 2016 21:32:53 GMT</pubDate>
       <description>
       
-        &lt;h1 id=&quot;You-should-read-this-if&quot;&gt;&lt;a href=&quot;#You-should-read-this-if&quot; class=&quot;headerlink&quot; title=&quot;You should read this if&quot;&gt;&lt;/a&gt;You should read t
+        &lt;h1 id=&quot;You-should-read-this-if&quot;&gt;&lt;a href=&quot;#You-should-read-this-if&quot; class=&quot;headerlink&quot; title=&quot;You should read this if&quot;&gt;&lt;/a&gt;You should read this if&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;You want to set up a personal blog&lt;/li&gt;
+&lt;li&gt;You know what &lt;a href=&quot;https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet&quot;&gt;Markdown&lt;/a&gt; is&lt;/li&gt;
+&lt;li&gt;You don’t want to set up a heavy Wordpress environment&lt;/li&gt;
+&lt;li&gt;You don’t want to set up any database just for the blog&lt;/li&gt;
+&lt;li&gt;You either don’t have a VPS or want to host blog content in some easy-to-reach place.&lt;/li&gt;
+&lt;li&gt;You still want a template/theme system.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;Solution&quot;&gt;&lt;a href=&quot;#Solution&quot; class=&quot;headerlink&quot; title=&quot;Solution&quot;&gt;&lt;/a&gt;Solution&lt;/h1&gt;&lt;p&gt;Github Pages + Hexo (what this site uses)&lt;/p&gt;
       
       </description>
       
@@ -86,6 +105,7 @@
 <li>You still want a template/theme system.</li>
 </ul>
 <h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>Github Pages + Hexo (what this site uses)</p>
+<a id="more"></a>
 <h1 id="What-is-Hexo"><a href="#What-is-Hexo" class="headerlink" title="What is Hexo"></a>What is Hexo</h1><p>“<a href="https://hexo.io/docs/index.html" target="_blank" rel="external">Hexo</a> is a fast, simple and powerful blog framework. You write posts in Markdown (or other languages) and Hexo generates static files with a beautiful theme in seconds.”</p>
 <p>In other words, Hexo is a <strong>static</strong> blogging system. This means there is no need for database, node/php code to maintain like Wordpress or other dynamic blogging systems require. Awesome.</p>
 <h1 id="How-on-earth-do-things-work"><a href="#How-on-earth-do-things-work" class="headerlink" title="How on earth do things work"></a>How on earth do things work</h1><ul>

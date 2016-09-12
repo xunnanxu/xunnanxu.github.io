@@ -21,6 +21,8 @@ tags:
 
 Github Pages + Hexo (what this site uses)
 
+<!-- more -->
+
 # What is Hexo
 
 "[Hexo](https://hexo.io/docs/index.html) is a fast, simple and powerful blog framework. You write posts in Markdown (or other languages) and Hexo generates static files with a beautiful theme in seconds."

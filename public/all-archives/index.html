@@ -343,7 +343,15 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"></div>
+                        <div class="media-content hide-xs font-merryweather"><h1 id="You-should-read-this-if"><a href="#You-should-read-this-if" class="headerlink" title="You should read this if"></a>You should read this if</h1><ul>
+<li>You want to set up a personal blog</li>
+<li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a> is</li>
+<li>You don’t want to set up a heavy Wordpress environment</li>
+<li>You don’t want to set up any database just for the blog</li>
+<li>You either don’t have a VPS or want to host blog content in some easy-to-reach place.</li>
+<li>You still want a template/theme system.</li>
+</ul>
+<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>Github Pages + Hexo (what this site uses)</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -362,7 +370,17 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"></div>
+                        <div class="media-content hide-xs font-merryweather"><p>There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one <code>InputStream</code> chunk by chunk into a small buffer (typically 8KB), and feed them into the <code>OutputStream</code>, or even better, you could create a <code>PipedInputStream</code>, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.</p>
+<h2 id="What-happens-under-the-hood"><a href="#What-happens-under-the-hood" class="headerlink" title="What happens under the hood"></a>What happens under the hood</h2><p>Well, here’s what happens when the above code is used:</p>
+<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png" alt="non_zero_copy.png" title="">
+<ol>
+<li>JVM sends read() syscall. </li>
+<li>OS context switches to kernel mode and reads data into the input socket buffer.</li>
+<li>OS kernel then copies data into user buffer, and context switches back to user mode. read() returns.</li>
+<li>JVM processes code logic and sends write() syscall.</li>
+<li>OS context switches to kernel mode and copies data from user buffer to output socket buffer.</li>
+<li>OS returns to user mode and logic in JVM continues.</li>
+</ol></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>

@@ -8,6 +8,8 @@ tags:
 - os
 - java
 - unix
+gallery:
+	- non_zero_copy.png
 ---
 
 There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one `InputStream` chunk by chunk into a small buffer (typically 8KB), and feed them into the `OutputStream`, or even better, you could create a `PipedInputStream`, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.
@@ -24,6 +26,8 @@ Well, here's what happens when the above code is used:
 4. JVM processes code logic and sends write() syscall.
 5. OS context switches to kernel mode and copies data from user buffer to output socket buffer.
 6. OS returns to user mode and logic in JVM continues.
+
+<!-- more -->
 
 This would be fine if latency and throughput aren't your service's concern or bottleneck, but it would be annoying if you do care, say for a static asset server. There are 4 context switches and 2 unnecessary copies for the above example.
 
@@ -80,4 +84,3 @@ Java NIO introduces `ByteBuffer` which represents the buffer area used for chann
 [Efficient data transfer through zero copy](https://www.ibm.com/developerworks/library/j-zerocopy/) - It also covers sendfile() performance comparison.
 
 [Getting started with new I/O (NIO)](http://www.ibm.com/developerworks/java/tutorials/j-nio/j-nio.html)
-

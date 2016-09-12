@@ -25,7 +25,7 @@
 <meta property="og:image" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/zero_copy.png">
 <meta property="og:image" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/scattergather.png">
 <meta property="og:image" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/mmap.png">
-<meta property="og:updated_time" content="2016-09-11T22:55:12.148Z">
+<meta property="og:updated_time" content="2016-09-12T05:35:42.834Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="It's all about buffers: zero-copy, mmap and Java NIO">
 <meta name="twitter:description" content="There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one InputStream chunk by ch">
@@ -39,6 +39,11 @@
     
     
     
+    
+        
+            <meta property="og:image" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png" />
+            <meta class="swiftype" name="image" data-type="enum" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png" />
+        
     
     <!--STYLES-->
     <link rel="stylesheet" href="/assets/css/style-wbdcx86leerwytqg6xlingcwmooouwc1xe2zasessmiukzlpjo3qvbm2iwib.min.css">
@@ -270,6 +275,7 @@
 <li>OS context switches to kernel mode and copies data from user buffer to output socket buffer.</li>
 <li>OS returns to user mode and logic in JVM continues.</li>
 </ol>
+<a id="more"></a>
 <p>This would be fine if latency and throughput aren’t your service’s concern or bottleneck, but it would be annoying if you do care, say for a static asset server. There are 4 context switches and 2 unnecessary copies for the above example.</p>
 <h2 id="OS-level-zero-copy-for-the-rescue"><a href="#OS-level-zero-copy-for-the-rescue" class="headerlink" title="OS-level zero copy for the rescue"></a>OS-level zero copy for the rescue</h2><p>Clearly in this use case, the copy from/to user space memory is totally unnecessary because we didn’t do anything other than dumping data to a different socket. Zero copy can thus be used here to save the 2 extra copies. The actual implementation doesn’t really have a standard and is up to the OS how to achieve that. Typically *nix systems will offer <code>sendfile()</code>. Its man page can be found <a href="http://man7.org/linux/man-pages/man2/sendfile.2.html" target="_blank" rel="external">here</a>. Some say some operating systems have broken versions of that with one of them being OSX <a href="https://blog.phusion.nl/2015/06/04/the-brokenness-of-the-sendfile-system-call/" target="_blank" rel="external">link</a>. Honestly with such low-level feature, I wouldn’t trust Apple’s BSD-like system so never tested there.</p>
 <p>With that, the diagram would be like this:</p>
@@ -300,6 +306,24 @@
 <p><a href="http://www.ibm.com/developerworks/java/tutorials/j-nio/j-nio.html" target="_blank" rel="external">Getting started with new I/O (NIO)</a></p>
 
             
+    
+    <div class="image-gallery">
+        <div class="image-gallery-metabar">
+            <span>Gallery : 1 images</span>
+        </div>
+        <div class="image-gallery-photos undefined">
+            
+            
+            <div class="photo-box">
+                <a class="photo-box-inner fancybox" data-fancybox-group="gallery-ciszh89qf00006s15dzhs8rx7"
+                   title="" href="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
+                    <img class="photo" src="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png" itemprop="image">
+                </a>
+            </div>
+            
+        </div>
+    </div>
+
         </div>
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
@@ -533,7 +557,15 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"></div>
+                        <div class="media-content hide-xs font-merryweather"><h1 id="You-should-read-this-if"><a href="#You-should-read-this-if" class="headerlink" title="You should read this if"></a>You should read this if</h1><ul>
+<li>You want to set up a personal blog</li>
+<li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a> is</li>
+<li>You don’t want to set up a heavy Wordpress environment</li>
+<li>You don’t want to set up any database just for the blog</li>
+<li>You either don’t have a VPS or want to host blog content in some easy-to-reach place.</li>
+<li>You still want a template/theme system.</li>
+</ul>
+<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>Github Pages + Hexo (what this site uses)</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -552,7 +584,17 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"></div>
+                        <div class="media-content hide-xs font-merryweather"><p>There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one <code>InputStream</code> chunk by chunk into a small buffer (typically 8KB), and feed them into the <code>OutputStream</code>, or even better, you could create a <code>PipedInputStream</code>, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.</p>
+<h2 id="What-happens-under-the-hood"><a href="#What-happens-under-the-hood" class="headerlink" title="What happens under the hood"></a>What happens under the hood</h2><p>Well, here’s what happens when the above code is used:</p>
+<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png" alt="non_zero_copy.png" title="">
+<ol>
+<li>JVM sends read() syscall. </li>
+<li>OS context switches to kernel mode and reads data into the input socket buffer.</li>
+<li>OS kernel then copies data into user buffer, and context switches back to user mode. read() returns.</li>
+<li>JVM processes code logic and sends write() syscall.</li>
+<li>OS context switches to kernel mode and copies data from user buffer to output socket buffer.</li>
+<li>OS returns to user mode and logic in JVM continues.</li>
+</ol></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
