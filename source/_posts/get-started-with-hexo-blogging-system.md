@@ -92,16 +92,17 @@ Depending on if you have a VPS, things maybe a bit different. Follow 7a if you d
 
 7b-1. If you have a VPS then you can commit all the files and just use github as the storage area since you can do backend url forwarding.
 
-        // nginx config:
-        server {
-            listen       80;
-            server_name  xcorpion.tech;
-        
-            location / {
-                proxy_set_header Host xcorpion.tech;
-                proxy_pass http://your.github.io/public/;
-            }
-        }
+{% codeblock nginx.conf lang:nginx %}
+server {
+    listen       80;
+    server_name  xcorpion.tech;
+
+    location / {
+        proxy_set_header Host xcorpion.tech;
+        proxy_pass http://your.github.io/public/;
+    }
+}
+{% endcodeblock %}
 
 7b-2. If you have a custom domain, set A record pointed to your server IP and similarily, remember to turn off https enforcement. Also don't forget to set the custom url in Github.
 

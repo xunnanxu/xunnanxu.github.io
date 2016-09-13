@@ -23,7 +23,7 @@ You don’t want to set up any database just for the blog
 You">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Get Started with Hexo Blogging System">
-<meta property="og:url" content="http://xcorpion.tech/2016/08/14/hexo/index.html">
+<meta property="og:url" content="http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/index.html">
 <meta property="og:site_name" content="Shawn's Pitstop">
 <meta property="og:description" content="You should read this if
 You want to set up a personal blog
@@ -31,7 +31,7 @@ You know what Markdown is
 You don’t want to set up a heavy Wordpress environment
 You don’t want to set up any database just for the blog
 You">
-<meta property="og:updated_time" content="2016-09-12T05:35:11.937Z">
+<meta property="og:updated_time" content="2016-09-13T07:05:16.867Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Get Started with Hexo Blogging System">
 <meta name="twitter:description" content="You should read this if
@@ -328,17 +328,8 @@ git push
 </code></pre><p>7a-3. If you have a custom domain, set CNAME pointed to your.github.io and remember to disable https enforcement in Github (since SSL will verify host name). Also don’t forget to set the custom url in Github.</p>
 <hr>
 <p>7b-1. If you have a VPS then you can commit all the files and just use github as the storage area since you can do backend url forwarding.</p>
-<pre><code>// nginx config:
-server {
-    listen       80;
-    server_name  xcorpion.tech;
-
-    location / {
-        proxy_set_header Host xcorpion.tech;
-        proxy_pass http://your.github.io/public/;
-    }
-}
-</code></pre><p>7b-2. If you have a custom domain, set A record pointed to your server IP and similarily, remember to turn off https enforcement. Also don’t forget to set the custom url in Github.</p>
+<figure class="highlight nginx"><figcaption><span>nginx.conf</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="section">server</span> &#123;</div><div class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</div><div class="line">    <span class="attribute">server_name</span>  xcorpion.tech;</div><div class="line"></div><div class="line">    <span class="attribute">location</span> / &#123;</div><div class="line">        <span class="attribute">proxy_set_header</span> Host xcorpion.tech;</div><div class="line">        <span class="attribute">proxy_pass</span> http://your.github.io/public/;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>7b-2. If you have a custom domain, set A record pointed to your server IP and similarily, remember to turn off https enforcement. Also don’t forget to set the custom url in Github.</p>
 <h1 id="And-that’s-it-Let’s-start-writing"><a href="#And-that’s-it-Let’s-start-writing" class="headerlink" title="And that’s it! Let’s start writing!"></a>And that’s it! Let’s start writing!</h1><ul>
 <li><p>In your hexo root directory, start a new post:</p>
 <pre><code>hexo new post
@@ -393,17 +384,17 @@ server {
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://xcorpion.tech/2016/08/14/hexo/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://xcorpion.tech/2016/08/14/hexo/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xcorpion.tech/2016/08/14/hexo/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -474,17 +465,17 @@ server {
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://xcorpion.tech/2016/08/14/hexo/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://xcorpion.tech/2016/08/14/hexo/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xcorpion.tech/2016/08/14/hexo/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -510,17 +501,17 @@ server {
                 <div id="share-options-bar" class="share-options-bar" data-behavior="4">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://xcorpion.tech/2016/08/14/hexo/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                 <i class="fa fa-google-plus"></i><span>Share on Google Plus</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://xcorpion.tech/2016/08/14/hexo/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                 <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://xcorpion.tech/2016/08/14/hexo/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                 <i class="fa fa-twitter"></i><span>Share on Twitter</span>
             </a>
         </li>
@@ -577,7 +568,7 @@ server {
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://xcorpion.tech/2016/08/14/hexo/">
+                        <a class="link-unstyled" href="http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
                             <h3 class="media-heading">Get Started with Hexo Blogging System</h3>
                         </a>
                         <span class="media-meta">
@@ -651,9 +642,9 @@ server {
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'http://xcorpion.tech/2016/08/14/hexo/';
+                 this.page.url = 'http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/';
                  
-                    this.page.identifier = '2016/08/14/hexo/';
+                    this.page.identifier = '2016/08/14/get-started-with-hexo-blogging-system/';
                  
              };
             (function() {
