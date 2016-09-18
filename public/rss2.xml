@@ -8,8 +8,52 @@
     <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Mon, 12 Sep 2016 06:16:51 GMT</pubDate>
+    <pubDate>Sun, 18 Sep 2016 19:42:42 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>Why you should ditch Browserify and CommonJS in the http/2 world</title>
+      <link>http://xcorpion.tech/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/</link>
+      <guid>http://xcorpion.tech/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/</guid>
+      <pubDate>Sun, 18 Sep 2016 17:15:36 GMT</pubDate>
+      <description>
+      
+        &lt;div class=&quot;alert info no-icon&quot;&gt;&lt;p&gt;Stop bundling in the http/2 world since it does it for you.&lt;/p&gt;
+&lt;/div&gt;
+&lt;!-- toc --&gt;
+&lt;h1 id=&quot;Modularization-is-a-great-idea&quot;&gt;&lt;a href=&quot;#Modularization-is-a-great-idea&quot; class=&quot;headerlink&quot; title=&quot;Modularization is a great idea&quot;&gt;&lt;/a&gt;Modularization is a great idea&lt;/h1&gt;&lt;p&gt;Back in the old days where there were no concept regarding frontend package management, we would lay out all the scripts in order in the html file, and hope for the best that they would somehow work together if order were right. This surely doesn’t work well with huge projects, but luckily back then JavaScripts weren’t so shiny anyways - UIs weren’t so cool and logic was much simpler. However, things do evolve. People soon noticed that this approach wouldn’t scale - cooperation across multiple teams becomes super tricky, if not impossible, and it doesn’t play well with DRY either.&lt;/p&gt;
+&lt;p&gt;Then people came up with a great idea of modularizing JS code (probably back in 2003?) the same way you would do for your beloved Java/C++ code libraries. And then there came the CommonJS definition concept by Kevin Dangoor back in 2009. Many people got to know this idea thanks to Node.js, and it works quite well, especially for server side code. Now you can easily use npm and build both the frontend and backend using the same tool very quickly, thanks to the JS community. Since people have the same interface for code modularization, team cooperation becomes much easier and projects gain benefit from much better encapsulation.&lt;/p&gt;
+      
+      </description>
+      
+      <content:encoded><![CDATA[<div class="alert info no-icon"><p>Stop bundling in the http/2 world since it does it for you.</p>
+</div>
+<!-- toc -->
+<h1 id="Modularization-is-a-great-idea"><a href="#Modularization-is-a-great-idea" class="headerlink" title="Modularization is a great idea"></a>Modularization is a great idea</h1><p>Back in the old days where there were no concept regarding frontend package management, we would lay out all the scripts in order in the html file, and hope for the best that they would somehow work together if order were right. This surely doesn’t work well with huge projects, but luckily back then JavaScripts weren’t so shiny anyways - UIs weren’t so cool and logic was much simpler. However, things do evolve. People soon noticed that this approach wouldn’t scale - cooperation across multiple teams becomes super tricky, if not impossible, and it doesn’t play well with DRY either.</p>
+<p>Then people came up with a great idea of modularizing JS code (probably back in 2003?) the same way you would do for your beloved Java/C++ code libraries. And then there came the CommonJS definition concept by Kevin Dangoor back in 2009. Many people got to know this idea thanks to Node.js, and it works quite well, especially for server side code. Now you can easily use npm and build both the frontend and backend using the same tool very quickly, thanks to the JS community. Since people have the same interface for code modularization, team cooperation becomes much easier and projects gain benefit from much better encapsulation.</p>
+<a id="more"></a>
+<h1 id="And-browserify-was-a-great-tool"><a href="#And-browserify-was-a-great-tool" class="headerlink" title="And browserify was a great tool"></a>And browserify was a great tool</h1><p>Browerify is a bundling tool based on CommonJS definition by providing polyfill for <code>require</code> and <code>define</code> calls in browser. Back in the days when AMD wasn’t ready, it gave people an easy way of defining your modules the same way as for other node modules and serving everything together as one giant bundle. The idea is based on the fact that browsers have concurrent http request limit, let alone now full-site https becomes popular and SSL handshaking is quite expensive. So by bundling, you cut the number of required requests and hence you get faster page loading.</p>
+<h1 id="However-there-are-a-few-small-problems…"><a href="#However-there-are-a-few-small-problems…" class="headerlink" title="However, there are a few small problems…"></a>However, there are a few small problems…</h1><p>Unlike AMD, CommonJS is synchronous and you can tell from their API design:</p>
+<figure class="highlight js"><figcaption><span>AMD</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">define([<span class="string">'foo'</span>, <span class="string">'bar'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">foo, bar</span>) </span>&#123;</div><div class="line">    <span class="comment">// code begins</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight js"><figcaption><span>CommonJS</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> foo = <span class="built_in">require</span>(<span class="string">'foo'</span>);</div><div class="line"><span class="keyword">var</span> bar = <span class="built_in">require</span>(<span class="string">'bar'</span>);</div><div class="line"></div><div class="line"><span class="comment">// code begins</span></div></pre></td></tr></table></figure>
+<p>It’s easy to load AMD modules asynchronously because the actual code lives in a callback so your loader can play scatter-n-gather. For CommonJS, however, each require call would have to wait until the previous one comes back, which means the loader cannot utilize Ajax and spread the load to multiple http requests in order to speed up the loading process. The solution for browserify is to bundle everything together and hence it can just grab that reference for you in a map. However, if your code library is huge, then it means your initial page load time and above-the-fold time (time between user hits enter and the content in the current browser window stops changing) will be negatively impacted. Moreover, on demand module loading becomes impossible here while in AMD, it’s pretty simple.</p>
+<p>Another problem with browserify, which is the main reason why I don’t like it, is that bundling becomes mandatory. This makes local dev environment setup and testing tricky and surprise-prone. Using browserify means if my app requires ABC in general, I still need to bundle everything together while I just want to test C. To me that’s just ridiculous.</p>
+<h1 id="And-http-2-increases-the-gap"><a href="#And-http-2-increases-the-gap" class="headerlink" title="And http/2 increases the gap"></a>And http/2 increases the gap</h1><p>Http/2 introduces multiplexing which makes CommonJS approach even more crippled. Multiplexing means now you can use one TCP connection to transfer different content from different sources, which makes asynchronous module loading greater. But if you bundle everything together, sorry you are just ignoring all those benefits.</p>
+<p>A lot of CDNs support http/2 now, including Akamai, Cloudflare and Cloudfront, you name it. Here’s a demo from cloudflare:</p>
+<img src="/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/comparison.gif" alt="comparison.gif" title="">
+<p>(Tested in Chrome 53.0)</p>
+<h1 id="So-what-to-use-instead"><a href="#So-what-to-use-instead" class="headerlink" title="So what to use instead?"></a>So what to use instead?</h1><p>ECMA 6 is really the way to go. It consolidates the nice API design from CommonJS and the asynchronous and on-demand module loading feature from AMD. Currently, most browsers don’t support it yet (as of Sep 2016). Surprisingly Microsoft leads the way this time by <a href="https://blogs.windows.com/msedgedev/2016/05/17/es6-modules-and-beyond" target="_blank" rel="external">allowing you to turn on this experimental feature</a>. Regardless of that, Babel can help you turn es6 code to es5, and System.js can fill the gap as the module loader.</p>
+<p>JSPM, Babel and System.js is a good combination for the time being. Everything just works seamlessly across different scenarios - you don’t need to bundle anything in dev environment while getting all the benefits in production with the same set of configuration. You have the freedom - choose to bundle your scripts for best performance for legacy browser support, or on demand, no bundling for best performance under http/2. The actual workflow configuration is out of the scope of this post. I’ll write a post later to discuss this in details, including comparison with the popular bundler - webpack.</p>
+<p>However, if you can’t switch to that for some reason, you can still keep using AMD. The major problems with AMD are:</p>
+<ol>
+<li>tedious API design (I don’t see how this can be changed without a transpiler due to native JS limit)</li>
+<li>not friendly to IDE due to separation of module naming and configuration (and webpack suffers from similar issues)</li>
+</ol>
+<p>Http/2 makes a lot of old “golden rules” no longer correct. Spriting for images and bundling for scripts used to be so true that some people just blindly follow them. However, the world keeps involving so time to keep our eyes open.</p>
+]]></content:encoded>
+      
+      <comments>http://xcorpion.tech/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/#disqus_thread</comments>
+    </item>
     
     <item>
       <title>It&#39;s all about buffers: zero-copy, mmap and Java NIO</title>

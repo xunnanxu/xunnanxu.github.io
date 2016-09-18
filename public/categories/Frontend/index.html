@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Shawn&#39;s Pitstop">
-    <title>Tag: os - Shawn&#39;s Pitstop</title>
+    <title>Category: Frontend - Shawn&#39;s Pitstop</title>
     <meta name="author" content="Shawn Xu">
     
     
@@ -17,7 +17,7 @@
     
     <meta property="og:type" content="blog">
 <meta property="og:title" content="Shawn's Pitstop">
-<meta property="og:url" content="http://xcorpion.tech/tags/os/index.html">
+<meta property="og:url" content="http://xcorpion.tech/categories/Frontend/index.html">
 <meta property="og:site_name" content="Shawn's Pitstop">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Shawn's Pitstop">
@@ -231,21 +231,21 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title" itemprop="headline">
                     
-                        <a class="link-unstyled" href="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
-                            It&#39;s all about buffers: zero-copy, mmap and Java NIO
+                        <a class="link-unstyled" href="/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/">
+                            Why you should ditch Browserify and CommonJS in the http/2 world
                         </a>
                     
                 </h1>
                 <div class="postShorten-meta">
-    <time itemprop="datePublished" datetime="2016-09-10T01:00:27-07:00">
+    <time itemprop="datePublished" datetime="2016-09-18T10:15:36-07:00">
 	
-		    Sep 10, 2016
+		    Sep 18, 2016
     	
     </time>
     
         <span>in </span>
         
-    <a class="category-link" href="/categories/OS/">OS</a>
+    <a class="category-link" href="/categories/Frontend/">Frontend</a>
 
 
     
@@ -254,19 +254,13 @@
             </div>
             
                 <div class="postShorten-excerpt" itemprop="articleBody">
-                    <p>There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one <code>InputStream</code> chunk by chunk into a small buffer (typically 8KB), and feed them into the <code>OutputStream</code>, or even better, you could create a <code>PipedInputStream</code>, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.</p>
-<h2 id="What-happens-under-the-hood"><a href="#What-happens-under-the-hood" class="headerlink" title="What happens under the hood"></a>What happens under the hood</h2><p>Well, here’s what happens when the above code is used:</p>
-<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png" alt="non_zero_copy.png" title="">
-<ol>
-<li>JVM sends read() syscall. </li>
-<li>OS context switches to kernel mode and reads data into the input socket buffer.</li>
-<li>OS kernel then copies data into user buffer, and context switches back to user mode. read() returns.</li>
-<li>JVM processes code logic and sends write() syscall.</li>
-<li>OS context switches to kernel mode and copies data from user buffer to output socket buffer.</li>
-<li>OS returns to user mode and logic in JVM continues.</li>
-</ol>
+                    <div class="alert info no-icon"><p>Stop bundling in the http/2 world since it does it for you.</p>
+</div>
+<!-- toc -->
+<h1 id="Modularization-is-a-great-idea"><a href="#Modularization-is-a-great-idea" class="headerlink" title="Modularization is a great idea"></a>Modularization is a great idea</h1><p>Back in the old days where there were no concept regarding frontend package management, we would lay out all the scripts in order in the html file, and hope for the best that they would somehow work together if order were right. This surely doesn’t work well with huge projects, but luckily back then JavaScripts weren’t so shiny anyways - UIs weren’t so cool and logic was much simpler. However, things do evolve. People soon noticed that this approach wouldn’t scale - cooperation across multiple teams becomes super tricky, if not impossible, and it doesn’t play well with DRY either.</p>
+<p>Then people came up with a great idea of modularizing JS code (probably back in 2003?) the same way you would do for your beloved Java/C++ code libraries. And then there came the CommonJS definition concept by Kevin Dangoor back in 2009. Many people got to know this idea thanks to Node.js, and it works quite well, especially for server side code. Now you can easily use npm and build both the frontend and backend using the same tool very quickly, thanks to the JS community. Since people have the same interface for code modularization, team cooperation becomes much easier and projects gain benefit from much better encapsulation.</p>
                     
-                        <a href="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/" class="postShorten-excerpt_link link">
+                        <a href="/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/" class="postShorten-excerpt_link link">
                             Continue reading
                         </a>
                         
@@ -286,6 +280,7 @@
 </div>
 
 </section>
+
 
 
                 <footer id="footer" class="main-content-wrap">
