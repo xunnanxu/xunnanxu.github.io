@@ -6,6 +6,7 @@
         var postContent = post.content;
         // Define default position for the thumbnail image
         var thumbnailImagePosition = theme.thumbnail_image_position;
+        var thumbnailImageClass = '';
         /* Define thumbnail image */
 
         // Define position of the thumbnail image
@@ -15,6 +16,10 @@
             if (post.thumbnailImagePosition && post.thumbnailImagePosition.length)  {
                 thumbnailImagePosition = post.thumbnailImagePosition;
             }
+        }
+
+        if (theme.thumbnail_image && thumbnailImagePosition) {
+            thumbnailImageClass = 'postShorten--thumbnailimg-' + thumbnailImagePosition;
         }
 
         // Generate and insert table of contents in post content
@@ -28,7 +33,7 @@
             postContent = postContent.replace(/<!--(\s*)[t|T][o|O][c|C](\s*)-->/, tableOfContents)
         }
     %>
-    <article class="postShorten postShorten--thumbnailimg-<%= thumbnailImagePosition %>" itemscope itemType="http://schema.org/BlogPosting">
+    <article class="postShorten <%= thumbnailImageClass %>" itemscope itemType="http://schema.org/BlogPosting">
         <div class="postShorten-wrap">
             <% if (thumbnailImageUrl !== null && thumbnailImagePosition === "top") { %>
                 <a href="<%- url_for(post.path) %>">
