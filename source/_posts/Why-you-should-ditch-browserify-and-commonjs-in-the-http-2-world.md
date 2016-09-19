@@ -53,7 +53,7 @@ Another problem with browserify, which is the main reason why I don't like it, i
 
 # And http/2 increases the gap
 
-Http/2 introduces multiplexing which makes CommonJS approach even more crippled. Multiplexing means now you can use one TCP connection to transfer different content from different sources, which makes asynchronous module loading greater. But if you bundle everything together, sorry you are just ignoring all those benefits.
+Http/2 introduces multiplexing which makes CommonJS approach even more crippled. Multiplexing means now you can use one TCP connection to transfer different content from different sources (URLs) on a single host, which makes asynchronous module loading greater. But if you bundle everything together, sorry you are just ignoring all those benefits.
 
 A lot of CDNs support http/2 now, including Akamai, Cloudflare and Cloudfront, you name it. Here's a demo from cloudflare:
 
