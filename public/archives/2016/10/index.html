@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Shawn&#39;s Pitstop">
-    <title>all-categories - Shawn&#39;s Pitstop</title>
+    <title>Archives: 2016/10 - Shawn&#39;s Pitstop</title>
     <meta name="author" content="Shawn Xu">
     
     
@@ -16,12 +16,11 @@
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/rss2.xml">
     
     <meta property="og:type" content="blog">
-<meta property="og:title" content="all-categories">
-<meta property="og:url" content="http://xcorpion.tech/all-categories/index.html">
+<meta property="og:title" content="Shawn's Pitstop">
+<meta property="og:url" content="http://xcorpion.tech/archives/2016/10/index.html">
 <meta property="og:site_name" content="Shawn's Pitstop">
-<meta property="og:updated_time" content="2016-08-15T00:59:09.093Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="all-categories">
+<meta name="twitter:title" content="Shawn's Pitstop">
     
     
         
@@ -223,55 +222,85 @@
                         hasCoverMetaIn
                         ">
                 
-<div id="categories-archives" class="main-content-wrap">
-    <form id="filter-form" action="##">
-        <input name="category" type="text" class="form-control input--xlarge"
-               placeholder="Search category" autofocus="autofocus">
-    </form>
-    <h5 class="archive-result text-color-base text-xlarge"
-        data-message-zero="no category found"
-        data-message-one="1 cartegory found"
-        data-message-other="{n} categories found"></h5>
+    <section class="postShorten-group main-content-wrap">
+    
+    
+    <article class="postShorten " itemscope itemType="http://schema.org/BlogPosting">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title" itemprop="headline">
+                    
+                        <a class="link-unstyled" href="/2016/10/01/You-Don-t-Know-JS-Eval/">
+                            You Don&#39;t Know JS - Eval
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time itemprop="datePublished" datetime="2016-10-01T16:03:31-07:00">
+	
+		    Oct 01, 2016
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/You-Don-t-Know-JS/">You Don't Know JS</a>
 
-        <section class="boxes">
-        
-            
-                <div><a href="#posts-list-Frontend" class="category-anchor" data-category="frontend" data-parent-categories="">Frontend</a></div>
-            
-        
-            
-                <div><a href="#posts-list-Hexo" class="category-anchor" data-category="hexo" data-parent-categories="">Hexo</a></div>
-            
-        
-            
-                <div><a href="#posts-list-OS" class="category-anchor" data-category="os" data-parent-categories="">OS</a></div>
-            
-        
-            
-                <div><a href="#posts-list-You Don't Know JS" class="category-anchor" data-category="you don't know js" data-parent-categories="">You Don't Know JS</a></div>
-            
-        
-    </section>
-    <section class="boxes">
-        
-            
-                    <div id="posts-list-Frontend" class="archive box" data-category="frontend" data-parent-categories=""><h4 class="archive-title text-xlarge"><a class="link-unstyled" href="/categories/Frontend/">Frontend (1)</a></h4><ul class="archive-posts"><li class="archive-post"><a class="archive-post-title" href="/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/">Why you should ditch Browserify and CommonJS in the http/2 world</a><span class="archive-post-date"> - Sep 18, 2016</span></li></ul></div>
-            
-        
-            
-                    <div id="posts-list-Hexo" class="archive box" data-category="hexo" data-parent-categories=""><h4 class="archive-title text-xlarge"><a class="link-unstyled" href="/categories/Hexo/">Hexo (1)</a></h4><ul class="archive-posts"><li class="archive-post"><a class="archive-post-title" href="/2016/08/14/get-started-with-hexo-blogging-system/">Get Started with Hexo Blogging System</a><span class="archive-post-date"> - Aug 14, 2016</span></li></ul></div>
-            
-        
-            
-                    <div id="posts-list-OS" class="archive box" data-category="os" data-parent-categories=""><h4 class="archive-title text-xlarge"><a class="link-unstyled" href="/categories/OS/">OS (1)</a></h4><ul class="archive-posts"><li class="archive-post"><a class="archive-post-title" href="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">It's all about buffers: zero-copy, mmap and Java NIO</a><span class="archive-post-date"> - Sep 10, 2016</span></li></ul></div>
-            
-        
-            
-                    <div id="posts-list-You Don't Know JS" class="archive box" data-category="you don't know js" data-parent-categories=""><h4 class="archive-title text-xlarge"><a class="link-unstyled" href="/categories/You-Don-t-Know-JS/">You Don't Know JS (1)</a></h4><ul class="archive-posts"><li class="archive-post"><a class="archive-post-title" href="/2016/10/01/You-Don-t-Know-JS-Eval/">You Don't Know JS - Eval</a><span class="archive-post-date"> - Oct 01, 2016</span></li></ul></div>
-            
-        
-    </section>
+
+    
 </div>
+
+            </div>
+            
+                <div class="postShorten-content" itemprop="articleBody">
+                    <h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Have-you-seen-eval-written-like-this"><span class="toc-text">Have you seen eval() written like this?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Regular-eval"><span class="toc-text">Regular eval</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Global-eval"><span class="toc-text">Global eval</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Back-to-the-original-topic"><span class="toc-text">Back to the original topic</span></a></li></ol>
+<p>Recently I’ve been writing quite a bit of front-end stuff and seen quite a few tricks from other people’s libraries. It turns out JavaScript is a pretty <del>wonky and fked up</del> interesting language, which tempts me to write a series about it and this is the first one. This is by no means supposed to show how to write JS but just to show some “wacky” stuff.</p>
+<h2 id="Have-you-seen-eval-written-like-this"><a href="#Have-you-seen-eval-written-like-this" class="headerlink" title="Have you seen eval() written like this?"></a>Have you seen eval() written like this?</h2><pre><code>(0, eval)(&apos;something&apos;);
+</code></pre><img src="http://www.memes.at/faces/are_you_fucking_kidding_me.jpg" alt="Are you fucking kidding me" style="width:200px">
+<h2 id="Regular-eval"><a href="#Regular-eval" class="headerlink" title="Regular eval"></a>Regular eval</h2><p>Eval basically allows you to execute any script within the given context.</p>
+<p>For example:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">eval</span>(<span class="string">'console.log("123");'</span>);            <span class="comment">// prints out 123</span></div><div class="line"></div><div class="line">(<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">this</span>.a = <span class="number">1</span>;</div><div class="line"></div><div class="line">    <span class="built_in">eval</span>(<span class="string">'console.log(this.a);'</span>);            <span class="comment">// 1</span></div><div class="line">&#125;)();</div><div class="line"></div></pre></td></tr></table></figure>
+<p>So far everything is normal: eval runs inside the current scope. <code>this</code> is pointed to the instance of A.</p>
+<h2 id="Global-eval"><a href="#Global-eval" class="headerlink" title="Global eval"></a>Global eval</h2><p>Things get interesting when you do this:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> someVar = <span class="string">'outer'</span>;</div><div class="line"></div><div class="line">(<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">this</span>.someVar = <span class="string">'inner'</span>;</div><div class="line"></div><div class="line">    <span class="built_in">eval</span>(<span class="string">'console.log(someVar);'</span>);       <span class="comment">// you may want 'outer' but this says 'inner'</span></div><div class="line">&#125;)();</div><div class="line"></div></pre></td></tr></table></figure>
+<p>Well in this scenario eval cannot get the value of someVar in the global scope.</p>
+<p>However ECMA5 says, if you change <code>eval()</code> call to indirect, in other words, if you use it as a value rather than a function reference, then it will evaluate the input in the global scope.</p>
+<p>So this would work:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> someVar = <span class="string">'outer'</span>;</div><div class="line"></div><div class="line">(<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> geval = <span class="built_in">eval</span>;</div><div class="line">    <span class="keyword">this</span>.someVar = <span class="string">'inner'</span>;</div><div class="line"></div><div class="line">    geval(<span class="string">'console.log(someVar);'</span>);       <span class="comment">// 'outer'</span></div><div class="line">&#125;)();</div><div class="line"></div></pre></td></tr></table></figure>
+<p>Although <code>geval</code> and <code>eval</code> call the exact same function, <code>geval</code> is a value and thus it becomes an indirect call according to ECMA5.</p>
+<h2 id="Back-to-the-original-topic"><a href="#Back-to-the-original-topic" class="headerlink" title="Back to the original topic"></a>Back to the original topic</h2><p>So what the hell is <code>(0, eval)</code> then? Well a comma separated expression list evaluates to the last value, so it essentially is a shortcut to</p>
+<pre><code>var geval = eval;
+geval(...);
+</code></pre><p>0 is only a puppet here. It could be any value.</p>
+<img src="http://www.memes.at/faces/so_much_win.jpg" alt="So much win" style="width:200px">
+                    
+                        
+                    
+                    
+                        <p>
+                            <a href="/2016/10/01/You-Don-t-Know-JS-Eval/#post-footer" class="postShorten-excerpt_link link">
+                                Comment and share
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    <div class="pagination-bar">
+    <ul class="pagination">
+        
+        
+        <li class="pagination-number">page 1 of 1</li>
+    </ul>
+</div>
+
+</section>
+
+
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
