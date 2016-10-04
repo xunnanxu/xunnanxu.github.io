@@ -231,6 +231,98 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title" itemprop="headline">
                     
+                        <a class="link-unstyled" href="/2016/10/03/You-Don-t-Know-JS-Equal-or-Not-Equal/">
+                            You Don&#39;t Know JS - Equal or Not Equal
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time itemprop="datePublished" datetime="2016-10-03T19:40:48-07:00">
+	
+		    Oct 03, 2016
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/You-Don-t-Know-JS/">You Don't Know JS</a>
+
+
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content" itemprop="articleBody">
+                    <h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#and"><span class="toc-text">== and ===</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dig-deeper"><span class="toc-text">Dig deeper</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#What-about-arrays"><span class="toc-text">What about arrays?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-about-objects"><span class="toc-text">What about objects</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implicit-conversions"><span class="toc-text">Implicit conversions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+<h2 id="and"><a href="#and" class="headerlink" title="== and ==="></a>== and ===</h2><p>Likely you know the difference between <code>==</code> and <code>===</code>: basically, <code>===</code> means strict equality where no implicit conversion is allowed whereas <code>==</code> is loose equality.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="string">'a'</span> === <span class="string">'a'</span>     <span class="comment">// true</span></div><div class="line"><span class="number">0</span> == <span class="literal">false</span>      <span class="comment">// true</span></div><div class="line"></div></pre></td></tr></table></figure>
+<h2 id="Dig-deeper"><a href="#Dig-deeper" class="headerlink" title="Dig deeper"></a>Dig deeper</h2><p>OK but this is too boring since we all know that.</p>
+<p>How about this:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="built_in">String</span>(<span class="string">'a'</span>) === <span class="string">'a'</span></div><div class="line"><span class="keyword">new</span> <span class="built_in">String</span>(<span class="string">'a'</span>) === <span class="string">'a'</span></div><div class="line"></div></pre></td></tr></table></figure>
+<p>Well the answers are <code>true</code> and <code>false</code> because <code>String()</code> returns a primitive string while <code>new String()</code> returns a string object. Surely <code>new String(&#39;a&#39;) == &#39;a&#39;</code> yields <code>true</code>. No surprise.</p>
+<h3 id="What-about-arrays"><a href="#What-about-arrays" class="headerlink" title="What about arrays?"></a>What about arrays?</h3><pre><code>[] === []
+</code></pre><p>Well this returns <code>false</code> because for non-primitive objects, they are compared by reference. This always returns <code>false</code> because they are different in terms of memory location.</p>
+<p>However surprisingly you can compare arrays like this:</p>
+<pre><code>[1, 2, 3] &lt; [2, 3]      // true
+[2, 1, 3] &gt; [1, 2, 3]   // true
+</code></pre><img src="http://www.memes.at/faces/blonde_hmmm.jpg" alt="Blonde hmmm" style="width:125px">
+<p>(Wait a sec. I think I have an idea.)</p>
+<p>How about this:</p>
+<pre><code>function arrEquals(arr1, arr2) {
+    return !(arr1 &lt; arr2) &amp;&amp; !(arr2 &lt; arr1);
+}
+</code></pre><img src="http://www.memes.at/faces/fuck_yeah_smile.jpg" alt="Fuck yeah smile" style="width:125px">
+<p>Well this is wrong because arrays will be flattened when compared, like this</p>
+<pre><code>[[1, 2], 1] &lt; [1, 2, 3]     // true
+</code></pre><h3 id="What-about-objects"><a href="#What-about-objects" class="headerlink" title="What about objects"></a>What about objects</h3><p>What’s the result of this expression?</p>
+<pre><code>{} === {}
+</code></pre><p>Well it’s neither <code>true</code> nor <code>false</code> but you get <code>SyntaxError</code> because in this case <code>{}</code> is not an object literal but a code block and thus it cannot be followed with <code>=</code>. Anyway we are drifting away from the original topic…</p>
+<h2 id="Implicit-conversions"><a href="#Implicit-conversions" class="headerlink" title="Implicit conversions"></a>Implicit conversions</h2><p>Well that’s just warm-up. Let’s see something serious.</p>
+<p>If you read something about “best practices”, you would probably be told not to use <code>==</code> because of the evil conversion. However chances are you’ve used it here and there and most likely that’s also part of the “best practices”.</p>
+<p>For example:</p>
+<pre><code>var foo = bar();
+if (foo) {
+    doSomething();
+}
+</code></pre><p>This works because in JavaScript, only 6 object/literals are evaluated to <code>false</code>. They are <code>0</code>, <code>&#39;&#39;</code>, <code>NaN</code>, <code>undefined</code>, <code>null</code> and of course <code>false</code>. Rest of the world evaluates to <code>true</code>, including <code>{}</code> and <code>[]</code>.</p>
+<p>Hmm here’s something wacky:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">var</span> a = &#123;</div><div class="line">    valueOf: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">if</span> (!(<span class="number">1</span> + a)) &#123;</div><div class="line">    alert(<span class="string">'boom'</span>);</div><div class="line">&#125;</div><div class="line"></div></pre></td></tr></table></figure>
+<p>Your code does go boom because <code>1 + a</code> gets implicitly converted to <code>1 + a.valueOf()</code> and hence yields <code>0</code>.</p>
+<p>The actual behavior is documented in ECMA standard - <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-abstract-equality-comparison" target="_blank" rel="external">http://www.ecma-international.org/ecma-262/6.0/#sec-abstract-equality-comparison</a></p>
+<p>In most cases, implicit conversion would cause <code>valueOf()</code> to be called or falls back to <code>toString()</code> if not defined.</p>
+<p>For example:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">var</span> foo = &#123;</div><div class="line">    valueOf: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">'value'</span>;</div><div class="line">    &#125;,</div><div class="line">    toString: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">'toString'</span>;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="string">'foo'</span> + foo             <span class="comment">// foovalue</span></div><div class="line"></div></pre></td></tr></table></figure>
+<p>This is because according to standard, when <code>toPrimitive</code> is invoked for implicit conversion with no <em>hint</em> provided (e.g. in the case of concatenation, or when <code>==</code> is used between different types), it by default prefers <code>valueOf</code>. There are a few exceptions though, including but not limited to <code>Array.prototype.join</code> and <code>alert</code>. They would call <code>toPrimitive</code> with <code>string</code> as the hint so <code>toString()</code> will be favored.</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>In general, you probably want to avoid using <code>==</code> and use <code>===</code> most of the time if not always to avoid worrying about wonky implicit conversion magic.</p>
+<p>However, you can’t be wary enough. For example:</p>
+<pre><code>isNaN(&apos;1&apos;) === true
+</code></pre><p>You might think that <code>&#39;1&#39;</code> is a string and hence this should be <code>false</code> but unfortunately <code>isNaN</code> always calls <code>toNumber</code> internally (<a href="http://www.ecma-international.org/ecma-262/6.0/#sec-tonumber" target="_blank" rel="external">spec</a>) and hence this is <code>true</code>.</p>
+<img src="http://www.memes.at/faces/computer_stare.jpg" alt="Computer stare" style="width:200px">
+
+                    
+                        
+                    
+                    
+                        <p>
+                            <a href="/2016/10/03/You-Don-t-Know-JS-Equal-or-Not-Equal/#post-footer" class="postShorten-excerpt_link link">
+                                Comment and share
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten " itemscope itemType="http://schema.org/BlogPosting">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title" itemprop="headline">
+                    
                         <a class="link-unstyled" href="/2016/10/01/You-Don-t-Know-JS-Eval/">
                             You Don&#39;t Know JS - Eval
                         </a>
@@ -453,6 +545,25 @@ geval(...);
                     <hr>
                 </div>
                 
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://xcorpion.tech/2016/10/03/You-Don-t-Know-JS-Equal-or-Not-Equal/">
+                            <h3 class="media-heading">You Don&#39;t Know JS - Equal or Not Equal</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Oct 3, 2016
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
             </div>
         </div>
         <div class="modal-footer">
@@ -460,7 +571,7 @@ geval(...);
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                4 posts found
+                5 posts found
             </p>
         </div>
     </div>
