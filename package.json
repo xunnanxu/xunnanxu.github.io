@@ -19,7 +19,7 @@
     "hexo-tag-rage-face": "^1.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "update": "node ./utils/update.js"
   },
   "repository": {
     "type": "git",
@@ -30,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/xunnanxu/xunnanxu.github.io/issues"
   },
-  "homepage": "https://github.com/xunnanxu/xunnanxu.github.io#readme"
+  "homepage": "https://github.com/xunnanxu/xunnanxu.github.io#readme",
+  "devDependencies": {
+    "prompt": "^1.0.0"
+  }
 }
