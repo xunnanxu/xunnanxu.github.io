@@ -18,8 +18,9 @@
     <meta property="og:type" content="blog">
 <meta property="og:title" content="all-categories">
 <meta property="og:url" content="http://xcorpion.tech/all-categories/index.html">
-<meta property="og:site_name" content="Shawn's Pitstop">
-<meta property="og:updated_time" content="2016-08-15T00:59:09.093Z">
+<meta property="og:site_name" content="Shawn&#39;s Pitstop">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2016-10-02T17:55:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="all-categories">
     
@@ -275,7 +276,7 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2016 Shawn Xu. All Rights Reserved.
+        Copyrights &copy; 2018 Shawn Xu. All Rights Reserved.
     </span>
 </footer>
 
@@ -341,7 +342,7 @@
                         </span>
                         <div class="media-content hide-xs font-merryweather"><h1 id="You-should-read-this-if"><a href="#You-should-read-this-if" class="headerlink" title="You should read this if"></a>You should read this if</h1><ul>
 <li>You want to set up a personal blog</li>
-<li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a> is</li>
+<li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank" rel="noopener">Markdown</a> is</li>
 <li>You don’t want to set up a heavy Wordpress environment</li>
 <li>You don’t want to set up any database just for the blog</li>
 <li>You either don’t have a VPS or want to host blog content in some easy-to-reach place.</li>
@@ -368,7 +369,7 @@
                         </span>
                         <div class="media-content hide-xs font-merryweather"><p>There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one <code>InputStream</code> chunk by chunk into a small buffer (typically 8KB), and feed them into the <code>OutputStream</code>, or even better, you could create a <code>PipedInputStream</code>, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.</p>
 <h2 id="What-happens-under-the-hood"><a href="#What-happens-under-the-hood" class="headerlink" title="What happens under the hood"></a>What happens under the hood</h2><p>Well, here’s what happens when the above code is used:</p>
-<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png" alt="non_zero_copy.png" title="">
+<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
 <ol>
 <li>JVM sends read() syscall. </li>
 <li>OS context switches to kernel mode and reads data into the input socket buffer.</li>
@@ -443,6 +444,25 @@
                     <hr>
                 </div>
                 
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://xcorpion.tech/2018/04/13/Workflow-Processing-Engine-Overview-2018-Airflow-vs-Azkaban-vs-Conductor-vs-Oozie-vs-Amazon-Step-Functions/">
+                            <h3 class="media-heading">Workflow Processing Engine Overview 2018: Airflow vs Azkaban vs Conductor vs Oozie vs Amazon Step Functions</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Apr 13, 2018
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
             </div>
         </div>
         <div class="modal-footer">
@@ -450,7 +470,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                5 posts found
+                6 posts found
             </p>
         </div>
     </div>
