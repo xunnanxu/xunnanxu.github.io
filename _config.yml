@@ -76,3 +76,7 @@ feed:
   type: rss2
   path: rss2.xml
   limit: 20
+
+marked:
+  gfm: true
+  breaks: false
