@@ -170,6 +170,12 @@ in Windows as typically the stuff from Windows will take priority.
 To fix that you can create a DWORD `AppendNtPath` under
 `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Lxss` and set the value to `0`.
 
+**Update:** The above trick seems to only work for legacy WSL (aka Bash on Ubuntu on Windows).
+For new users, create a DWORD `DistributionFlags` with value `fffffffd` under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LxssManager`.
+Then go to Services and restart the LxssManager service.
+
+This is undocumented but described in [WSL#2048](https://github.com/Microsoft/WSL/issues/2048).
+
 ### Allow Linux to Open File Using Preferred Application in Windows
 
 This is quite useful if you just want to say check an image as WSL is not shipped with a desktop.
@@ -181,7 +187,7 @@ Luckily as WSL supports interop, there's a trick:
 
     ```bash
     #!/usr/bin/env sh
-    cmd.exe /C start "$1"
+    /mnt/c/Windows/System32/cmd.exe /C start "$1"
     ```
 
 2. Make it executable:

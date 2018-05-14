@@ -339,12 +339,16 @@ if you use tools like pyenv, rvm or nvm and you also have python, ruby, or node 
 in Windows as typically the stuff from Windows will take priority.</p>
 <p>To fix that you can create a DWORD <code>AppendNtPath</code> under
 <code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Lxss</code> and set the value to <code>0</code>.</p>
+<p><strong>Update:</strong> The above trick seems to only work for legacy WSL (aka Bash on Ubuntu on Windows).
+For new users, create a DWORD <code>DistributionFlags</code> with value <code>fffffffd</code> under <code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LxssManager</code>.
+Then go to Services and restart the LxssManager service.</p>
+<p>This is undocumented but described in <a href="https://github.com/Microsoft/WSL/issues/2048" target="_blank" rel="noopener">WSL#2048</a>.</p>
 <h3 id="Allow-Linux-to-Open-File-Using-Preferred-Application-in-Windows"><a href="#Allow-Linux-to-Open-File-Using-Preferred-Application-in-Windows" class="headerlink" title="Allow Linux to Open File Using Preferred Application in Windows"></a>Allow Linux to Open File Using Preferred Application in Windows</h3><p>This is quite useful if you just want to say check an image as WSL is not shipped with a desktop.
 By default the <code>xdg-open</code> binary can be used in linux but WSL is not shipped with that either.</p>
 <p>Luckily as WSL supports interop, there’s a trick:</p>
 <ol>
 <li><p>Create a file <code>/usr/bin/xdg-open</code> with content</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env sh</span></span><br><span class="line">cmd.exe /C start <span class="string">"<span class="variable">$1</span>"</span></span><br></pre></td></tr></table></figure>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env sh</span></span><br><span class="line">/mnt/c/Windows/System32/cmd.exe /C start <span class="string">"<span class="variable">$1</span>"</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>Make it executable:</p>
  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo chmod +x /usr/bin/xdg-open</span></span><br></pre></td></tr></table></figure>
