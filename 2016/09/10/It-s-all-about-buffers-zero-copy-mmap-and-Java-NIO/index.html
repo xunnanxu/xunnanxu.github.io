@@ -10,7 +10,7 @@
     <meta name="author" content="Shawn Xu">
     
     
-        <link rel="icon" href="http://xcorpion.tech/assets/images/favicon.jpg">
+        <link rel="icon" href="https://xunnanxu.github.io/assets/images/favicon.jpg">
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/rss2.xml">
@@ -19,19 +19,19 @@
 <meta name="keywords" content="io,os,java,unix">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="It&#39;s all about buffers: zero-copy, mmap and Java NIO">
-<meta property="og:url" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/index.html">
+<meta property="og:url" content="https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
 <meta property="og:description" content="There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one InputStream chunk by ch">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
-<meta property="og:image" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/zero_copy.png">
-<meta property="og:image" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/scattergather.png">
-<meta property="og:image" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/mmap.png">
-<meta property="og:updated_time" content="2016-09-12T06:16:51.561Z">
+<meta property="og:image" content="https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
+<meta property="og:image" content="https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/zero_copy.png">
+<meta property="og:image" content="https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/scattergather.png">
+<meta property="og:image" content="https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/mmap.png">
+<meta property="og:updated_time" content="2018-07-26T07:32:16.768Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="It&#39;s all about buffers: zero-copy, mmap and Java NIO">
 <meta name="twitter:description" content="There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one InputStream chunk by ch">
-<meta name="twitter:image" content="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
+<meta name="twitter:image" content="https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
     
     
         
@@ -311,9 +311,88 @@
             </div>
             
                 <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
-                    
-                </div>
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
                 
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/"  data-tooltip="Why you should ditch Browserify and CommonJS in the http/2 world">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/08/14/get-started-with-hexo-blogging-system/" data-tooltip="Get Started with Hexo Blogging System">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                <i class="fa fa-google-plus"></i><span>Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
             
         </div>
         
@@ -363,7 +442,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://xcorpion.tech/2016/08/14/get-started-with-hexo-blogging-system/">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/08/14/get-started-with-hexo-blogging-system/">
                             <h3 class="media-heading">Get Started with Hexo Blogging System</h3>
                         </a>
                         <span class="media-meta">
@@ -390,7 +469,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
                             <h3 class="media-heading">It&#39;s all about buffers: zero-copy, mmap and Java NIO</h3>
                         </a>
                         <span class="media-meta">
@@ -419,7 +498,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://xcorpion.tech/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/">
                             <h3 class="media-heading">Why you should ditch Browserify and CommonJS in the http/2 world</h3>
                         </a>
                         <span class="media-meta">
@@ -442,7 +521,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://xcorpion.tech/2016/10/01/You-Don-t-Know-JS-Eval/">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/10/01/You-Don-t-Know-JS-Eval/">
                             <h3 class="media-heading">You Don&#39;t Know JS - Eval</h3>
                         </a>
                         <span class="media-meta">
@@ -461,7 +540,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://xcorpion.tech/2016/10/03/You-Don-t-Know-JS-Equal-or-Not-Equal/">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/10/03/You-Don-t-Know-JS-Equal-or-Not-Equal/">
                             <h3 class="media-heading">You Don&#39;t Know JS - Equal or Not Equal</h3>
                         </a>
                         <span class="media-meta">
@@ -480,7 +559,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://xcorpion.tech/2018/04/13/Workflow-Processing-Engine-Overview-2018-Airflow-vs-Azkaban-vs-Conductor-vs-Oozie-vs-Amazon-Step-Functions/">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/04/13/Workflow-Processing-Engine-Overview-2018-Airflow-vs-Azkaban-vs-Conductor-vs-Oozie-vs-Amazon-Step-Functions/">
                             <h3 class="media-heading">Workflow Processing Engine Overview 2018: Airflow vs Azkaban vs Conductor vs Oozie vs Amazon Step Functions</h3>
                         </a>
                         <span class="media-meta">
@@ -499,7 +578,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://xcorpion.tech/2018/05/13/Building-Linux-Workspace-on-Windows-10-via-WSL/">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/05/13/Building-Linux-Workspace-on-Windows-10-via-WSL/">
                             <h3 class="media-heading">Building Linux Workspace on Windows 10 via WSL</h3>
                         </a>
                         <span class="media-meta">
@@ -518,7 +597,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://xcorpion.tech/2018/05/14/Angular-4-Custom-Bootstrapping-Lazy-Bind-to-Designated-Container/">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/05/14/Angular-4-Custom-Bootstrapping-Lazy-Bind-to-Designated-Container/">
                             <h3 class="media-heading">Angular 4+ Custom Bootstrapping: Lazy Bind to Designated Container</h3>
                         </a>
                         <span class="media-meta">
@@ -555,7 +634,7 @@
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'http://xcorpion.tech/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/';
+                 this.page.url = 'https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/';
                  
                     this.page.identifier = '2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/';
                  
