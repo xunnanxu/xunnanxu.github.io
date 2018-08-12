@@ -1,9 +1,13 @@
 ---
-title: >-
-  Workflow Processing Engine Overview 2018: Airflow vs Azkaban vs Conductor vs
-  Oozie vs Amazon Step Functions
+title: "Workflow Processing Engine Overview 2018: Airflow vs Azkaban vs Conductor vs Oozie vs Amazon Step Functions"
 date: 2018-04-13 21:33:33
 tags:
+    - opensource
+    - workflow
+    - aws
+    - airflow
+    - azkaban
+    - review
 ---
 |                                 | Airflow                                | Azkaban                                         | Conductor                      | Oozie                                      | Step Functions                      |
 |:-------------------------------:|----------------------------------------|-------------------------------------------------|--------------------------------|--------------------------------------------|-------------------------------------|

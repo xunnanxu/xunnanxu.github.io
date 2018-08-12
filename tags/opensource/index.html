@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Shawn&#39;s Pitstop">
-    <title>Tag: es6 - Shawn&#39;s Pitstop</title>
+    <title>Tag: opensource - Shawn&#39;s Pitstop</title>
     <meta name="author" content="Shawn Xu">
     
     
@@ -17,7 +17,7 @@
     
     <meta property="og:type" content="blog">
 <meta property="og:title" content="Shawn&#39;s Pitstop">
-<meta property="og:url" content="https://xunnanxu.github.io/tags/es6/index.html">
+<meta property="og:url" content="https://xunnanxu.github.io/tags/opensource/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
 <meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary">
@@ -232,39 +232,290 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title" itemprop="headline">
                     
-                        <a class="link-unstyled" href="/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/">
-                            Why you should ditch Browserify and CommonJS in the http/2 world
+                        <a class="link-unstyled" href="/2018/04/13/Workflow-Processing-Engine-Overview-2018-Airflow-vs-Azkaban-vs-Conductor-vs-Oozie-vs-Amazon-Step-Functions/">
+                            Workflow Processing Engine Overview 2018: Airflow vs Azkaban vs Conductor vs Oozie vs Amazon Step Functions
                         </a>
                     
                 </h1>
                 <div class="postShorten-meta">
-    <time itemprop="datePublished" datetime="2016-09-18T10:15:36-07:00">
+    <time itemprop="datePublished" datetime="2018-04-13T21:33:33-07:00">
 	
-		    Sep 18, 2016
+		    Apr 13, 2018
     	
     </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Frontend/">Frontend</a>
-
-
     
 </div>
 
             </div>
             
-                <div class="postShorten-excerpt" itemprop="articleBody">
-                    <div class="alert info no-icon"><p>Stop bundling in the http/2 world since it does it for you.</p>
-</div>
-<!-- toc -->
-<h1 id="Modularization-is-a-great-idea"><a href="#Modularization-is-a-great-idea" class="headerlink" title="Modularization is a great idea"></a>Modularization is a great idea</h1><p>Back in the old days where there were no concept regarding frontend package management, we would lay out all the scripts in order in the html file, and hope for the best that they would somehow work together if order were right. This surely doesn’t work well with huge projects, but luckily back then JavaScripts weren’t so shiny anyways - UIs weren’t so cool and logic was much simpler. However, things do evolve. People soon noticed that this approach wouldn’t scale - cooperation across multiple teams becomes super tricky, if not impossible, and it doesn’t play well with DRY either.</p>
-<p>Then people came up with a great idea of modularizing JS code (probably back in 2003?) the same way you would do for your beloved Java/C++ code libraries. And then there came the CommonJS definition concept by Kevin Dangoor back in 2009. Many people got to know this idea thanks to Node.js, and it works quite well, especially for server side code. Now you can easily use npm and build both the frontend and backend using the same tool very quickly, thanks to the JS community. Since people have the same interface for code modularization, team cooperation becomes much easier and projects gain benefit from much better encapsulation.</p>
+                <div class="postShorten-content" itemprop="articleBody">
+                    <table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th>Airflow</th>
+<th>Azkaban</th>
+<th>Conductor</th>
+<th>Oozie</th>
+<th>Step Functions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Owner</strong></td>
+<td>Apache<br>(previously Airbnb)</td>
+<td>LinkedIn</td>
+<td>Netflix</td>
+<td>Apache</td>
+<td>Amazon</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Community</strong></td>
+<td>Very Active</td>
+<td>Somewhat active</td>
+<td>Active</td>
+<td>Active</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>History</strong></td>
+<td>4 years</td>
+<td>7 years</td>
+<td>1.5 years</td>
+<td>8 years</td>
+<td>1.5 years</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Main Purpose</strong></td>
+<td>General Purpose Batch Processing</td>
+<td>Hadoop Job Scheduling</td>
+<td>Microservice orchestration</td>
+<td>Hadoop Job Scheduling</td>
+<td>General Purpose Workflow Processing</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Flow Definition</strong></td>
+<td>Python</td>
+<td>Custom DSL</td>
+<td>JSON</td>
+<td>XML</td>
+<td>JSON</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Support for single node</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Quick demo setup</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Support for HA</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Single Point of Failure</strong></td>
+<td>Yes<br>(Single scheduler)</td>
+<td>Yes<br>(Single web and scheduler combined node)</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>HA Extra Requirement</strong></td>
+<td>Celery/Dask/Mesos + Load Balancer + DB</td>
+<td>DB</td>
+<td>Load Balancer (web nodes) + DB</td>
+<td>Load Balancer (web nodes) + DB + Zookeeper</td>
+<td>Native</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Cron Job</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Execution Model</strong></td>
+<td>Push</td>
+<td>Push</td>
+<td>Poll</td>
+<td>Poll</td>
+<td>Unknown</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Rest API Trigger</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Parameterized Execution</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Trigger by External Event</strong></td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Native Waiting Task Support</strong></td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes (external signal required)</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Backfilling support</strong></td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Native Web Authentication</strong></td>
+<td>LDAP/Password</td>
+<td>XML Password</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Monitoring</strong></td>
+<td>Yes</td>
+<td>Limited</td>
+<td>Limited</td>
+<td>Yes</td>
+<td>Limited</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Scalability</strong></td>
+<td>Depending on executor setup</td>
+<td>Good</td>
+<td>Very Good</td>
+<td>Very Good</td>
+<td>Very Good</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Disclaimer"><a href="#Disclaimer" class="headerlink" title="Disclaimer"></a>Disclaimer</h2><p>I’m not an expert in any of those engines.
+I’ve used some of those (Airflow &amp; Azkaban) and checked the code.
+For some others I either only read the code (Conductor) or the docs (Oozie/AWS Step Functions).
+As most of them are OSS projects, it’s certainly possible that I might have missed certain undocumented features,
+or community-contributed plugins. I’m happy to update this if you see anything wrong.</p>
+<p>Bottom line: Use your own judgement when reading this post.</p>
+<h2 id="Airflow"><a href="#Airflow" class="headerlink" title="Airflow"></a>Airflow</h2><h3 id="The-Good"><a href="#The-Good" class="headerlink" title="The Good"></a>The Good</h3><p>Airflow is a super feature rich engine compared to all other solutions.
+Not only you can use plugins to support all kinds of jobs,
+ranging from data processing jobs: Hive, Pig (though you can also submit them via shell command),
+to general flow management like triggering by existence of file/db entry/s3 content,
+or waiting for expected output from a web endpoint,
+but also it provides a nice UI that allows you to check your DAGs (workflow dependencies) through code/graph,
+and monitors the real time execution of jobs.</p>
+<p>Airflow is also highly customizable with a currently vigorous community.
+You can run all your jobs through a single node using local executor,
+or distribute them onto a group of worker nodes through Celery/Dask/Mesos orchestration.</p>
+<h3 id="The-Bad"><a href="#The-Bad" class="headerlink" title="The Bad"></a>The Bad</h3><p>Airflow by itself is still not very mature (in fact maybe Oozie is the only “mature” engine here).
+The scheduler would need to periodically poll the scheduling plan and send jobs to executors.
+This means it along would continuously dump enormous amount of logs out of the box.
+As it works by “ticking”, your jobs are not guaranteed to get scheduled in “real-time” if that makes sense
+and this would get worse as the number of concurrent jobs increases.
+Meanwhile as you have one centralized scheduler, if it goes down or gets stuck, your running jobs won’t be
+affected as that the job of executors, but no new jobs will get scheduled. This is especially confusing when
+you run this with a HA setup where you have multiple web nodes, a scheduler, a broker
+(typically a message queue in Celery case), multiple executors. When scheduler is stuck for whatever reason,
+all you see in web UI is all tasks are running, but in fact they are not actually moving forward while executors
+are happily reporting they are fine. In other words, the default monitoring is still far from bullet proof.</p>
+<p>The web UI is very nice from the first look. However it sometimes is confusing to new users.
+What does it mean my DAG runs are “running” but my tasks have no state? The charts are not search friendly either,
+let alone some of the features are still far from well documented
+(though the document does look nice, I mean, compared to Oozie, which does seem out-dated).</p>
+<p>The backfilling design is good in certain cases but very error prone in others.
+If you have a flow with cron schedules disabled and re-enabled later, it would try to play catch up,
+and if your jobs is not designed to be idempotent, shit would happen for real.</p>
+<h2 id="Azkaban"><a href="#Azkaban" class="headerlink" title="Azkaban"></a>Azkaban</h2><h3 id="The-Good-1"><a href="#The-Good-1" class="headerlink" title="The Good"></a>The Good</h3><p>Of all the engines, Azkaban is probably the easiest to get going out of the box.
+UI is very intuitive and easy to use. Scheduling and REST APIs works just fine.</p>
+<p>Limited HA setup works out of the box.
+There’s no need for load balancer because you can only have one web node.
+You can configure how it selects executor nodes to push jobs to and it generally seems to scale pretty nicely.
+You can easily run tens of thousands of jobs as long as you have enough capacity for the executor nodes.</p>
+<h3 id="The-Bad-1"><a href="#The-Bad-1" class="headerlink" title="The Bad"></a>The Bad</h3><p>It is not very feature rich out of the box as a general purpose orchestration engine,
+but likely that’s not what’s originally designed for. It’s strength lies in native support for Hadoop/Pig/Hive,
+though you can also achieve those using command line. But itself cannot trigger jobs through external resources like
+Airflow, nor does it support job waiting pattern. Although you can do busy waiting through java code/scripts, that
+leads to bad resource utilization.</p>
+<p>The documentation and configuration are generally a bit confusing compared to others. It’s likely that it wasn’t supposed
+to be OSed at the beginning. The design is okish but you better have a big data center to run the executors as scheduling 
+would get stalled when executors run out of resources without extra monitoring stuff. The code quality overall is a bit towards
+the lower end compared to others so it generally only scales well when resource is not a problem.</p>
+<p>The setup/design is not cloud friendly. You are pretty much supposed to have stable bare metal rather than dynamically
+allocated virtual instances with dynamic IPs. Scheduling would go south if machines vanish.</p>
+<p>The monitoring part is sort of acceptable through JMX (does not seem documented). But it generally doesn’t work well if your
+machines are heavily loaded, unfortunately, as the endpoints may get stuck.</p>
+<h2 id="Conductor"><a href="#Conductor" class="headerlink" title="Conductor"></a>Conductor</h2><h3 id="The-Good-2"><a href="#The-Good-2" class="headerlink" title="The Good"></a>The Good</h3><p>It’s a bit unfair to put Conductor into this competition as it’s real purpose is for microservice orchestration, whatever that means.
+It’s HA model involves a quorum of servers sitting behind load balancer putting tasks onto a message queue which the worker nodes would
+poll from, which means it’s less likely you’ll run into stalled scheduling.
+With the help of parameterized execution through API, it’s actually quite good at scheduling and scaling provided
+that you set up your load balancer/service discovery layer properly.</p>
+<h3 id="The-Bad-2"><a href="#The-Bad-2" class="headerlink" title="The Bad"></a>The Bad</h3><p>The UI needs a bit more love. There’s currently very limited monitoring there. Although for general purpose scheduling that’s probably
+good enough.</p>
+<p>It’s pretty bare-bone out of the box. There’s not even native support for running shell scripts, though it’s pretty easy to implement
+a task worker through python to do the job with the examples provided.</p>
+<h2 id="Oozie"><a href="#Oozie" class="headerlink" title="Oozie"></a>Oozie</h2><h3 id="The-Good-3"><a href="#The-Good-3" class="headerlink" title="The Good"></a>The Good</h3><p>Oozie provides a seemingly reliable HA model through the db setup (seemingly b/c I’ve not dug into it).
+It provides native support for Hadoop related jobs as it was sort of built for that eco system.</p>
+<h3 id="The-Bad-3"><a href="#The-Bad-3" class="headerlink" title="The Bad"></a>The Bad</h3><p>Not a very good candidate for general purpose flow scheduling as the XML definition is quite verbose
+and cumbersome for defining light weight jobs.</p>
+<p>It also requires quite a bit of peripheral setup. You need a zookeeper cluster, a db, a load balancer
+and each node needs to run a web app container like Tomcat. The initial setup also takes some time which is
+not friendly to first time users to pilot stuff.</p>
+<h2 id="Step-Functions"><a href="#Step-Functions" class="headerlink" title="Step Functions"></a>Step Functions</h2><h3 id="The-Good-4"><a href="#The-Good-4" class="headerlink" title="The Good"></a>The Good</h3><p>Step Functions is fairly new (launch in Dec 2016). However the future seems promising. With the HA nature of cloud
+platform and lambda functions, it almost feels like it can easily scale infinitely (compared to others).</p>
+<p>It also offers some useful features for general purpose workflow handling like waiting support and dynamic branching
+based on output.</p>
+<p>It’s also fairly cheap:</p>
+<ul>
+<li>4,000 state transitions are free each month</li>
+<li>$0.025 per 1,000 state transitions thereafter ($0.000025 per state transition)</li>
+</ul>
+<p>If you don’t run tens of thousands of jobs, this might be even better than running your own cluster of things.</p>
+<h3 id="The-Bad-4"><a href="#The-Bad-4" class="headerlink" title="The Bad"></a>The Bad</h3><p>Can only be used by AWS users. Deal breaker if you are not one of them yet.</p>
+<p>Lambda requires extra work for production level iteration/deployment.</p>
+<p>There’s no UI (well there is but it’s really just a console).
+So if you need any level of monitoring beyond that you need to build it using cloudwatch by yourself.</p>
+
                     
-                        <a href="/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/" class="postShorten-excerpt_link link">
-                            Continue reading
-                        </a>
                         
+                    
+                    
+                        <p>
+                            <a href="/2018/04/13/Workflow-Processing-Engine-Overview-2018-Airflow-vs-Azkaban-vs-Conductor-vs-Oozie-vs-Amazon-Step-Functions/#post-footer" class="postShorten-excerpt_link link">
+                                Comment and share
+                            </a>
+                        </p>
                     
                 </div>
             
