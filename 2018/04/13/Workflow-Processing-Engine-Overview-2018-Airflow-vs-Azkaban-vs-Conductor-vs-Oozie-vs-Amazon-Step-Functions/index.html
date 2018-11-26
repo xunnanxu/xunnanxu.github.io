@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
 <meta property="og:description" content="Airflow Azkaban Conductor Oozie Step Functions     Owner Apache(previously Airbnb) LinkedIn Netflix Apache Amazon   Community Very Active Somewhat active Active Active N/A   History 4 years 7 year">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-11-25T21:59:45.716Z">
+<meta property="og:updated_time" content="2018-11-26T01:38:04.832Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Workflow Processing Engine Overview 2018: Airflow vs Azkaban vs Conductor vs Oozie vs Amazon Step Functions">
 <meta name="twitter:description" content="Airflow Azkaban Conductor Oozie Step Functions     Owner Apache(previously Airbnb) LinkedIn Netflix Apache Amazon   Community Very Active Somewhat active Active Active N/A   History 4 years 7 year">
@@ -381,8 +381,8 @@
 <td>LDAP/Password</td>
 <td>XML Password</td>
 <td>No</td>
-<td>No</td>
-<td>No</td>
+<td>Kerberos</td>
+<td>N/A (AWS login)</td>
 </tr>
 <tr>
 <td style="text-align:center"><strong>Monitoring</strong></td>
@@ -402,6 +402,9 @@
 </tr>
 </tbody>
 </table>
+<h2 id="Update"><a href="#Update" class="headerlink" title="Update"></a>Update</h2><ul>
+<li><em>(2018.11) Oozie has Kerberos auth over SPNEGO for web (thanks to Justin Miller for pointing it out)</em></li>
+</ul>
 <h2 id="Disclaimer"><a href="#Disclaimer" class="headerlink" title="Disclaimer"></a>Disclaimer</h2><p>I’m not an expert in any of those engines.
 I’ve used some of those (Airflow &amp; Azkaban) and checked the code.
 For some others I either only read the code (Conductor) or the docs (Oozie/AWS Step Functions).

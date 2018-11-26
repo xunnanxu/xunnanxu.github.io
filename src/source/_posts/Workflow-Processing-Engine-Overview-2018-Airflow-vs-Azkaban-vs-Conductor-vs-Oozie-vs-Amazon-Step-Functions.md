@@ -28,9 +28,13 @@ tags:
 |  **Trigger by External Event**  | Yes                                    | No                                              | No                             | Yes                                        | Yes                                 |
 | **Native Waiting Task Support** | Yes                                    | No                                              | Yes (external signal required) | No                                         | Yes                                 |
 |     **Backfilling support**     | Yes                                    | No                                              | No                             | Yes                                        | No                                  |
-|  **Native Web Authentication**  | LDAP/Password                          | XML Password                                    | No                             | No                                         | No                                  |
+|  **Native Web Authentication**  | LDAP/Password                          | XML Password                                    | No                             | Kerberos                                   | N/A (AWS login)                 |
 |          **Monitoring**         | Yes                                    | Limited                                         | Limited                        | Yes                                        | Limited                             |
 |         **Scalability**         | Depending on executor setup            | Good                                            | Very Good                      | Very Good                                  | Very Good                           |
+
+## Update
+
+- *(2018.11) Oozie has Kerberos auth over SPNEGO for web (thanks to Justin Miller for pointing it out)*
 
 ## Disclaimer
 I'm not an expert in any of those engines.

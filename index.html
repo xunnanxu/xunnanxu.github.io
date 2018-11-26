@@ -716,8 +716,8 @@ By default the <code>xdg-open</code> binary can be used in linux but WSL is not 
 <td>LDAP/Password</td>
 <td>XML Password</td>
 <td>No</td>
-<td>No</td>
-<td>No</td>
+<td>Kerberos</td>
+<td>N/A (AWS login)</td>
 </tr>
 <tr>
 <td style="text-align:center"><strong>Monitoring</strong></td>
@@ -737,6 +737,9 @@ By default the <code>xdg-open</code> binary can be used in linux but WSL is not 
 </tr>
 </tbody>
 </table>
+<h2 id="Update"><a href="#Update" class="headerlink" title="Update"></a>Update</h2><ul>
+<li><em>(2018.11) Oozie has Kerberos auth over SPNEGO for web (thanks to Justin Miller for pointing it out)</em></li>
+</ul>
 <h2 id="Disclaimer"><a href="#Disclaimer" class="headerlink" title="Disclaimer"></a>Disclaimer</h2><p>I’m not an expert in any of those engines.
 I’ve used some of those (Airflow &amp; Azkaban) and checked the code.
 For some others I either only read the code (Conductor) or the docs (Oozie/AWS Step Functions).
