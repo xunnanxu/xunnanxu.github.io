@@ -30,11 +30,13 @@ AWS X-Ray can fill the gap here by offering service mapping and tracing and thus
 
 {% asset_img tracing.png %}
 
-<!-- more -->
-
 Compared to generic service monitoring,
 X-Ray has some additional benefits around AWS ecosystem in that
-it will auto expose your write (yes unfortunately) calls insights when you use AWS SDK.
+it will auto expose your AWS resource write
+(yes only write unfortunately) call insights when you use AWS SDK.
+This applies to SQS, SNS and DynamoDB.
+
+<!-- more -->
 
 But first of all, you need to understand how X-Ray works:
 

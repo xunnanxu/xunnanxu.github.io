@@ -559,7 +559,12 @@
 <p>While this is half joking, monitoring and fault resilency are definitely more challenging in microservice world. While there are frameworks like Hystrix and resilience4j to handle circuit breaking, rate limiting and stuff like that, this post focuses on the first thing: how the heck are my services talking to each other?</p>
 <p>AWS X-Ray can fill the gap here by offering service mapping and tracing and thus you can see something like</p>
 <img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png">
-<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/tracing.png"></div>
+<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/tracing.png">
+<p>Compared to generic service monitoring,
+X-Ray has some additional benefits around AWS ecosystem in that
+it will auto expose your AWS resource write
+(yes only write unfortunately) call insights when you use AWS SDK.
+This applies to SQS, SNS and DynamoDB.</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
