@@ -1,0 +1,815 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Shawn&#39;s Pitstop">
+    <title>Monitor gRPC Microservices in Kubernetes with Amazon X-Ray - Shawn&#39;s Pitstop</title>
+    <meta name="author" content="Shawn Xu">
+    
+    
+        <link rel="icon" href="https://xunnanxu.github.io/assets/images/favicon.jpg">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/rss2.xml">
+    
+    <meta name="description" content="Microservice architecture is typically useful to solve certain scaling problems where service decoupling/segregation is required to improve development velocity, make service more fault tolerant or ha">
+<meta name="keywords" content="monitoring,grpc,microservice,kubernetes,aws,xray">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Monitor gRPC Microservices in Kubernetes with Amazon X-Ray">
+<meta property="og:url" content="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Pitstop">
+<meta property="og:description" content="Microservice architecture is typically useful to solve certain scaling problems where service decoupling/segregation is required to improve development velocity, make service more fault tolerant or ha">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/ms-failure.png">
+<meta property="og:image" content="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png">
+<meta property="og:image" content="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/tracing.png">
+<meta property="og:image" content="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/iam.png">
+<meta property="og:updated_time" content="2018-11-26T01:19:09.776Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Monitor gRPC Microservices in Kubernetes with Amazon X-Ray">
+<meta name="twitter:description" content="Microservice architecture is typically useful to solve certain scaling problems where service decoupling/segregation is required to improve development velocity, make service more fault tolerant or ha">
+<meta name="twitter:image" content="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/ms-failure.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"/>
+    
+    
+    
+        <meta property="og:image" content="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-tjqiy9dmftx6bosldegn4cseab47cbwepgllthon2qqaa41bsapcml3pboyd.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-83953865-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">Shawn&#39;s Pitstop</a>
+    </div>
+    
+        
+            <a class="header-right-picture " href="#about">
+        
+        
+            <img class="header-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture">
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">Shawn Xu</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Full-stack Software Engineer in Bay Area</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/ ">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-categories/">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-tags/">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/all-archives/">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/xunnanxu" target="_blank">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://www.linkedin.com/in/xunnanxu" target="_blank">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/rss2.xml">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+        <div class="post-header-cover
+                    text-left
+                    post-header-cover--partial" style="background-image:url('/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png');" data-behavior="4">
+            
+        </div>
+
+            <div id="main" data-behavior="4"
+                 class="hasCover
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            Monitor gRPC Microservices in Kubernetes with Amazon X-Ray
+        </h1>
+    
+    <div class="post-meta">
+    <time itemprop="datePublished" datetime="2018-11-25T14:11:39-08:00">
+	
+		    Nov 25, 2018
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Operation/">Operation</a>, <a class="category-link" href="/categories/Operation/Architecture/">Architecture</a>
+
+
+    
+</div>
+
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>Microservice architecture is typically useful to solve certain scaling problems where service decoupling/segregation is required to improve development velocity, make service more fault tolerant or handle performance hotspots.</p>
+<p>However, everything comes with a price and so does microservice. One typical issue is:</p>
+<p><img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/ms-failure.png" style="width: 600px"></p>
+<p>While this is half joking, monitoring and fault resilency are definitely more challenging in microservice world. While there are frameworks like Hystrix and resilience4j to handle circuit breaking, rate limiting and stuff like that, this post focuses on the first thing: how the heck are my services talking to each other?</p>
+<p>AWS X-Ray can fill the gap here by offering service mapping and tracing and thus you can see something like</p>
+<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png">
+<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/tracing.png">
+<a id="more"></a>
+<p>Compared to generic service monitoring,
+X-Ray has some additional benefits around AWS ecosystem in that
+it will auto expose your write (yes unfortunately) calls insights when you use AWS SDK.</p>
+<p>But first of all, you need to understand how X-Ray works:</p>
+<ul>
+<li>X-Ray requires application to forward insights to the daemon.
+In EC2, this means the daemon process alongside with your application.
+In Kubenetes, this means you’d need to install it as a daemonset so it would run with your node.</li>
+<li>When a request enters the first service (typically an API gateway),
+the service is responsible for creating the first <code>segment</code> and generate the <code>trace ID</code>
+(typically created by AWS X-Ray SDK).
+A <code>segment</code> represents the overall lifecycle of a request within <strong>one</strong> application,
+identified by <code>segment ID</code>.
+A <code>trace ID</code> identifies the overall roundtrip of a request across <strong>multiple</strong> applications.</li>
+<li>A service, when making requests to other services,
+should generate corresponding <code>subsegment</code>s.
+A <code>subsegment</code> is used to identify activities within one application.
+This is not required for service mapping but nice to have for tracing purposes.</li>
+<li>A service, when accepting traffic from other services,
+should relay the trace ID and the previous segment ID (called parent ID in SDK).
+This is such that the service mapping can be generated.</li>
+</ul>
+<p>For inter-service communication, gRPC is often used. Compared to JSON over REST, gRPC offers more flexibility around query design and better performance thanks to the efficiency of (de)serialization with protobuf and the usage of http2 multiplexing. The extra typing and backward compatibility from protobuf also help documentation and maintenance, improving the overall quality of service quorum.</p>
+<p>However, while X-Ray SDK offers J2EE servlet filter for general http servers, gRPC does not follow that. The canonical <a href="https://github.com/grpc/grpc-java" target="_blank" rel="noopener">gRPC Java implementation</a> uses netty and has no knowledge around that.</p>
+<p>This means we’d have to write some custom code. Unfortunately the documentation around that is <a href="https://grpc.io/docs/quickstart/java.html" target="_blank" rel="noopener">next to none</a>. Luckily, gRPC has implicit support via <code>io.grpc.ServerInterceptor</code> and <code>io.grpc.ClientInterceptor</code> so it’s just a matter of how to wire pieces together.</p>
+<p>Overall there are 4 steps:</p>
+<ol>
+<li>Set up Kubernetes daemonset</li>
+<li>Grant permission to Kubernetes nodes so they can write metrics to X-Ray.</li>
+<li>Write/use interceptors in code</li>
+<li>Route metrics to X-Ray daemon</li>
+</ol>
+<p>Let’s do this step by step:</p>
+<h4 id="Set-up-Kubernetes-daemonset"><a href="#Set-up-Kubernetes-daemonset" class="headerlink" title="Set up Kubernetes daemonset"></a>Set up Kubernetes daemonset</h4><p>There’s an example offered by Amazon regarding how to install it: <a href="https://github.com/aws-samples/aws-xray-kubernetes" target="_blank" rel="noopener">link</a></p>
+<h4 id="Grant-permission-to-Kubernetes-nodes"><a href="#Grant-permission-to-Kubernetes-nodes" class="headerlink" title="Grant permission to Kubernetes nodes"></a>Grant permission to Kubernetes nodes</h4><p>This is a bit tricky depending how your kube cluster is set up.</p>
+<p>If you use EKS/EC2, you need to grant X-Ray write permission by
+attaching the canned policy to your IAM role for the worker nodes.</p>
+<p><img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/iam.png" style="width: 400px"></p>
+<p>If you host your kubenetes outside AWS ecosystem,
+well chances are you don’t need X-Ray but something generic like Istio’s sidecar approach.
+But if you do need it then you can create IAM users,
+attach the policy and use these users in your code.</p>
+<h4 id="Write-use-interceptors-in-code"><a href="#Write-use-interceptors-in-code" class="headerlink" title="Write/use interceptors in code"></a>Write/use interceptors in code</h4><p>First, we need to make sure we use the same language between server and client.
+In typical HTTP this is the headers.
+In gRPC this is the metadata, keyed by <code>Key</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Keys</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Metadata.Key&lt;String&gt; TRACE_ID_HEADER = Metadata.Key.of(<span class="string">"traceId"</span>, Metadata.ASCII_STRING_MARSHALLER);</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Metadata.Key&lt;String&gt; PARENT_ID_HEADER = Metadata.Key.of(<span class="string">"parentId"</span>, Metadata.ASCII_STRING_MARSHALLER);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Now, let’s implement client interceptor.</p>
+<p>First you need some X-Ray stuff in classpath
+(assuming Gradle is used for dependence managmement, should be similar for maven/ivy/sbt):</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  compile (</span><br><span class="line">    <span class="string">"com.amazonaws:aws-xray-recorder-sdk-core"</span>,</span><br><span class="line">    <span class="string">"com.amazonaws:aws-xray-recorder-sdk-aws-sdk"</span>,</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Note for demonstration purpose the verion is omitted here,
+for actual usage you should peg the latest version at the time.</p>
+<p>If you want X-Ray to instrument your AWS resource calls, you also need:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile(<span class="string">"com.amazonaws:aws-xray-recorder-sdk-aws-sdk-instrumentor"</span>)</span><br></pre></td></tr></table></figure>
+<p>Now the code:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XRayClientInterceptor</span> <span class="keyword">implements</span> <span class="title">ClientInterceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AWSXRayRecorder recorder = AWSXRayRecorderBuilder.defaultRecorder();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;ReqT, RespT&gt; <span class="function">ClientCall&lt;ReqT, RespT&gt; <span class="title">interceptCall</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            MethodDescriptor&lt;ReqT, RespT&gt; method, CallOptions callOptions, Channel next)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Segment segment = recorder.getCurrentSegmentOptional().orElseGet(() -&gt; &#123;</span><br><span class="line">            <span class="comment">//noinspection CodeBlock2Expr</span></span><br><span class="line">            <span class="keyword">return</span> recorder.beginSegment(method.getFullMethodName());</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">final</span> String segmentId = segment.getId();</span><br><span class="line">        <span class="keyword">final</span> String traceId = segment.getTraceId().toString();</span><br><span class="line">        ClientCall&lt;ReqT, RespT&gt; call = next.newCall(method, callOptions);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ForwardingClientCall.SimpleForwardingClientCall&lt;ReqT, RespT&gt;(call) &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(Listener&lt;RespT&gt; responseListener, Metadata headers)</span> </span>&#123;</span><br><span class="line">                Subsegment callSegment = recorder.beginSubsegment(method.getFullMethodName());</span><br><span class="line">                <span class="keyword">final</span> Entity context = recorder.getTraceEntity();</span><br><span class="line">                headers.discardAll(Keys.PARENT_ID_HEADER);</span><br><span class="line">                headers.put(Keys.PARENT_ID_HEADER, segmentId);</span><br><span class="line">                headers.put(Keys.TRACE_ID_HEADER, traceId);</span><br><span class="line">                delegate().start(</span><br><span class="line">                        <span class="keyword">new</span> ForwardingClientCallListener.SimpleForwardingClientCallListener&lt;RespT&gt;(responseListener) &#123;</span><br><span class="line">                            <span class="meta">@Override</span></span><br><span class="line">                            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClose</span><span class="params">(io.grpc.Status status, Metadata trailers)</span> </span>&#123;</span><br><span class="line">                                <span class="keyword">if</span> (status.getCause() != <span class="keyword">null</span>) &#123;</span><br><span class="line">                                    callSegment.addException(status.getCause());</span><br><span class="line">                                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!status.isOk()) &#123;</span><br><span class="line">                                    callSegment.setError(<span class="keyword">true</span>);</span><br><span class="line">                                &#125;</span><br><span class="line">                                <span class="keyword">try</span> &#123;</span><br><span class="line">                                    <span class="keyword">super</span>.onClose(status, trailers);</span><br><span class="line">                                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                                    Entity originalContext = recorder.getTraceEntity();</span><br><span class="line">                                    recorder.setTraceEntity(context);</span><br><span class="line">                                    <span class="keyword">try</span> &#123;</span><br><span class="line">                                        callSegment.close();</span><br><span class="line">                                    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                                        recorder.setTraceEntity(originalContext);</span><br><span class="line">                                    &#125;</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;,</span><br><span class="line">                        headers);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>There’s quite a lot of code here but the key gotchas are:</p>
+<ul>
+<li>You should always use an existing segment if one exists,
+which is what <code>getCurrentSegmentOptional()</code> is for.
+Fail to do so would result in the loss of previous segment.
+If in some other code the previous segment is still referenced,
+you will get missing context exceptions when trying to close it.</li>
+<li>Always bear in mind that data streaming/async handling is baked in gRPC design.
+So never close the segment directly after starting forwarding the client call.
+Instead, implement <code>ClientCallListener</code> and let gRPC tell you when
+it actually starts/finishes it.</li>
+<li><code>AWSXRayRecorder</code> is thread safe so using one for all calls should be fine.
+However, all the segments are tracked via <code>ThreadLocalSegmentContext</code> by default.
+That is shared by <strong>all</strong> instances across the entire app by default
+even if you have multiple <code>AWSXRayRecorder</code> instances.
+What that implies is you should
+<strong>always remember the corresponding context for that segment/subsegment</strong>,
+especially when crossing threads. Failure to do so would result in weird errors.
+This is what <code>getTraceEntity()</code> and <code>setTraceEntity()</code> are for.</li>
+<li>The <code>put()</code> calls would append if key with the same name already exists.
+So remember to clean it up first.
+The trace ID meta doesn’t need to be cleared because
+it’s supposed to be the same as mentioned.</li>
+</ul>
+<p>After that, wire it up when you build the client:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">newBlockingStub(channel).withInterceptors(<span class="keyword">new</span> XRayClientInterceptor());</span><br></pre></td></tr></table></figure>
+<p>Next, let’s build the server side interceptor:</p>
+<p>This has some extra flavors in that it assumes you use a spring based
+gRPC server like the <a href="https://github.com/LogNet/grpc-spring-boot-starter" target="_blank" rel="noopener">LogNet Springboot</a> one.
+The <code>GRpcGlobalInterceptor</code> would tell the runner to inject the interceptor automagically.
+If that’s not the case, that’s fine,
+just replace the <code>appName</code> with some other logic,
+and wire up the interceptor using <code>ServerInterceptors.intercept(serviceDefinition, interceptors)</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GRpcGlobalInterceptor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">XRayServerInterceptor</span> <span class="keyword">implements</span> <span class="title">ServerInterceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;spring.application.name&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> String appName;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;ReqT, RespT&gt; ServerCall.<span class="function">Listener&lt;ReqT&gt; <span class="title">interceptCall</span><span class="params">(ServerCall&lt;ReqT, RespT&gt; call, Metadata headers, ServerCallHandler&lt;ReqT, RespT&gt; next)</span> </span>&#123;</span><br><span class="line">        String traceId = headers.get(Keys.TRACE_ID_HEADER);</span><br><span class="line">        String parentId = headers.get(Keys.PARENT_ID_HEADER);</span><br><span class="line">        TraceID tId = <span class="keyword">new</span> TraceID();</span><br><span class="line">        <span class="keyword">if</span> (traceId != <span class="keyword">null</span>) &#123;</span><br><span class="line">            tId = TraceID.fromString(traceId);</span><br><span class="line">        &#125;</span><br><span class="line">        Segment segment = recorder.beginSegment(appName, tId, parentId);</span><br><span class="line">        headers.discardAll(Keys.PARENT_ID_HEADER);</span><br><span class="line">        headers.discardAll(Keys.TRACE_ID_HEADER);</span><br><span class="line">        headers.put(Keys.PARENT_ID_HEADER, segment.getId());</span><br><span class="line">        headers.put(Keys.TRACE_ID_HEADER, tId.toString());</span><br><span class="line">        ServerCall.Listener&lt;ReqT&gt; listener = next.startCall(call, headers);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ForwardingListener&lt;&gt;(listener, call, recorder, recorder.getTraceEntity(), segment);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ForwardingListener</span>&lt;<span class="title">T</span>, <span class="title">R</span>&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">extends</span> <span class="title">ForwardingServerCallListener</span>.<span class="title">SimpleForwardingServerCallListener</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ServerCall&lt;T, R&gt; call;</span><br><span class="line">    <span class="keyword">private</span> AWSXRayRecorder recorder;</span><br><span class="line">    <span class="keyword">private</span> Entity entity;</span><br><span class="line">    <span class="keyword">private</span> Segment segment;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ForwardingListener</span><span class="params">(ServerCall.Listener&lt;T&gt; delegate,</span></span></span><br><span class="line"><span class="function"><span class="params">            ServerCall&lt;T, R&gt; call,</span></span></span><br><span class="line"><span class="function"><span class="params">            AWSXRayRecorder recorder,</span></span></span><br><span class="line"><span class="function"><span class="params">            Entity entity,</span></span></span><br><span class="line"><span class="function"><span class="params">            Segment segment</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(delegate);</span><br><span class="line">        <span class="keyword">this</span>.call = call;</span><br><span class="line">        <span class="keyword">this</span>.recorder = recorder;</span><br><span class="line">        <span class="keyword">this</span>.entity = entity;</span><br><span class="line">        <span class="keyword">this</span>.segment = segment;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCancel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        recorder.setTraceEntity(entity);</span><br><span class="line">        <span class="keyword">if</span> (call.isCancelled()) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        segment.setFault(<span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.onCancel();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">finally</span> &#123;</span><br><span class="line">            segment.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        recorder.setTraceEntity(entity);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.onComplete();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">            segment.setError(<span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">finally</span> &#123;</span><br><span class="line">            segment.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Route-metrics-to-X-Ray-daemon"><a href="#Route-metrics-to-X-Ray-daemon" class="headerlink" title="Route metrics to X-Ray daemon"></a>Route metrics to X-Ray daemon</h4><p>Last but not least, we need to tell X-Ray SDK to forward them to our daemon:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line">  <span class="string">...</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">...</span></span><br><span class="line"><span class="attr">      env:</span></span><br><span class="line"><span class="attr">      - name:</span> <span class="string">AWS_XRAY_DAEMON_ADDRESS</span> </span><br><span class="line"><span class="attr">        value:</span> <span class="attr">xray-daemon:2000</span></span><br></pre></td></tr></table></figure>
+<p>The value corresponds to your daemon name.</p>
+<p><code>AWS_XRAY_DAEMON_ADDRESS</code> will be read by AWS SDK at runtime.</p>
+<h4 id="Done"><a href="#Done" class="headerlink" title="Done"></a>Done</h4><p>And that’s it. Just deploy the apps to kube cluster.
+Bear in mind that the service map is bound to time range.
+It won’t show up until you get traffic across your apps.
+And if you have traffic split like A/B testing or service
+migration, you’ll see how things evolve over time,
+which is pretty cool.</p>
+
+            
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/aws/">aws</a> <a class="tag tag--primary tag--small t-link" href="/tags/grpc/">grpc</a> <a class="tag tag--primary tag--small t-link" href="/tags/kubernetes/">kubernetes</a> <a class="tag tag--primary tag--small t-link" href="/tags/microservice/">microservice</a> <a class="tag tag--primary tag--small t-link" href="/tags/monitoring/">monitoring</a> <a class="tag tag--primary tag--small t-link" href="/tags/xray/">xray</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/05/14/Angular-4-Custom-Bootstrapping-Lazy-Bind-to-Designated-Container/" data-tooltip="Angular 4+ Custom Bootstrapping: Lazy Bind to Designated Container">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 Shawn Xu. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/05/14/Angular-4-Custom-Bootstrapping-Lazy-Bind-to-Designated-Container/" data-tooltip="Angular 4+ Custom Bootstrapping: Lazy Bind to Designated Container">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                <i class="fa fa-google-plus"></i><span>Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">Shawn Xu</h4>
+        
+            <div id="about-card-bio"><p>Full-stack Software Engineer in Bay Area</p>
+</div>
+        
+        
+        
+    </div>
+</div>
+
+        <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-close"></i></span>
+            <a href="https://algolia.com" target="_blank" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search " autofocus="autofocus">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/08/14/get-started-with-hexo-blogging-system/">
+                            <h3 class="media-heading">Get Started with Hexo Blogging System</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 14, 2016
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><h1 id="You-should-read-this-if"><a href="#You-should-read-this-if" class="headerlink" title="You should read this if"></a>You should read this if</h1><ul>
+<li>You want to set up a personal blog</li>
+<li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank" rel="noopener">Markdown</a> is</li>
+<li>You don’t want to set up a heavy Wordpress environment</li>
+<li>You don’t want to set up any database just for the blog</li>
+<li>You either don’t have a VPS or want to host blog content in some easy-to-reach place.</li>
+<li>You still want a template/theme system.</li>
+</ul>
+<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>Github Pages + Hexo (what this site uses)</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
+                            <h3 class="media-heading">It&#39;s all about buffers: zero-copy, mmap and Java NIO</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 10, 2016
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one <code>InputStream</code> chunk by chunk into a small buffer (typically 8KB), and feed them into the <code>OutputStream</code>, or even better, you could create a <code>PipedInputStream</code>, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.</p>
+<h2 id="What-happens-under-the-hood"><a href="#What-happens-under-the-hood" class="headerlink" title="What happens under the hood"></a>What happens under the hood</h2><p>Well, here’s what happens when the above code is used:</p>
+<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
+<ol>
+<li>JVM sends read() syscall. </li>
+<li>OS context switches to kernel mode and reads data into the input socket buffer.</li>
+<li>OS kernel then copies data into user buffer, and context switches back to user mode. read() returns.</li>
+<li>JVM processes code logic and sends write() syscall.</li>
+<li>OS context switches to kernel mode and copies data from user buffer to output socket buffer.</li>
+<li>OS returns to user mode and logic in JVM continues.</li>
+</ol></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/">
+                            <h3 class="media-heading">Why you should ditch Browserify and CommonJS in the http/2 world</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 18, 2016
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><div class="alert info no-icon"><p>Stop bundling in the http/2 world since it does it for you.</p>
+</div>
+<!-- toc -->
+<h1 id="Modularization-is-a-great-idea"><a href="#Modularization-is-a-great-idea" class="headerlink" title="Modularization is a great idea"></a>Modularization is a great idea</h1><p>Back in the old days where there were no concept regarding frontend package management, we would lay out all the scripts in order in the html file, and hope for the best that they would somehow work together if order were right. This surely doesn’t work well with huge projects, but luckily back then JavaScripts weren’t so shiny anyways - UIs weren’t so cool and logic was much simpler. However, things do evolve. People soon noticed that this approach wouldn’t scale - cooperation across multiple teams becomes super tricky, if not impossible, and it doesn’t play well with DRY either.</p>
+<p>Then people came up with a great idea of modularizing JS code (probably back in 2003?) the same way you would do for your beloved Java/C++ code libraries. And then there came the CommonJS definition concept by Kevin Dangoor back in 2009. Many people got to know this idea thanks to Node.js, and it works quite well, especially for server side code. Now you can easily use npm and build both the frontend and backend using the same tool very quickly, thanks to the JS community. Since people have the same interface for code modularization, team cooperation becomes much easier and projects gain benefit from much better encapsulation.</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/10/01/You-Don-t-Know-JS-Eval/">
+                            <h3 class="media-heading">You Don&#39;t Know JS - Eval</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Oct 1, 2016
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/10/03/You-Don-t-Know-JS-Equal-or-Not-Equal/">
+                            <h3 class="media-heading">You Don&#39;t Know JS - Equal or Not Equal</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Oct 3, 2016
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/04/13/Workflow-Processing-Engine-Overview-2018-Airflow-vs-Azkaban-vs-Conductor-vs-Oozie-vs-Amazon-Step-Functions/">
+                            <h3 class="media-heading">Workflow Processing Engine Overview 2018: Airflow vs Azkaban vs Conductor vs Oozie vs Amazon Step Functions</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Apr 13, 2018
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/05/13/Building-Linux-Workspace-on-Windows-10-via-WSL/">
+                            <h3 class="media-heading">Building Linux Workspace on Windows 10 via WSL</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 13, 2018
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/05/14/Angular-4-Custom-Bootstrapping-Lazy-Bind-to-Designated-Container/">
+                            <h3 class="media-heading">Angular 4+ Custom Bootstrapping: Lazy Bind to Designated Container</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 14, 2018
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
+                            <h3 class="media-heading">Monitor gRPC Microservices in Kubernetes with Amazon X-Ray</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 25, 2018
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>Microservice architecture is typically useful to solve certain scaling problems where service decoupling/segregation is required to improve development velocity, make service more fault tolerant or handle performance hotspots.</p>
+<p>However, everything comes with a price and so does microservice. One typical issue is:</p>
+<p><img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/ms-failure.png" style="width: 600px"></p>
+<p>While this is half joking, monitoring and fault resilency are definitely more challenging in microservice world. While there are frameworks like Hystrix and resilience4j to handle circuit breaking, rate limiting and stuff like that, this post focuses on the first thing: how the heck are my services talking to each other?</p>
+<p>AWS X-Ray can fill the gap here by offering service mapping and tracing and thus you can see something like</p>
+<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png">
+<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/tracing.png"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                9 posts found
+            </p>
+        </div>
+    </div>
+</div>
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-6cx5wezqwzs2duyk2bxi04wpzkiibvdkdociqczdvf3xn3voskkzdkecawfe.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/';
+                 
+                    this.page.identifier = '2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'xcorpion';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+
+    </body>
+</html>
