@@ -1,7 +1,10 @@
 ---
 title: 'Angular 4+ Custom Bootstrapping: Lazy Bind to Designated Container'
 date: 2018-05-14 23:50:39
+categories:
+- Frontend
 tags:
+- angular
 ---
 
 {% alert info no-icon %}
@@ -38,6 +41,8 @@ use cases in the real world.
 Alright enough whining and let's get to coding. After all, Angular seems excellent
 especially it covers everything from development, testing, and packaging out of the box.
 Let's leave whining till next time.
+
+<!-- more -->
 
 I'll create a simple stackblitz app like this:
 

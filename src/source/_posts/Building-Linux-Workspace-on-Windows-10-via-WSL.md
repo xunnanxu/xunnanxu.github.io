@@ -71,6 +71,8 @@ cmd.exe /C start image.png
 
 **Awesome, but what's our original topic?**
 
+<!-- more -->
+
 ## Enable WSL
 
 Ok, to use WSL, you'd need to enable it first.
