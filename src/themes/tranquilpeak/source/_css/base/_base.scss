@@ -123,6 +123,10 @@ dl {
     }
 }
 
+img {
+    margin: 0 auto;
+}
+
 // code block
 pre > code {
     display:     block;
@@ -158,7 +162,7 @@ blockquote {
     border-left: 3px solid map-get($colors, 'base');
     padding:     0 15px;
     font-style:  italic;
-    margin:      1.5em 0;
+    margin:      1.5em 0 0;
 
     cite {
         &:before {
