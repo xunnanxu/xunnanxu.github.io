@@ -10,11 +10,12 @@
     <meta name="author" content="Shawn Xu">
     
     
-        <link rel="icon" href="https://xunnanxu.github.io/assets/images/favicon.jpg">
     
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
     
-        <link rel="alternate" type="application/atom+xml" title="RSS" href="/rss2.xml">
-    
+    <script type="application/ld+json">{}</script>
     <meta property="og:type" content="blog">
 <meta property="og:title" content="Shawn&#39;s Pitstop">
 <meta property="og:url" content="https://xunnanxu.github.io/tags/hexo/index.html">
@@ -33,19 +34,20 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-tjqiy9dmftx6bosldegn4cseab47cbwepgllthon2qqaa41bsapcml3pboyd.min.css">
+    <link rel="stylesheet" href="/assets/css/style-1smt6ukziuo0uroiaslpmlmgoyfe0esybt4koznprwypsakte3zk8uckk1tn.min.css">
     <!--STYLES END-->
     
-    <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-83953865-1']);
-        _gaq.push(['_trackPageview']);
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83953865-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-83953865-1');
     </script>
+
+
+    
 
     
 </head>
@@ -64,12 +66,21 @@
 <header id="header" data-behavior="1">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
-        <a class="header-title-link" href="/ ">Shawn&#39;s Pitstop</a>
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            Shawn&#39;s Pitstop
+        </a>
     </div>
     
         
-            <a  class="header-right-picture "
-                href="#about">
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
         
         
             <img class="header-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture"/>
@@ -89,7 +100,10 @@
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
-                <a href="/#about">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
                     <img class="sidebar-profile-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture"/>
                 </a>
                 <h4 class="sidebar-profile-name">Shawn Xu</h4>
@@ -104,72 +118,70 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link "
-                             href="/ "
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
                             
+                            rel="noopener"
+                            title="Home"
                         >
-                    
-                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Home</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link "
-                             href="/all-categories/"
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
                             
+                            rel="noopener"
+                            title="Categories"
                         >
-                    
-                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Categories</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link "
-                             href="/all-tags/"
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
                             
+                            rel="noopener"
+                            title="Tags"
                         >
-                    
-                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Tags</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link "
-                             href="/all-archives/"
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
                             
+                            rel="noopener"
+                            title="Archives"
                         >
-                    
-                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Archives</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link open-algolia-search"
-                             href="#search"
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
                             
+                            rel="noopener"
+                            title="About"
                         >
-                    
-                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
-                        <span class="sidebar-button-desc">Search</span>
-                    </a>
-            </li>
-            
-                <li class="sidebar-button">
-                    
-                        <a  class="sidebar-button-link "
-                             href="#about"
-                            
-                        >
-                    
-                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">About</span>
                     </a>
             </li>
@@ -180,19 +192,17 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://github.com/xunnanxu" target="_blank">
-                    
-                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/xunnanxu"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">GitHub</span>
-                    </a>
-            </li>
-            
-                <li class="sidebar-button">
-                    
-                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/xunnanxu" target="_blank">
-                    
-                        <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
-                        <span class="sidebar-button-desc">LinkedIn</span>
                     </a>
             </li>
             
@@ -202,12 +212,14 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link "
-                             href="/rss2.xml"
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
                             
+                            rel="noopener"
+                            title="RSS"
                         >
-                    
-                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">RSS</span>
                     </a>
             </li>
@@ -226,19 +238,23 @@
     <section class="postShorten-group main-content-wrap">
     
     
-    <article class="postShorten " itemscope itemType="http://schema.org/BlogPosting">
+    <article class="postShorten postShorten--thumbnailimg-right">
         <div class="postShorten-wrap">
             
             <div class="postShorten-header">
-                <h1 class="postShorten-title" itemprop="headline">
+                <h1 class="postShorten-title">
                     
-                        <a class="link-unstyled" href="/2016/08/14/get-started-with-hexo-blogging-system/">
+                        <a
+                            class="link-unstyled"
+                            href="/2016/08/14/get-started-with-hexo-blogging-system/"
+                            aria-label=": Get Started with Hexo Blogging System"
+                        >
                             Get Started with Hexo Blogging System
                         </a>
                     
                 </h1>
                 <div class="postShorten-meta">
-    <time itemprop="datePublished" datetime="2016-08-14T14:32:53-07:00">
+    <time datetime="2016-08-14T14:32:53-07:00">
 	
 		    Aug 14, 2016
     	
@@ -254,7 +270,7 @@
 
             </div>
             
-                <div class="postShorten-excerpt" itemprop="articleBody">
+                <div class="postShorten-excerpt">
                     <h1 id="You-should-read-this-if"><a href="#You-should-read-this-if" class="headerlink" title="You should read this if"></a>You should read this if</h1><ul>
 <li>You want to set up a personal blog</li>
 <li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank" rel="noopener">Markdown</a> is</li>
@@ -265,7 +281,11 @@
 </ul>
 <h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>Github Pages + Hexo (what this site uses)</p>
                     
-                        <a href="/2016/08/14/get-started-with-hexo-blogging-system/" class="postShorten-excerpt_link link">
+                        <a
+                            href="/2016/08/14/get-started-with-hexo-blogging-system/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Get Started with Hexo Blogging System"
+                        >
                             Continue reading
                         </a>
                         
@@ -306,7 +326,7 @@
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
-            <i class="fa fa-remove"></i>
+            <i class="fa fa-times"></i>
         </div>
         
             <img id="about-card-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture"/>
@@ -317,346 +337,25 @@
 </div>
         
         
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
         
     </div>
 </div>
 
-        <div id="algolia-search-modal" class="modal-container">
-    <div class="modal">
-        <div class="modal-header">
-            <span class="close-button"><i class="fa fa-close"></i></span>
-            <a href="https://algolia.com" target="_blank" class="searchby-algolia text-color-light link-unstyled">
-                <span class="searchby-algolia-text text-color-light text-small">by</span>
-                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
-            </a>
-            <i class="search-icon fa fa-search"></i>
-            <form id="algolia-search-form">
-                <input type="text" id="algolia-search-input" name="search"
-                    class="form-control input--large search-input" placeholder="Search "
-                    autofocus="autofocus"/>
-            </form>
-        </div>
-        <div class="modal-body">
-            <div class="no-result text-color-light text-center">no post found</div>
-            <div class="results">
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/08/14/get-started-with-hexo-blogging-system/">
-                            <h3 class="media-heading">Get Started with Hexo Blogging System</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Aug 14, 2016
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><h1 id="You-should-read-this-if"><a href="#You-should-read-this-if" class="headerlink" title="You should read this if"></a>You should read this if</h1><ul>
-<li>You want to set up a personal blog</li>
-<li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank" rel="noopener">Markdown</a> is</li>
-<li>You don’t want to set up a heavy Wordpress environment</li>
-<li>You don’t want to set up any database just for the blog</li>
-<li>You either don’t have a VPS or want to host blog content in some easy-to-reach place.</li>
-<li>You still want a template/theme system.</li>
-</ul>
-<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>Github Pages + Hexo (what this site uses)</p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/">
-                            <h3 class="media-heading">It&#39;s all about buffers: zero-copy, mmap and Java NIO</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Sep 10, 2016
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><p>There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one <code>InputStream</code> chunk by chunk into a small buffer (typically 8KB), and feed them into the <code>OutputStream</code>, or even better, you could create a <code>PipedInputStream</code>, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.</p>
-<h2 id="What-happens-under-the-hood"><a href="#What-happens-under-the-hood" class="headerlink" title="What happens under the hood"></a>What happens under the hood</h2><p>Well, here’s what happens when the above code is used:</p>
-<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
-<ol>
-<li>JVM sends read() syscall. </li>
-<li>OS context switches to kernel mode and reads data into the input socket buffer.</li>
-<li>OS kernel then copies data into user buffer, and context switches back to user mode. read() returns.</li>
-<li>JVM processes code logic and sends write() syscall.</li>
-<li>OS context switches to kernel mode and copies data from user buffer to output socket buffer.</li>
-<li>OS returns to user mode and logic in JVM continues.</li>
-</ol></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/09/18/Why-you-should-ditch-browserify-and-commonjs-in-the-http-2-world/">
-                            <h3 class="media-heading">Why you should ditch Browserify and CommonJS in the http/2 world</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Sep 18, 2016
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><div class="alert info no-icon"><p>Stop bundling in the http/2 world since it does it for you.</p>
-</div>
-<!-- toc -->
-<h1 id="Modularization-is-a-great-idea"><a href="#Modularization-is-a-great-idea" class="headerlink" title="Modularization is a great idea"></a>Modularization is a great idea</h1><p>Back in the old days where there were no concept regarding frontend package management, we would lay out all the scripts in order in the html file, and hope for the best that they would somehow work together if order were right. This surely doesn’t work well with huge projects, but luckily back then JavaScripts weren’t so shiny anyways - UIs weren’t so cool and logic was much simpler. However, things do evolve. People soon noticed that this approach wouldn’t scale - cooperation across multiple teams becomes super tricky, if not impossible, and it doesn’t play well with DRY either.</p>
-<p>Then people came up with a great idea of modularizing JS code (probably back in 2003?) the same way you would do for your beloved Java/C++ code libraries. And then there came the CommonJS definition concept by Kevin Dangoor back in 2009. Many people got to know this idea thanks to Node.js, and it works quite well, especially for server side code. Now you can easily use npm and build both the frontend and backend using the same tool very quickly, thanks to the JS community. Since people have the same interface for code modularization, team cooperation becomes much easier and projects gain benefit from much better encapsulation.</p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/10/01/You-Don-t-Know-JS-Eval/">
-                            <h3 class="media-heading">You Don&#39;t Know JS - Eval</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Oct 1, 2016
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2016/10/03/You-Don-t-Know-JS-Equal-or-Not-Equal/">
-                            <h3 class="media-heading">You Don&#39;t Know JS - Equal or Not Equal</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Oct 3, 2016
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/04/13/Workflow-Processing-Engine-Overview-2018-Airflow-vs-Azkaban-vs-Conductor-vs-Oozie-vs-Amazon-Step-Functions/">
-                            <h3 class="media-heading">Workflow Processing Engine Overview 2018: Airflow vs Azkaban vs Conductor vs Oozie vs Amazon Step Functions</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Apr 13, 2018
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/05/13/Building-Linux-Workspace-on-Windows-10-via-WSL/">
-                            <h3 class="media-heading">Building Linux Workspace on Windows 10 via WSL</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    May 13, 2018
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><img src="/2018/05/13/Building-Linux-Workspace-on-Windows-10-via-WSL/title.png">
-<p>I was not really a fan of Windows 10,
-let alone Microsoft decided to ditch the most important feature I liked in Windows 7 - Aero.
-In fact, I’d admit that in most cases I use Windows as an entertainment system
-rather than a working platform.</p>
-<p>Don’t get me wrong, Windows is great, both in terms of the quality of the software
-and the design/usability of the system by itself. It’s also particularly great of you are
-a .NET developer, a webmaster using IIS, or a game developer heavily using DirectX.
-However, it’s just cumbersome to use it as a daily OSS platform, namely there lacks the
-general ecosystem and the tools are just different. Yes you can install node, java, maven,
-gradle, and you can probably use powershell to write shell scripts, but at the end of the day,
-the overall configuration just feels different and since most people don’t use Windows
-for work on a day-to-day basis, it just takes too much time and effort to learn a set of
-rules with different flavor, just to get the environment set up.</p>
-<p>However, things have changed.</p>
-<p>The release of WSL (Windows Subsystem on Linux) in Windows 10 was like silent bomb.
-It wasn’t really marketed to general public, but it implies the fundamental
-change of attitude from Microsoft towards OSS community.</p>
-<p>WSL is not a virtual machine. In fact there’s no real linux kernel running.
-Instead, there is a layer in between that translates linux system calls to
-something that windows kernel can handle. Technically, this is seriously phenomenal,
-as there’s certain things that there’s no direct equivalent in Windows.</p>
-<p>For example:</p>
-<p>Quoted from <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/08/wsl-system-calls/" target="_blank" rel="noopener">MSDN blog</a></p>
-<blockquote>
-<p>The Linux fork syscall has no documented equivalent for Windows.
-When a fork syscall is made on WSL, lxss.sys does some of the initial work
-to prepare for copying the process.
-It then calls internal NT APIs to create the process with the correct semantics
-and create a thread in the process with an identical register context.
-Finally, it does some additional work to complete copying the process
-and resumes the new process so it can begin executing.</p>
-</blockquote>
-<p>And another one regarding <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/15/wsl-file-system-support/" target="_blank" rel="noopener">WSL file system</a>:</p>
-<blockquote>
-<p>The Windows Subsystem for Linux must translate various Linux file system operations
-into NT kernel operations. WSL must provide a place where Linux system files can exist
-with all the functionality required for that including Linux permissions,
-symbolic links and other special files such as FIFOs;
-it must provide access to the Windows volumes on your system;
-and it must provide special file systems such as ProcFs.</p>
-</blockquote>
-<p>And now it even supports <a href="https://docs.microsoft.com/en-us/windows/wsl/interop" target="_blank" rel="noopener">interop</a>
-after the Fall Creators update. This means if you type in <code>notepad.exe</code>,
-it would literally open notepad for you. Not very exciting but beyond that you could
-do</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> copy stuff to clipboard</span><br><span class="line">echo 'foo bar' | clip.exe</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> open a file in windows using default associated program</span><br><span class="line">cmd.exe /C start image.png</span><br></pre></td></tr></table></figure>
-<p><strong>Awesome, but what’s our original topic?</strong></p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/05/14/Angular-4-Custom-Bootstrapping-Lazy-Bind-to-Designated-Container/">
-                            <h3 class="media-heading">Angular 4+ Custom Bootstrapping: Lazy Bind to Designated Container</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    May 14, 2018
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><div class="alert info no-icon"><p>This works for Angular 4-6 so far.</p>
-</div>
-<p><br>
-If you have ever used Angular 1.x, you know there’s a manual bootstrapping
-option which looks like:
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">angular.bootstrap(<span class="built_in">document</span>.querySelector(<span class="string">'#myApp'</span>), [<span class="string">'myModule'</span>])<span class="string">`</span></span><br></pre></td></tr></table></figure></p>
-<p>This used to be pretty handy until Angular 2 comes in and changes the life.
-For some reason they decide to hide that option and ask people to just use
-<code>bootstrap</code> in <code>@NgModule</code>.</p>
-<p>I get that because for general users this is good enough,
-especially if you are just building a general SPA.
-However if you want to build something advanced like lazy loading,
-or conditional rendering, then this seems a bit naive.</p>
-<p>This is especially annoying when in React its counterpart is as simple as
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ReactDOM.render(     </span><br><span class="line">  &lt;MyApp /&gt;,</span><br><span class="line">  <span class="built_in">document</span>.querySelector(<span class="string">'#myApp'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
-<p>This alone won’t drive people away from Angular but it’s just one of the examples
-that shows Angular wants to force people into its model rather than thinking about
-use cases in the real world.</p>
-<p>Alright enough whining and let’s get to coding. After all, Angular seems excellent
-especially it covers everything from development, testing, and packaging out of the box.
-Let’s leave whining till next time.</p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/">
-                            <h3 class="media-heading">Monitor gRPC Microservices in Kubernetes with Amazon X-Ray</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Nov 25, 2018
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><p>Microservice architecture is typically useful to solve certain scaling problems where service decoupling/segregation is required to improve development velocity, make service more fault tolerant or handle performance hotspots.</p>
-<p>However, everything comes with a price and so does microservice. One typical issue is:</p>
-<p><img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/ms-failure.png" style="width: 600px"></p>
-<p>While this is half joking, monitoring and fault resilency are definitely more challenging in microservice world. While there are frameworks like Hystrix and resilience4j to handle circuit breaking, rate limiting and stuff like that, this post focuses on the first thing: how the heck are my services talking to each other?</p>
-<p>AWS X-Ray can fill the gap here by offering service mapping and tracing and thus you can see something like</p>
-<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png">
-<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/tracing.png">
-<p>Compared to generic service monitoring,
-X-Ray has some additional benefits around AWS ecosystem in that
-it will auto expose your AWS resource write
-(yes only write unfortunately) call insights when you use AWS SDK.
-This applies to SQS, SNS and DynamoDB.</p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
-                    <div class="media-body">
-                        <a class="link-unstyled" href="https://xunnanxu.github.io/2020/04/04/Make-Wireless-BackHaul-Great-Again-Disable-Orbi-2-4G-Backhaul/">
-                            <h3 class="media-heading">Make Wireless BackHaul Great Again: Disable Orbi 2.4G Backhaul</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    Apr 4, 2020
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"><h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR;"></a>TL;DR;</h2><p>I was able to “break” Orbi’s 2.4G backhaul fallback
-and hence force it onto 5G.</p>
-<p>So instead of this</p>
-<p><img src="/2020/04/04/Make-Wireless-BackHaul-Great-Again-Disable-Orbi-2-4G-Backhaul/slowspeed.png" style="width: 400px"></p>
-<p>I got this:</p>
-<p><img src="/2020/04/04/Make-Wireless-BackHaul-Great-Again-Disable-Orbi-2-4G-Backhaul/speed.png" style="width: 400px"></p>
-<p>The solution isn’t clean. Basically telnet to the satellite and then
-<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@RBS20:/# config set wlg_sta_ssid=&lt;original ssid&gt;_disabled</span><br><span class="line">root@RBS20:/# config commit</span><br></pre></td></tr></table></figure></p>
-<p>Then reboot.</p>
-<p>More details and investigation<br>
-↓</p></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-            </div>
-        </div>
-        <div class="modal-footer">
-            <p class="results-count text-medium"
-                data-message-zero="no post found"
-                data-message-one="1 post found"
-                data-message-other="{n} posts found">
-                10 posts found
-            </p>
-        </div>
-    </div>
-</div>
+        
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-6cx5wezqwzs2duyk2bxi04wpzkiibvdkdociqczdvf3xn3voskkzdkecawfe.min.js"></script>
+<script src="/assets/js/script-a7eop4b94fvporpnstudfqw6wiir0xfyhoqcklc5vnjjojzcjzfpez7ngt2n.min.js"></script>
 <!--SCRIPTS END-->
+
+
 
 
 
