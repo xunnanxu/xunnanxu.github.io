@@ -273,16 +273,15 @@
                 <div class="postShorten-excerpt">
                     <p>Microservice architecture is typically useful to solve certain scaling problems where service decoupling/segregation is required to improve development velocity, make service more fault tolerant or handle performance hotspots.</p>
 <p>However, everything comes with a price and so does microservice. One typical issue is:</p>
-<p><img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/ms-failure.png" style="width: 600px"></p>
+<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/ms-failure.png" style="width: 600px">
+
 <p>While this is half joking, monitoring and fault resilency are definitely more challenging in microservice world. While there are frameworks like Hystrix and resilience4j to handle circuit breaking, rate limiting and stuff like that, this post focuses on the first thing: how the heck are my services talking to each other?</p>
 <p>AWS X-Ray can fill the gap here by offering service mapping and tracing and thus you can see something like</p>
 <img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png">
+
 <img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/tracing.png">
-<p>Compared to generic service monitoring,
-X-Ray has some additional benefits around AWS ecosystem in that
-it will auto expose your AWS resource write
-(yes only write unfortunately) call insights when you use AWS SDK.
-This applies to SQS, SNS and DynamoDB.</p>
+
+<p>Compared to generic service monitoring,<br>X-Ray has some additional benefits around AWS ecosystem in that<br>it will auto expose your AWS resource write<br>(yes only write unfortunately) call insights when you use AWS SDK.<br>This applies to SQS, SNS and DynamoDB.</p>
                     
                         <a
                             href="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/"
@@ -296,6 +295,16 @@ This applies to SQS, SNS and DynamoDB.</p>
                 </div>
             
         </div>
+        
+            <a
+                href="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/"
+                aria-label=": Monitor gRPC Microservices in Kubernetes with Amazon X-Ray"
+            >
+                <div class="postShorten-thumbnailimg">
+                    <img alt="" src="https://xunnanxu.github.io/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png"/>
+                </div>
+            </a>
+            
         
     </article>
     
@@ -330,7 +339,7 @@ This applies to SQS, SNS and DynamoDB.</p>
                     <table>
 <thead>
 <tr>
-<th style="text-align:center"></th>
+<th align="center"></th>
 <th>Airflow</th>
 <th>Azkaban</th>
 <th>Conductor</th>
@@ -338,9 +347,8 @@ This applies to SQS, SNS and DynamoDB.</p>
 <th>Step Functions</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td style="text-align:center"><strong>Owner</strong></td>
+<tbody><tr>
+<td align="center"><strong>Owner</strong></td>
 <td>Apache<br>(previously Airbnb)</td>
 <td>LinkedIn</td>
 <td>Netflix</td>
@@ -348,7 +356,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Amazon</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Community</strong></td>
+<td align="center"><strong>Community</strong></td>
 <td>Very Active</td>
 <td>Somewhat active</td>
 <td>Active</td>
@@ -356,7 +364,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>N/A</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>History</strong></td>
+<td align="center"><strong>History</strong></td>
 <td>4 years</td>
 <td>7 years</td>
 <td>1.5 years</td>
@@ -364,7 +372,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>1.5 years</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Main Purpose</strong></td>
+<td align="center"><strong>Main Purpose</strong></td>
 <td>General Purpose Batch Processing</td>
 <td>Hadoop Job Scheduling</td>
 <td>Microservice orchestration</td>
@@ -372,7 +380,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>General Purpose Workflow Processing</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Flow Definition</strong></td>
+<td align="center"><strong>Flow Definition</strong></td>
 <td>Python</td>
 <td>Custom DSL</td>
 <td>JSON</td>
@@ -380,7 +388,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>JSON</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Support for single node</strong></td>
+<td align="center"><strong>Support for single node</strong></td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
@@ -388,7 +396,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>N/A</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Quick demo setup</strong></td>
+<td align="center"><strong>Quick demo setup</strong></td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
@@ -396,7 +404,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>N/A</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Support for HA</strong></td>
+<td align="center"><strong>Support for HA</strong></td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
@@ -404,7 +412,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Yes</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Single Point of Failure</strong></td>
+<td align="center"><strong>Single Point of Failure</strong></td>
 <td>Yes<br>(Single scheduler)</td>
 <td>Yes<br>(Single web and scheduler combined node)</td>
 <td>No</td>
@@ -412,7 +420,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>No</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>HA Extra Requirement</strong></td>
+<td align="center"><strong>HA Extra Requirement</strong></td>
 <td>Celery/Dask/Mesos + Load Balancer + DB</td>
 <td>DB</td>
 <td>Load Balancer (web nodes) + DB</td>
@@ -420,7 +428,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Native</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Cron Job</strong></td>
+<td align="center"><strong>Cron Job</strong></td>
 <td>Yes</td>
 <td>Yes</td>
 <td>No</td>
@@ -428,7 +436,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Yes</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Execution Model</strong></td>
+<td align="center"><strong>Execution Model</strong></td>
 <td>Push</td>
 <td>Push</td>
 <td>Poll</td>
@@ -436,7 +444,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Unknown</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Rest API Trigger</strong></td>
+<td align="center"><strong>Rest API Trigger</strong></td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
@@ -444,7 +452,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Yes</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Parameterized Execution</strong></td>
+<td align="center"><strong>Parameterized Execution</strong></td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
@@ -452,7 +460,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Yes</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Trigger by External Event</strong></td>
+<td align="center"><strong>Trigger by External Event</strong></td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
@@ -460,7 +468,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Yes</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Native Waiting Task Support</strong></td>
+<td align="center"><strong>Native Waiting Task Support</strong></td>
 <td>Yes</td>
 <td>No</td>
 <td>Yes (external signal required)</td>
@@ -468,7 +476,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Yes</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Backfilling support</strong></td>
+<td align="center"><strong>Backfilling support</strong></td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
@@ -476,7 +484,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>No</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Native Web Authentication</strong></td>
+<td align="center"><strong>Native Web Authentication</strong></td>
 <td>LDAP/Password</td>
 <td>XML Password</td>
 <td>No</td>
@@ -484,7 +492,7 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>N/A (AWS login)</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Monitoring</strong></td>
+<td align="center"><strong>Monitoring</strong></td>
 <td>Yes</td>
 <td>Limited</td>
 <td>Limited</td>
@@ -492,91 +500,38 @@ This applies to SQS, SNS and DynamoDB.</p>
 <td>Limited</td>
 </tr>
 <tr>
-<td style="text-align:center"><strong>Scalability</strong></td>
+<td align="center"><strong>Scalability</strong></td>
 <td>Depending on executor setup</td>
 <td>Good</td>
 <td>Very Good</td>
 <td>Very Good</td>
 <td>Very Good</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <h2 id="Update"><a href="#Update" class="headerlink" title="Update"></a>Update</h2><ul>
 <li><em>(2018.11) Oozie has Kerberos auth over SPNEGO for web (thanks to Justin Miller for pointing it out)</em></li>
 </ul>
-<h2 id="Disclaimer"><a href="#Disclaimer" class="headerlink" title="Disclaimer"></a>Disclaimer</h2><p>I’m not an expert in any of those engines.
-I’ve used some of those (Airflow &amp; Azkaban) and checked the code.
-For some others I either only read the code (Conductor) or the docs (Oozie/AWS Step Functions).
-As most of them are OSS projects, it’s certainly possible that I might have missed certain undocumented features,
-or community-contributed plugins. I’m happy to update this if you see anything wrong.</p>
+<h2 id="Disclaimer"><a href="#Disclaimer" class="headerlink" title="Disclaimer"></a>Disclaimer</h2><p>I’m not an expert in any of those engines.<br>I’ve used some of those (Airflow &amp; Azkaban) and checked the code.<br>For some others I either only read the code (Conductor) or the docs (Oozie/AWS Step Functions).<br>As most of them are OSS projects, it’s certainly possible that I might have missed certain undocumented features,<br>or community-contributed plugins. I’m happy to update this if you see anything wrong.</p>
 <p>Bottom line: Use your own judgement when reading this post.</p>
-<h2 id="Airflow"><a href="#Airflow" class="headerlink" title="Airflow"></a>Airflow</h2><h3 id="The-Good"><a href="#The-Good" class="headerlink" title="The Good"></a>The Good</h3><p>Airflow is a super feature rich engine compared to all other solutions.
-Not only you can use plugins to support all kinds of jobs,
-ranging from data processing jobs: Hive, Pig (though you can also submit them via shell command),
-to general flow management like triggering by existence of file/db entry/s3 content,
-or waiting for expected output from a web endpoint,
-but also it provides a nice UI that allows you to check your DAGs (workflow dependencies) through code/graph,
-and monitors the real time execution of jobs.</p>
-<p>Airflow is also highly customizable with a currently vigorous community.
-You can run all your jobs through a single node using local executor,
-or distribute them onto a group of worker nodes through Celery/Dask/Mesos orchestration.</p>
-<h3 id="The-Bad"><a href="#The-Bad" class="headerlink" title="The Bad"></a>The Bad</h3><p>Airflow by itself is still not very mature (in fact maybe Oozie is the only “mature” engine here).
-The scheduler would need to periodically poll the scheduling plan and send jobs to executors.
-This means it along would continuously dump enormous amount of logs out of the box.
-As it works by “ticking”, your jobs are not guaranteed to get scheduled in “real-time” if that makes sense
-and this would get worse as the number of concurrent jobs increases.
-Meanwhile as you have one centralized scheduler, if it goes down or gets stuck, your running jobs won’t be
-affected as that the job of executors, but no new jobs will get scheduled. This is especially confusing when
-you run this with a HA setup where you have multiple web nodes, a scheduler, a broker
-(typically a message queue in Celery case), multiple executors. When scheduler is stuck for whatever reason,
-all you see in web UI is all tasks are running, but in fact they are not actually moving forward while executors
-are happily reporting they are fine. In other words, the default monitoring is still far from bullet proof.</p>
-<p>The web UI is very nice from the first look. However it sometimes is confusing to new users.
-What does it mean my DAG runs are “running” but my tasks have no state? The charts are not search friendly either,
-let alone some of the features are still far from well documented
-(though the document does look nice, I mean, compared to Oozie, which does seem out-dated).</p>
-<p>The backfilling design is good in certain cases but very error prone in others.
-If you have a flow with cron schedules disabled and re-enabled later, it would try to play catch up,
-and if your jobs is not designed to be idempotent, shit would happen for real.</p>
-<h2 id="Azkaban"><a href="#Azkaban" class="headerlink" title="Azkaban"></a>Azkaban</h2><h3 id="The-Good-1"><a href="#The-Good-1" class="headerlink" title="The Good"></a>The Good</h3><p>Of all the engines, Azkaban is probably the easiest to get going out of the box.
-UI is very intuitive and easy to use. Scheduling and REST APIs works just fine.</p>
-<p>Limited HA setup works out of the box.
-There’s no need for load balancer because you can only have one web node.
-You can configure how it selects executor nodes to push jobs to and it generally seems to scale pretty nicely.
-You can easily run tens of thousands of jobs as long as you have enough capacity for the executor nodes.</p>
-<h3 id="The-Bad-1"><a href="#The-Bad-1" class="headerlink" title="The Bad"></a>The Bad</h3><p>It is not very feature rich out of the box as a general purpose orchestration engine,
-but likely that’s not what’s originally designed for. It’s strength lies in native support for Hadoop/Pig/Hive,
-though you can also achieve those using command line. But itself cannot trigger jobs through external resources like
-Airflow, nor does it support job waiting pattern. Although you can do busy waiting through java code/scripts, that
-leads to bad resource utilization.</p>
-<p>The documentation and configuration are generally a bit confusing compared to others. It’s likely that it wasn’t supposed
-to be OSed at the beginning. The design is okish but you better have a big data center to run the executors as scheduling 
-would get stalled when executors run out of resources without extra monitoring stuff. The code quality overall is a bit towards
-the lower end compared to others so it generally only scales well when resource is not a problem.</p>
-<p>The setup/design is not cloud friendly. You are pretty much supposed to have stable bare metal rather than dynamically
-allocated virtual instances with dynamic IPs. Scheduling would go south if machines vanish.</p>
-<p>The monitoring part is sort of acceptable through JMX (does not seem documented). But it generally doesn’t work well if your
-machines are heavily loaded, unfortunately, as the endpoints may get stuck.</p>
-<h2 id="Conductor"><a href="#Conductor" class="headerlink" title="Conductor"></a>Conductor</h2><h3 id="The-Good-2"><a href="#The-Good-2" class="headerlink" title="The Good"></a>The Good</h3><p>It’s a bit unfair to put Conductor into this competition as it’s real purpose is for microservice orchestration, whatever that means.
-It’s HA model involves a quorum of servers sitting behind load balancer putting tasks onto a message queue which the worker nodes would
-poll from, which means it’s less likely you’ll run into stalled scheduling.
-With the help of parameterized execution through API, it’s actually quite good at scheduling and scaling provided
-that you set up your load balancer/service discovery layer properly.</p>
-<h3 id="The-Bad-2"><a href="#The-Bad-2" class="headerlink" title="The Bad"></a>The Bad</h3><p>The UI needs a bit more love. There’s currently very limited monitoring there. Although for general purpose scheduling that’s probably
-good enough.</p>
-<p>It’s pretty bare-bone out of the box. There’s not even native support for running shell scripts, though it’s pretty easy to implement
-a task worker through python to do the job with the examples provided.</p>
-<h2 id="Oozie"><a href="#Oozie" class="headerlink" title="Oozie"></a>Oozie</h2><h3 id="The-Good-3"><a href="#The-Good-3" class="headerlink" title="The Good"></a>The Good</h3><p>Oozie provides a seemingly reliable HA model through the db setup (seemingly b/c I’ve not dug into it).
-It provides native support for Hadoop related jobs as it was sort of built for that eco system.</p>
-<h3 id="The-Bad-3"><a href="#The-Bad-3" class="headerlink" title="The Bad"></a>The Bad</h3><p>Not a very good candidate for general purpose flow scheduling as the XML definition is quite verbose
-and cumbersome for defining light weight jobs.</p>
-<p>It also requires quite a bit of peripheral setup. You need a zookeeper cluster, a db, a load balancer
-and each node needs to run a web app container like Tomcat. The initial setup also takes some time which is
-not friendly to first time users to pilot stuff.</p>
-<h2 id="Step-Functions"><a href="#Step-Functions" class="headerlink" title="Step Functions"></a>Step Functions</h2><h3 id="The-Good-4"><a href="#The-Good-4" class="headerlink" title="The Good"></a>The Good</h3><p>Step Functions is fairly new (launch in Dec 2016). However the future seems promising. With the HA nature of cloud
-platform and lambda functions, it almost feels like it can easily scale infinitely (compared to others).</p>
-<p>It also offers some useful features for general purpose workflow handling like waiting support and dynamic branching
-based on output.</p>
+<h2 id="Airflow"><a href="#Airflow" class="headerlink" title="Airflow"></a>Airflow</h2><h3 id="The-Good"><a href="#The-Good" class="headerlink" title="The Good"></a>The Good</h3><p>Airflow is a super feature rich engine compared to all other solutions.<br>Not only you can use plugins to support all kinds of jobs,<br>ranging from data processing jobs: Hive, Pig (though you can also submit them via shell command),<br>to general flow management like triggering by existence of file/db entry/s3 content,<br>or waiting for expected output from a web endpoint,<br>but also it provides a nice UI that allows you to check your DAGs (workflow dependencies) through code/graph,<br>and monitors the real time execution of jobs.</p>
+<p>Airflow is also highly customizable with a currently vigorous community.<br>You can run all your jobs through a single node using local executor,<br>or distribute them onto a group of worker nodes through Celery/Dask/Mesos orchestration.</p>
+<h3 id="The-Bad"><a href="#The-Bad" class="headerlink" title="The Bad"></a>The Bad</h3><p>Airflow by itself is still not very mature (in fact maybe Oozie is the only “mature” engine here).<br>The scheduler would need to periodically poll the scheduling plan and send jobs to executors.<br>This means it along would continuously dump enormous amount of logs out of the box.<br>As it works by “ticking”, your jobs are not guaranteed to get scheduled in “real-time” if that makes sense<br>and this would get worse as the number of concurrent jobs increases.<br>Meanwhile as you have one centralized scheduler, if it goes down or gets stuck, your running jobs won’t be<br>affected as that the job of executors, but no new jobs will get scheduled. This is especially confusing when<br>you run this with a HA setup where you have multiple web nodes, a scheduler, a broker<br>(typically a message queue in Celery case), multiple executors. When scheduler is stuck for whatever reason,<br>all you see in web UI is all tasks are running, but in fact they are not actually moving forward while executors<br>are happily reporting they are fine. In other words, the default monitoring is still far from bullet proof.</p>
+<p>The web UI is very nice from the first look. However it sometimes is confusing to new users.<br>What does it mean my DAG runs are “running” but my tasks have no state? The charts are not search friendly either,<br>let alone some of the features are still far from well documented<br>(though the document does look nice, I mean, compared to Oozie, which does seem out-dated).</p>
+<p>The backfilling design is good in certain cases but very error prone in others.<br>If you have a flow with cron schedules disabled and re-enabled later, it would try to play catch up,<br>and if your jobs is not designed to be idempotent, shit would happen for real.</p>
+<h2 id="Azkaban"><a href="#Azkaban" class="headerlink" title="Azkaban"></a>Azkaban</h2><h3 id="The-Good-1"><a href="#The-Good-1" class="headerlink" title="The Good"></a>The Good</h3><p>Of all the engines, Azkaban is probably the easiest to get going out of the box.<br>UI is very intuitive and easy to use. Scheduling and REST APIs works just fine.</p>
+<p>Limited HA setup works out of the box.<br>There’s no need for load balancer because you can only have one web node.<br>You can configure how it selects executor nodes to push jobs to and it generally seems to scale pretty nicely.<br>You can easily run tens of thousands of jobs as long as you have enough capacity for the executor nodes.</p>
+<h3 id="The-Bad-1"><a href="#The-Bad-1" class="headerlink" title="The Bad"></a>The Bad</h3><p>It is not very feature rich out of the box as a general purpose orchestration engine,<br>but likely that’s not what’s originally designed for. It’s strength lies in native support for Hadoop/Pig/Hive,<br>though you can also achieve those using command line. But itself cannot trigger jobs through external resources like<br>Airflow, nor does it support job waiting pattern. Although you can do busy waiting through java code/scripts, that<br>leads to bad resource utilization.</p>
+<p>The documentation and configuration are generally a bit confusing compared to others. It’s likely that it wasn’t supposed<br>to be OSed at the beginning. The design is okish but you better have a big data center to run the executors as scheduling<br>would get stalled when executors run out of resources without extra monitoring stuff. The code quality overall is a bit towards<br>the lower end compared to others so it generally only scales well when resource is not a problem.</p>
+<p>The setup/design is not cloud friendly. You are pretty much supposed to have stable bare metal rather than dynamically<br>allocated virtual instances with dynamic IPs. Scheduling would go south if machines vanish.</p>
+<p>The monitoring part is sort of acceptable through JMX (does not seem documented). But it generally doesn’t work well if your<br>machines are heavily loaded, unfortunately, as the endpoints may get stuck.</p>
+<h2 id="Conductor"><a href="#Conductor" class="headerlink" title="Conductor"></a>Conductor</h2><h3 id="The-Good-2"><a href="#The-Good-2" class="headerlink" title="The Good"></a>The Good</h3><p>It’s a bit unfair to put Conductor into this competition as it’s real purpose is for microservice orchestration, whatever that means.<br>It’s HA model involves a quorum of servers sitting behind load balancer putting tasks onto a message queue which the worker nodes would<br>poll from, which means it’s less likely you’ll run into stalled scheduling.<br>With the help of parameterized execution through API, it’s actually quite good at scheduling and scaling provided<br>that you set up your load balancer/service discovery layer properly.</p>
+<h3 id="The-Bad-2"><a href="#The-Bad-2" class="headerlink" title="The Bad"></a>The Bad</h3><p>The UI needs a bit more love. There’s currently very limited monitoring there. Although for general purpose scheduling that’s probably<br>good enough.</p>
+<p>It’s pretty bare-bone out of the box. There’s not even native support for running shell scripts, though it’s pretty easy to implement<br>a task worker through python to do the job with the examples provided.</p>
+<h2 id="Oozie"><a href="#Oozie" class="headerlink" title="Oozie"></a>Oozie</h2><h3 id="The-Good-3"><a href="#The-Good-3" class="headerlink" title="The Good"></a>The Good</h3><p>Oozie provides a seemingly reliable HA model through the db setup (seemingly b/c I’ve not dug into it).<br>It provides native support for Hadoop related jobs as it was sort of built for that eco system.</p>
+<h3 id="The-Bad-3"><a href="#The-Bad-3" class="headerlink" title="The Bad"></a>The Bad</h3><p>Not a very good candidate for general purpose flow scheduling as the XML definition is quite verbose<br>and cumbersome for defining light weight jobs.</p>
+<p>It also requires quite a bit of peripheral setup. You need a zookeeper cluster, a db, a load balancer<br>and each node needs to run a web app container like Tomcat. The initial setup also takes some time which is<br>not friendly to first time users to pilot stuff.</p>
+<h2 id="Step-Functions"><a href="#Step-Functions" class="headerlink" title="Step Functions"></a>Step Functions</h2><h3 id="The-Good-4"><a href="#The-Good-4" class="headerlink" title="The Good"></a>The Good</h3><p>Step Functions is fairly new (launch in Dec 2016). However the future seems promising. With the HA nature of cloud<br>platform and lambda functions, it almost feels like it can easily scale infinitely (compared to others).</p>
+<p>It also offers some useful features for general purpose workflow handling like waiting support and dynamic branching<br>based on output.</p>
 <p>It’s also fairly cheap:</p>
 <ul>
 <li>4,000 state transitions are free each month</li>
@@ -585,8 +540,7 @@ based on output.</p>
 <p>If you don’t run tens of thousands of jobs, this might be even better than running your own cluster of things.</p>
 <h3 id="The-Bad-4"><a href="#The-Bad-4" class="headerlink" title="The Bad"></a>The Bad</h3><p>Can only be used by AWS users. Deal breaker if you are not one of them yet.</p>
 <p>Lambda requires extra work for production level iteration/deployment.</p>
-<p>There’s no UI (well there is but it’s really just a console).
-So if you need any level of monitoring beyond that you need to build it using cloudwatch by yourself.</p>
+<p>There’s no UI (well there is but it’s really just a console).<br>So if you need any level of monitoring beyond that you need to build it using cloudwatch by yourself.</p>
 
                     
                         

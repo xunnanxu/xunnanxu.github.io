@@ -274,6 +274,7 @@
                     <p>There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one <code>InputStream</code> chunk by chunk into a small buffer (typically 8KB), and feed them into the <code>OutputStream</code>, or even better, you could create a <code>PipedInputStream</code>, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.</p>
 <h2 id="What-happens-under-the-hood"><a href="#What-happens-under-the-hood" class="headerlink" title="What happens under the hood"></a>What happens under the hood</h2><p>Well, here’s what happens when the above code is used:</p>
 <img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
+
 <ol>
 <li>JVM sends read() syscall. </li>
 <li>OS context switches to kernel mode and reads data into the input socket buffer.</li>

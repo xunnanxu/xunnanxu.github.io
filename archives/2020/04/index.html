@@ -265,17 +265,18 @@
             </div>
             
                 <div class="postShorten-excerpt">
-                    <h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR;"></a>TL;DR;</h2><p>I was able to “break” Orbi’s 2.4G backhaul fallback
-and hence force it onto 5G.</p>
+                    <h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR;"></a>TL;DR;</h2><p>I was able to “break” Orbi’s 2.4G backhaul fallback<br>and hence force it onto 5G.</p>
 <p>So instead of this</p>
-<p><img src="/2020/04/04/Make-Wireless-BackHaul-Great-Again-Disable-Orbi-2-4G-Backhaul/slowspeed.png" style="width: 400px"></p>
+<img src="/2020/04/04/Make-Wireless-BackHaul-Great-Again-Disable-Orbi-2-4G-Backhaul/slowspeed.png" style="width: 400px">
+
 <p>I got this:</p>
-<p><img src="/2020/04/04/Make-Wireless-BackHaul-Great-Again-Disable-Orbi-2-4G-Backhaul/speed.png" style="width: 400px"></p>
-<p>The solution isn’t clean. Basically telnet to the satellite and then
-<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@RBS20:/# config set wlg_sta_ssid=&lt;original ssid&gt;_disabled</span><br><span class="line">root@RBS20:/# config commit</span><br></pre></td></tr></table></figure></p>
+<img src="/2020/04/04/Make-Wireless-BackHaul-Great-Again-Disable-Orbi-2-4G-Backhaul/speed.png" style="width: 400px">
+
+<p>The solution isn’t clean. Basically telnet to the satellite and then</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@RBS20:/# config set wlg_sta_ssid=&lt;original ssid&gt;_disabled</span><br><span class="line">root@RBS20:/# config commit</span><br></pre></td></tr></table></figure>
+
 <p>Then reboot.</p>
-<p>More details and investigation<br>
-↓</p>
+<p>More details and investigation<br><br>↓</p>
                     
                         <a
                             href="/2020/04/04/Make-Wireless-BackHaul-Great-Again-Disable-Orbi-2-4G-Backhaul/"

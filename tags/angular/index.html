@@ -273,25 +273,19 @@
                 <div class="postShorten-excerpt">
                     <div class="alert info no-icon"><p>This works for Angular 4-6 so far.</p>
 </div>
-<p><br>
-If you have ever used Angular 1.x, you know there’s a manual bootstrapping
+
+<br>
+If you have ever used Angular 1.x, you know there's a manual bootstrapping
 option which looks like:
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">angular.bootstrap(<span class="built_in">document</span>.querySelector(<span class="string">'#myApp'</span>), [<span class="string">'myModule'</span>])<span class="string">`</span></span><br></pre></td></tr></table></figure></p>
-<p>This used to be pretty handy until Angular 2 comes in and changes the life.
-For some reason they decide to hide that option and ask people to just use
-<code>bootstrap</code> in <code>@NgModule</code>.</p>
-<p>I get that because for general users this is good enough,
-especially if you are just building a general SPA.
-However if you want to build something advanced like lazy loading,
-or conditional rendering, then this seems a bit naive.</p>
-<p>This is especially annoying when in React its counterpart is as simple as
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ReactDOM.render(     </span><br><span class="line">  &lt;MyApp /&gt;,</span><br><span class="line">  <span class="built_in">document</span>.querySelector(<span class="string">'#myApp'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
-<p>This alone won’t drive people away from Angular but it’s just one of the examples
-that shows Angular wants to force people into its model rather than thinking about
-use cases in the real world.</p>
-<p>Alright enough whining and let’s get to coding. After all, Angular seems excellent
-especially it covers everything from development, testing, and packaging out of the box.
-Let’s leave whining till next time.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">angular.bootstrap(<span class="built_in">document</span>.querySelector(<span class="string">'#myApp'</span>), [<span class="string">'myModule'</span>])<span class="string">`</span></span><br></pre></td></tr></table></figure>
+
+<p>This used to be pretty handy until Angular 2 comes in and changes the life.<br>For some reason they decide to hide that option and ask people to just use<br><code>bootstrap</code> in <code>@NgModule</code>.</p>
+<p>I get that because for general users this is good enough,<br>especially if you are just building a general SPA.<br>However if you want to build something advanced like lazy loading,<br>or conditional rendering, then this seems a bit naive.</p>
+<p>This is especially annoying when in React its counterpart is as simple as</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ReactDOM.render(     </span><br><span class="line">  &lt;MyApp /&gt;,</span><br><span class="line">  <span class="built_in">document</span>.querySelector(<span class="string">'#myApp'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>This alone won’t drive people away from Angular but it’s just one of the examples<br>that shows Angular wants to force people into its model rather than thinking about<br>use cases in the real world.</p>
+<p>Alright enough whining and let’s get to coding. After all, Angular seems excellent<br>especially it covers everything from development, testing, and packaging out of the box.<br>Let’s leave whining till next time.</p>
                     
                         <a
                             href="/2018/05/14/Angular-4-Custom-Bootstrapping-Lazy-Bind-to-Designated-Container/"
