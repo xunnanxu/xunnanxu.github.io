@@ -1,5 +1,5 @@
 ---
-title: Why Keeping High Standard of Shit Is Important
+title: Why Keeping High Standards of Shit Is Important
 date: 2020-05-23 16:54:54
 tags:
 - software engineering
