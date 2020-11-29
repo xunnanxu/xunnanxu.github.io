@@ -275,6 +275,12 @@
 <p>After that it will fetch the firmware (start4.elf), configs and kernel files (vmlinuz) from that tftp location. The bootloader has a config to specify the exact path for the current device. By default, that’s the last 9 chars of the serial number. This is important as certain config (like cmdline.txt) would tell the OS how to mount the root fs and thus needs to be separate.</p>
 <p>The kernel will later be loaded which takes over the boot process and eventually loads the rest of the system distribution.</p>
 <p>The official doc can be found <a href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/net.md" target="_blank" rel="noopener">here</a>.</p>
+<h2 id="Flashing-the-EEPROM-to-Enable-Netboot"><a href="#Flashing-the-EEPROM-to-Enable-Netboot" class="headerlink" title="Flashing the EEPROM to Enable Netboot"></a>Flashing the EEPROM to Enable Netboot</h2><p>With the basic knowledge equipped, we can continue by first enabling the netboot in bootloader.</p>
+<p>To do that, we need to grab the updated version of bootcode.bin file which supports netboot and update the config.</p>
+<p>This also requires using the raspberry cli binary vcgencmd.</p>
+<p><strong>Pitfall #1: vcgencmd can only work in native Raspberry Pi OS</strong></p>
+<p>Yes the vcgencmd binary does not work in Ubuntu or any other “supported” Linux distros, even if you compile from source. They would just silently fail. Technically it should be doable if they are shipped with the right “stuff” but I decide not to waste more time figuring out what the “stuff” is.</p>
+<p>Here we need a small microSD card to flash the Raspberry Pi OS onto it and boot the system. For headless setup, don’t forget to <code>touch ssh</code> to create the file to enable ssh by default.</p>
                     
                         <a
                             href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DNS-Setup/"

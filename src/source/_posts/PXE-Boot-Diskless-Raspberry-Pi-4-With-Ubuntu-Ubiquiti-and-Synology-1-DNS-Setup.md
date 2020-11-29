@@ -31,8 +31,6 @@ The kernel will later be loaded which takes over the boot process and eventually
 
 The official doc can be found [here](https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/net.md).
 
-<!-- more -->
-
 ## Flashing the EEPROM to Enable Netboot
 
 With the basic knowledge equipped, we can continue by first enabling the netboot in bootloader.
@@ -46,6 +44,8 @@ This also requires using the raspberry cli binary vcgencmd.
 Yes the vcgencmd binary does not work in Ubuntu or any other "supported" Linux distros, even if you compile from source. They would just silently fail. Technically it should be doable if they are shipped with the right "stuff" but I decide not to waste more time figuring out what the "stuff" is.
 
 Here we need a small microSD card to flash the Raspberry Pi OS onto it and boot the system. For headless setup, don't forget to `touch ssh` to create the file to enable ssh by default.
+
+<!-- more -->
 
 The default user name and password is `pi` and `raspberry`.
 
