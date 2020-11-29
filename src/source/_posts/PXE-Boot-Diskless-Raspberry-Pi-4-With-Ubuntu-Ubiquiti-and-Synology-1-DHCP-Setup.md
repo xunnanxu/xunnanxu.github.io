@@ -9,7 +9,7 @@ tags:
 - network
 ---
 
-Raspberry Pi 4 is shipped with a flahable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it's thus worth writing down all the pitfalls through the path especially when it involves a non-"native" Linux distribution.
+Raspberry Pi 4 is shipped with a flashable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it's thus worth writing down all the pitfalls through the path especially when it involves a non-"native" Linux distribution.
 
 One thing worth noting is that even though this post mentions "PXE" and so does the official document, the boot process isn't entirely PXE compliant and thus regular PXE boot support setup process may not work at all or at least not directly.
 
