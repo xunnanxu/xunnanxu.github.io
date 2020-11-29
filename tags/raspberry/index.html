@@ -246,6 +246,62 @@
                     
                         <a
                             class="link-unstyled"
+                            href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-2-Config-TFTP-and-NFS-mounts/"
+                            aria-label=": PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (2): Config TFTP and NFS mounts"
+                        >
+                            PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (2): Config TFTP and NFS mounts
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-11-28T21:37:17-08:00">
+	
+		    Nov 28, 2020
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    <p>Once we get the DHCP part set up, here comes the exciting part - to actually install the Linux distro and boot the Pi using it instead of the vanilla 32-bit Raspberry Pi OS.</p>
+<p>Now our Pi is still stuck at the initial screen, but don’t worry, as long as it is trying to read the tftp path we have made progress.</p>
+<h2 id="Enable-TFTP-on-the-Server-Side"><a href="#Enable-TFTP-on-the-Server-Side" class="headerlink" title="Enable TFTP on the Server Side"></a>Enable TFTP on the Server Side</h2><p>Here I will be using the Synology NAS server as the file system server.</p>
+<p>Synology offers tftp support in file sharing directly. On the other hand, it’s also fairly straightforward to set up a TFTP server using a Linux server. One thing important is to remember the tftp root directory. That will be used in the next step to copy over the boot files to.</p>
+<p>Under that directory create the Pi corresponding directory like</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;tftp root&gt;/123456789</span><br></pre></td></tr></table></figure>
+
+<p><code>123456789</code> refers to last 9 chars of serial no. Pi’s bootloader by default will load from there.</p>
+<h2 id="Create-the-TFTP-boot-directory"><a href="#Create-the-TFTP-boot-directory" class="headerlink" title="Create the TFTP boot directory"></a>Create the TFTP boot directory</h2><p>We need to first grab the Linux distro from an image.</p>
+<p>Here I picked Ubuntu 20.04 LTS which is “officially” supported. Technically this is probably not the best option as the OS itself includes a lot of things that we may not actually need and the size is pretty bulky. On the other end the Alpine one is very skinny and lacks some of the tooling we may need initially. For raspberry, unfortunately each distro may be slightly different (in terms of boot) so while you are free to choose whatever you want, YMMV.</p>
+<p>Flash the image into the SD card and we’ll get 2 partitions - boot and root.</p>
+<p>In general, it’s a good idea to first boot the system using the SD card just in case there’s some essential setup we need to complete ahead of time. After that, the remaining Pi boards can replicate the same set of files with minor tweaks.</p>
+                    
+                        <a
+                            href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-2-Config-TFTP-and-NFS-mounts/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (2): Config TFTP and NFS mounts"
+                        >
+                            Continue reading
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
                             href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
                             aria-label=": PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP Setup"
                         >
