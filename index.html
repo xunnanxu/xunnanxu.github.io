@@ -245,10 +245,10 @@
                     
                         <a
                             class="link-unstyled"
-                            href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DNS-Setup/"
-                            aria-label=": PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DNS Setup"
+                            href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                            aria-label=": PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP Setup"
                         >
-                            PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DNS Setup
+                            PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP Setup
                         </a>
                     
                 </h1>
@@ -267,7 +267,7 @@
                     <p>Raspberry Pi 4 is shipped with a flahable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it’s thus worth writing down all the pitfalls through the path especially when it involves a non-“native” Linux distribution.</p>
 <p>One thing worth noting is that even though this post mentions “PXE” and so does the official document, the boot process isn’t entirely PXE compliant and thus regular PXE boot support setup process may not work at all or at least not directly.</p>
 <p>Here’s a diagram of the network topology I use for the setup:</p>
-<img src="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DNS-Setup/net-topo.png">
+<img src="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/net-topo.png">
 
 <p>The Ubiquiti will also be serving as the DHCP server. The Synology NAS will be serving data via tftp (pxe boot) and nfs (post boot). Due to kernel limitation, my NAS cannot support overlayfs. But for newer version of NAS it might be possible.</p>
 <h2 id="Raspberry-Netboot-Sequence"><a href="#Raspberry-Netboot-Sequence" class="headerlink" title="Raspberry Netboot Sequence"></a>Raspberry Netboot Sequence</h2><p>The bootloader in EEPROM by default does not enable netboot so we’d need to enable that first.</p>
@@ -283,9 +283,9 @@
 <p>Here we need a small microSD card to flash the Raspberry Pi OS onto it and boot the system. For headless setup, don’t forget to <code>touch ssh</code> to create the file to enable ssh by default.</p>
                     
                         <a
-                            href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DNS-Setup/"
+                            href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
                             class="postShorten-excerpt_link link"
-                            aria-label=": PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DNS Setup"
+                            aria-label=": PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP Setup"
                         >
                             Continue reading
                         </a>

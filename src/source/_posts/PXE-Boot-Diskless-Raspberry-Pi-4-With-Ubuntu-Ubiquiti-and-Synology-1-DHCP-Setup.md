@@ -1,6 +1,6 @@
 ---
 title: >-
-  PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DNS
+  PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP
   Setup
 date: 2020-11-28 12:00:16
 tags:

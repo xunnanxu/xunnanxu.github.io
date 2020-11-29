@@ -1,0 +1,716 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Shawn&#39;s Pitstop">
+    <title>PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP Setup - Shawn&#39;s Pitstop</title>
+    <meta name="author" content="Shawn Xu">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"},"articleBody":"Raspberry Pi 4 is shipped with a flahable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it’s thus worth writing down all the pitfalls through the path especially when it involves a non-“native” Linux distribution.\nOne thing worth noting is that even though this post mentions “PXE” and so does the official document, the boot process isn’t entirely PXE compliant and thus regular PXE boot support setup process may not work at all or at least not directly.\nHere’s a diagram of the network topology I use for the setup:\n\n\nThe Ubiquiti will also be serving as the DHCP server. The Synology NAS will be serving data via tftp (pxe boot) and nfs (post boot). Due to kernel limitation, my NAS cannot support overlayfs. But for newer version of NAS it might be possible.\nRaspberry Netboot SequenceThe bootloader in EEPROM by default does not enable netboot so we’d need to enable that first.\nOnce enabled, upon powering up, Pi will first send a DHCP request to ask for the TFTP server location and verify if netboot is supported.\nAfter that it will fetch the firmware (start4.elf), configs and kernel files (vmlinuz) from that tftp location. The bootloader has a config to specify the exact path for the current device. By default, that’s the last 9 chars of the serial number. This is important as certain config (like cmdline.txt) would tell the OS how to mount the root fs and thus needs to be separate.\nThe kernel will later be loaded which takes over the boot process and eventually loads the rest of the system distribution.\nThe official doc can be found here.\nFlashing the EEPROM to Enable NetbootWith the basic knowledge equipped, we can continue by first enabling the netboot in bootloader.\nTo do that, we need to grab the updated version of bootcode.bin file which supports netboot and update the config.\nThis also requires using the raspberry cli binary vcgencmd.\nPitfall #1: vcgencmd can only work in native Raspberry Pi OS\nYes the vcgencmd binary does not work in Ubuntu or any other “supported” Linux distros, even if you compile from source. They would just silently fail. Technically it should be doable if they are shipped with the right “stuff” but I decide not to waste more time figuring out what the “stuff” is.\nHere we need a small microSD card to flash the Raspberry Pi OS onto it and boot the system. For headless setup, don’t forget to touch ssh to create the file to enable ssh by default.\n\n\nThe default user name and password is pi and raspberry.\nRun\n1vcgencmd bootloader_config | grep BOOT_ORDER | cut -d &apos;=&apos; -f 2\n\nTo check the current boot order. The boot order is a sequence of digits from right to left. The default is 0x1 (or 0xf41 in later version) which means it’s SD card only (or SD -&gt; USB -&gt; restart). We’ll change this to 0xf21 (SD -&gt; Network -&gt; restart).\nThe full doc about order can be found here.\nTo do that, first we need to grab a bootloader that supports netboot. Anything late 2020 should work. For example to grab 2020-07-31 version:\n1wget https://github.com/raspberrypi/rpi-eeprom/raw/master/firmware/stable/pieeprom-2020-07-31.bin\n\nExtract the bootconf.txt file and update order:\n123sudo rpi-eeprom-config pieeprom-2020-07-31.bin &gt; bootconf.txtsed -i &apos;s/BOOT_ORDER=.*/BOOT_ORDER=0xf21/g&apos; bootconf.txtsudo rpi-eeprom-config --out bootloader.bin --config bootconf.txt pieeprom-2020-07-31.bin\n\nFlash the EEPROM:\n1sudo rpi-eeprom-update -d -f bootloader.bin\n\nBefore exiting, grab the serial number:\n1cat /proc/cpuinfo | grep Serial | tail -c 9\n\nAssume this is 123456789. This will be used in later tftp setup.\nUnplug, remove the SD card and replug the Pi. Now it should be stuck on the initial self test screen as it can neither boot from SD or net. This is expected.\nDHCP SetupNow it comes to the router side as we need to enable the extra options of DHCP such that Pi can find the NAS in the same network.\nThis step is vendor specific. I use a Ubiquiti router. The command should be more or less the same for anything using OpenWRT.\nTo enable PXE boot, we first need to figure out what options Pi is asking for. In this case we need tcpdump.\n1sudo tcpdump -vnes0 port 67 or port 68\n\n-v verbose (to list options)-n do not try to look up ip address-e list mac address-s0 do not truncate packet and show full contentport 67 is for client -&gt; server packets and 68 is for the other way around\nRestart the Pi to capture the packets.\nThe DHCP protocol has 4 parts for our interest:\n\nDiscover - this is the initial DHCP broadcast request and we need to pay attention to the Parameter-Request part.\nOffer - DHCP server responds with allocated IP address and option responses\nRequest - Client echoes the IP back to server to confirm allocation\nACK - DHCP server confirms the echo\n\nHere’s what Pi sends as the initial request:\n12345678910111213141519:45:26.963111 &lt;PI MAC ADDR&gt; &gt; ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 364: (tos 0x0, ttl 64, id 20586, offset 0, flags [none], proto UDP (17), length 350)    0.0.0.0.68 &gt; 255.255.255.255.67: BOOTP/DHCP, Request from &lt;PI MAC ADDR&gt;, length 322, xid 0xd5ec86d6, Flags [none]          Client-Ethernet-Address &lt;PI MAC ADDR&gt;          Vendor-rfc1048 Extensions            Magic Cookie 0x63825363            DHCP-Message Option 53, length 1: Discover            Parameter-Request Option 55, length 14:              Subnet-Mask, Default-Gateway, Vendor-Option, Vendor-Class              TFTP, BF, Option 128, Option 129              Option 130, Option 131, Option 132, Option 133              Option 134, Option 135            Vendor-Class Option 60, length 32: &quot;PXEClient:Arch:00000:UNDI:002001&quot;            ARCH Option 93, length 2: 0            NDI Option 94, length 3: 1.2.1            GUID Option 97, length 17: 0.82.80.105.52.18.49.192.0.50.167.237.137.157.110.239.229\n\nHere the common options are in plain text like Subnet-Mask while some option extensions are just using numbers. The exact reference can be seen in RFC2132\nWhat we need are:\nTFTP (66) - tftp server ip/name -&gt; this should point to the NAS server ipBF (67) - boot file name -&gt; this technically shouldn’t matter for us as the bootloader is directly in Pi’s EEPROM but for consistency we will set this to bootcode.binVendor-Option (43) - This is important and MUST include Raspberry Pi BootVendor-Class (60) - TBH can’t remember if this matters for Pi but I set it to PXEClient anyways to be PXE compliant in general.\nTo set these in Ubiquiti router:\nUse configure to enter config editing mode.\nThe configs are tree-like and we can list the current options using\n1show service dhcp-server\n\nHere certain options are known to the router and we can set directly like tftp-server-name:\nHere the NAS is allocated with a static IP 192.168.1.60 so:\n12set service dhcp-server shared-network-name LAN subnet 192.168.1.0/24 tftp-server-name 192.168.1.60set service dhcp-server shared-network-name LAN subnet 192.168.1.0/24 bootfile-name bootcode.bin\n\nFor other stuff it would be a bit tricky as we need to first tell the router what they are:\n12set service dhcp-server global-parameters &quot;option vendor-class-identifier code 60 = string;&quot;set service dhcp-server global-parameters &quot;option vendor-encapsulated-options code 43 = string;&quot;\n\nand then set them\n12set service dhcp-server shared-network-name LAN subnet 192.168.1.0/24 subnet-parameters &quot;option vendor-class-identifier &amp;quot;PXEClient&amp;quot;;&quot;set service dhcp-server shared-network-name LAN subnet 192.168.1.0/24 subnet-parameters &quot;option vendor-encapsulated-options &amp;quot;Raspberry Pi Boot   &amp;quot;;&quot;\n\nThe &amp;quot; part is to actually include a double quote there.\nDon’t forget to comment and save the config:\n1commit; save\n\nThe router should pick up the new config and restart DHCP server as needed. If not reboot it to force the reload.\nNow if we tcpdump we’ll see the response packet with something like this:\n1234567891011121314151619:45:27.963654 &lt;ROUTER MAC ADDR&gt; &gt; &lt;PI MAC ADDR&gt;, ethertype IPv4 (0x0800), length 371: (tos 0x10, ttl 128, id 0, offset 0, flags [none], proto UDP (17), length 357)    192.168.1.1.67 &gt; 192.168.1.137.68: BOOTP/DHCP, Reply, length 329, xid 0xd5ec86d6, Flags [none]          Your-IP 192.168.1.137          Server-IP 192.168.1.60          Client-Ethernet-Address &lt;PI MAC ADDR&gt;          file &quot;bootcode.bin&quot;          Vendor-rfc1048 Extensions            DHCP-Message Option 53, length 1: Offer            Server-ID Option 54, length 4: 192.168.1.1            Lease-Time Option 51, length 4: 86400            Subnet-Mask Option 1, length 4: 255.255.255.0            Default-Gateway Option 3, length 4: 192.168.1.1            Vendor-Option Option 43, length 20: 82.97.115.112.98.101.114.114.121.32.80.105.32.66.111.111.116.32.32.32            Vendor-Class Option 60, length 9: &quot;PXEClient&quot;            TFTP Option 66, length 12: &quot;192.168.1.60&quot;            BF Option 67, length 12: &quot;bootcode.bin&quot;\n\nOf course in theory this can be further optimized to include the additional info only when vendor-class includes PXEClient but I omitted that part.\nWith these in place, the Pi should now be stuck accessing the TFTP server. Congrats and we will cover that in the next part.\n","dateCreated":"2020-11-28T12:00:16-08:00","dateModified":"2020-11-28T21:39:08-08:00","datePublished":"2020-11-28T12:00:16-08:00","description":"Raspberry Pi 4 is shipped with a flahable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it’s thus worth writing down all the pitfalls through the path especially when it involves a non-“native” Linux distribution.\nOne thing worth noting is that even though this post mentions “PXE” and so does the official document, the boot process isn’t entirely PXE compliant and thus regular PXE boot support setup process may not work at all or at least not directly.\nHere’s a diagram of the network topology I use for the setup:\n\n\nThe Ubiquiti will also be serving as the DHCP server. The Synology NAS will be serving data via tftp (pxe boot) and nfs (post boot). Due to kernel limitation, my NAS cannot support overlayfs. But for newer version of NAS it might be possible.\nRaspberry Netboot SequenceThe bootloader in EEPROM by default does not enable netboot so we’d need to enable that first.\nOnce enabled, upon powering up, Pi will first send a DHCP request to ask for the TFTP server location and verify if netboot is supported.\nAfter that it will fetch the firmware (start4.elf), configs and kernel files (vmlinuz) from that tftp location. The bootloader has a config to specify the exact path for the current device. By default, that’s the last 9 chars of the serial number. This is important as certain config (like cmdline.txt) would tell the OS how to mount the root fs and thus needs to be separate.\nThe kernel will later be loaded which takes over the boot process and eventually loads the rest of the system distribution.\nThe official doc can be found here.\nFlashing the EEPROM to Enable NetbootWith the basic knowledge equipped, we can continue by first enabling the netboot in bootloader.\nTo do that, we need to grab the updated version of bootcode.bin file which supports netboot and update the config.\nThis also requires using the raspberry cli binary vcgencmd.\nPitfall #1: vcgencmd can only work in native Raspberry Pi OS\nYes the vcgencmd binary does not work in Ubuntu or any other “supported” Linux distros, even if you compile from source. They would just silently fail. Technically it should be doable if they are shipped with the right “stuff” but I decide not to waste more time figuring out what the “stuff” is.\nHere we need a small microSD card to flash the Raspberry Pi OS onto it and boot the system. For headless setup, don’t forget to touch ssh to create the file to enable ssh by default.","headline":"PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP Setup","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"},"publisher":{"@type":"Organization","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg","logo":{"@type":"ImageObject","url":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"}},"url":"https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/","keywords":"linux, raspberry, network"}</script>
+    <meta name="description" content="Raspberry Pi 4 is shipped with a flahable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it’s thus worth writing down all the pitfalls through the pa">
+<meta name="keywords" content="linux,raspberry,network">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP Setup">
+<meta property="og:url" content="https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Pitstop">
+<meta property="og:description" content="Raspberry Pi 4 is shipped with a flahable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it’s thus worth writing down all the pitfalls through the pa">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/net-topo.png">
+<meta property="og:updated_time" content="2020-11-29T05:39:08.031Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP Setup">
+<meta name="twitter:description" content="Raspberry Pi 4 is shipped with a flahable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it’s thus worth writing down all the pitfalls through the pa">
+<meta name="twitter:image" content="https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/net-topo.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83953865-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-83953865-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            Shawn&#39;s Pitstop
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Shawn Xu</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Software Engineer in Bay Area</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/xunnanxu"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DHCP Setup
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-11-28T12:00:16-08:00">
+	
+		    Nov 28, 2020
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>Raspberry Pi 4 is shipped with a flahable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it’s thus worth writing down all the pitfalls through the path especially when it involves a non-“native” Linux distribution.</p>
+<p>One thing worth noting is that even though this post mentions “PXE” and so does the official document, the boot process isn’t entirely PXE compliant and thus regular PXE boot support setup process may not work at all or at least not directly.</p>
+<p>Here’s a diagram of the network topology I use for the setup:</p>
+<img src="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/net-topo.png">
+
+<p>The Ubiquiti will also be serving as the DHCP server. The Synology NAS will be serving data via tftp (pxe boot) and nfs (post boot). Due to kernel limitation, my NAS cannot support overlayfs. But for newer version of NAS it might be possible.</p>
+<h2 id="Raspberry-Netboot-Sequence"><a href="#Raspberry-Netboot-Sequence" class="headerlink" title="Raspberry Netboot Sequence"></a>Raspberry Netboot Sequence</h2><p>The bootloader in EEPROM by default does not enable netboot so we’d need to enable that first.</p>
+<p>Once enabled, upon powering up, Pi will first send a DHCP request to ask for the TFTP server location and verify if netboot is supported.</p>
+<p>After that it will fetch the firmware (start4.elf), configs and kernel files (vmlinuz) from that tftp location. The bootloader has a config to specify the exact path for the current device. By default, that’s the last 9 chars of the serial number. This is important as certain config (like cmdline.txt) would tell the OS how to mount the root fs and thus needs to be separate.</p>
+<p>The kernel will later be loaded which takes over the boot process and eventually loads the rest of the system distribution.</p>
+<p>The official doc can be found <a href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/net.md" target="_blank" rel="noopener">here</a>.</p>
+<h2 id="Flashing-the-EEPROM-to-Enable-Netboot"><a href="#Flashing-the-EEPROM-to-Enable-Netboot" class="headerlink" title="Flashing the EEPROM to Enable Netboot"></a>Flashing the EEPROM to Enable Netboot</h2><p>With the basic knowledge equipped, we can continue by first enabling the netboot in bootloader.</p>
+<p>To do that, we need to grab the updated version of bootcode.bin file which supports netboot and update the config.</p>
+<p>This also requires using the raspberry cli binary vcgencmd.</p>
+<p><strong>Pitfall #1: vcgencmd can only work in native Raspberry Pi OS</strong></p>
+<p>Yes the vcgencmd binary does not work in Ubuntu or any other “supported” Linux distros, even if you compile from source. They would just silently fail. Technically it should be doable if they are shipped with the right “stuff” but I decide not to waste more time figuring out what the “stuff” is.</p>
+<p>Here we need a small microSD card to flash the Raspberry Pi OS onto it and boot the system. For headless setup, don’t forget to <code>touch ssh</code> to create the file to enable ssh by default.</p>
+<a id="more"></a>
+
+<p>The default user name and password is <code>pi</code> and <code>raspberry</code>.</p>
+<p>Run</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vcgencmd bootloader_config | grep BOOT_ORDER | cut -d &apos;=&apos; -f 2</span><br></pre></td></tr></table></figure>
+
+<p>To check the current boot order. The boot order is a sequence of digits from right to left. The default is <code>0x1</code> (or <code>0xf41</code> in later version) which means it’s SD card only (or SD -&gt; USB -&gt; restart). We’ll change this to <code>0xf21</code> (SD -&gt; Network -&gt; restart).</p>
+<p>The full doc about order can be found <a href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711_bootloader_config.md" target="_blank" rel="noopener">here</a>.</p>
+<p>To do that, first we need to grab a bootloader that supports netboot. Anything late 2020 should work. For example to grab 2020-07-31 version:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/raspberrypi/rpi-eeprom/raw/master/firmware/stable/pieeprom-2020-07-31.bin</span><br></pre></td></tr></table></figure>
+
+<p>Extract the <code>bootconf.txt</code> file and update order:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo rpi-eeprom-config pieeprom-2020-07-31.bin &gt; bootconf.txt</span><br><span class="line">sed -i &apos;s/BOOT_ORDER=.*/BOOT_ORDER=0xf21/g&apos; bootconf.txt</span><br><span class="line">sudo rpi-eeprom-config --out bootloader.bin --config bootconf.txt pieeprom-2020-07-31.bin</span><br></pre></td></tr></table></figure>
+
+<p>Flash the EEPROM:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rpi-eeprom-update -d -f bootloader.bin</span><br></pre></td></tr></table></figure>
+
+<p>Before exiting, grab the serial number:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo | grep Serial | tail -c 9</span><br></pre></td></tr></table></figure>
+
+<p>Assume this is <code>123456789</code>. This will be used in later tftp setup.</p>
+<p>Unplug, remove the SD card and replug the Pi. Now it should be stuck on the initial self test screen as it can neither boot from SD or net. This is expected.</p>
+<h2 id="DHCP-Setup"><a href="#DHCP-Setup" class="headerlink" title="DHCP Setup"></a>DHCP Setup</h2><p>Now it comes to the router side as we need to enable the extra options of DHCP such that Pi can find the NAS in the same network.</p>
+<p>This step is vendor specific. I use a Ubiquiti router. The command should be more or less the same for anything using OpenWRT.</p>
+<p>To enable PXE boot, we first need to figure out what options Pi is asking for. In this case we need <code>tcpdump</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tcpdump -vnes0 port 67 or port 68</span><br></pre></td></tr></table></figure>
+
+<p><code>-v</code> verbose (to list options)<br><code>-n</code> do not try to look up ip address<br><code>-e</code> list mac address<br><code>-s0</code> do not truncate packet and show full content<br><code>port 67</code> is for client -&gt; server packets and <code>68</code> is for the other way around</p>
+<p>Restart the Pi to capture the packets.</p>
+<p>The DHCP protocol has 4 parts for our interest:</p>
+<ol>
+<li><code>Discover</code> - this is the initial DHCP broadcast request and we need to pay attention to the <code>Parameter-Request</code> part.</li>
+<li><code>Offer</code> - DHCP server responds with allocated IP address and option responses</li>
+<li><code>Request</code> - Client echoes the IP back to server to confirm allocation</li>
+<li><code>ACK</code> - DHCP server confirms the echo</li>
+</ol>
+<p>Here’s what Pi sends as the initial request:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">19:45:26.963111 &lt;PI MAC ADDR&gt; &gt; ff:ff:ff:ff:ff:ff, ethertype IPv4 (0x0800), length 364: (tos 0x0, ttl 64, id 20586, offset 0, flags [none], proto UDP (17), length 350)</span><br><span class="line">    0.0.0.0.68 &gt; 255.255.255.255.67: BOOTP/DHCP, Request from &lt;PI MAC ADDR&gt;, length 322, xid 0xd5ec86d6, Flags [none]</span><br><span class="line">          Client-Ethernet-Address &lt;PI MAC ADDR&gt;</span><br><span class="line">          Vendor-rfc1048 Extensions</span><br><span class="line">            Magic Cookie 0x63825363</span><br><span class="line">            DHCP-Message Option 53, length 1: Discover</span><br><span class="line">            Parameter-Request Option 55, length 14:</span><br><span class="line">              Subnet-Mask, Default-Gateway, Vendor-Option, Vendor-Class</span><br><span class="line">              TFTP, BF, Option 128, Option 129</span><br><span class="line">              Option 130, Option 131, Option 132, Option 133</span><br><span class="line">              Option 134, Option 135</span><br><span class="line">            Vendor-Class Option 60, length 32: &quot;PXEClient:Arch:00000:UNDI:002001&quot;</span><br><span class="line">            ARCH Option 93, length 2: 0</span><br><span class="line">            NDI Option 94, length 3: 1.2.1</span><br><span class="line">            GUID Option 97, length 17: 0.82.80.105.52.18.49.192.0.50.167.237.137.157.110.239.229</span><br></pre></td></tr></table></figure>
+
+<p>Here the common options are in plain text like <code>Subnet-Mask</code> while some option extensions are just using numbers. The exact reference can be seen in <a href="https://tools.ietf.org/html/rfc2132" target="_blank" rel="noopener">RFC2132</a></p>
+<p>What we need are:</p>
+<p><code>TFTP (66)</code> - tftp server ip/name -&gt; this should point to the NAS server ip<br><code>BF (67)</code> - boot file name -&gt; this technically shouldn’t matter for us as the bootloader is directly in Pi’s EEPROM but for consistency we will set this to <code>bootcode.bin</code><br><code>Vendor-Option (43)</code> - This is important and MUST include <code>Raspberry Pi Boot</code><br><code>Vendor-Class (60)</code> - TBH can’t remember if this matters for Pi but I set it to <code>PXEClient</code> anyways to be PXE compliant in general.</p>
+<p>To set these in Ubiquiti router:</p>
+<p>Use <code>configure</code> to enter config editing mode.</p>
+<p>The configs are tree-like and we can list the current options using</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show service dhcp-server</span><br></pre></td></tr></table></figure>
+
+<p>Here certain options are known to the router and we can set directly like <code>tftp-server-name</code>:</p>
+<p>Here the NAS is allocated with a static IP <code>192.168.1.60</code> so:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set service dhcp-server shared-network-name LAN subnet 192.168.1.0/24 tftp-server-name 192.168.1.60</span><br><span class="line">set service dhcp-server shared-network-name LAN subnet 192.168.1.0/24 bootfile-name bootcode.bin</span><br></pre></td></tr></table></figure>
+
+<p>For other stuff it would be a bit tricky as we need to first tell the router what they are:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set service dhcp-server global-parameters &quot;option vendor-class-identifier code 60 = string;&quot;</span><br><span class="line">set service dhcp-server global-parameters &quot;option vendor-encapsulated-options code 43 = string;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>and then set them</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set service dhcp-server shared-network-name LAN subnet 192.168.1.0/24 subnet-parameters &quot;option vendor-class-identifier &amp;quot;PXEClient&amp;quot;;&quot;</span><br><span class="line">set service dhcp-server shared-network-name LAN subnet 192.168.1.0/24 subnet-parameters &quot;option vendor-encapsulated-options &amp;quot;Raspberry Pi Boot   &amp;quot;;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>The <code>&amp;quot;</code> part is to actually include a double quote there.</p>
+<p>Don’t forget to comment and save the config:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">commit; save</span><br></pre></td></tr></table></figure>
+
+<p>The router should pick up the new config and restart DHCP server as needed. If not reboot it to force the reload.</p>
+<p>Now if we tcpdump we’ll see the response packet with something like this:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">19:45:27.963654 &lt;ROUTER MAC ADDR&gt; &gt; &lt;PI MAC ADDR&gt;, ethertype IPv4 (0x0800), length 371: (tos 0x10, ttl 128, id 0, offset 0, flags [none], proto UDP (17), length 357)</span><br><span class="line">    192.168.1.1.67 &gt; 192.168.1.137.68: BOOTP/DHCP, Reply, length 329, xid 0xd5ec86d6, Flags [none]</span><br><span class="line">          Your-IP 192.168.1.137</span><br><span class="line">          Server-IP 192.168.1.60</span><br><span class="line">          Client-Ethernet-Address &lt;PI MAC ADDR&gt;</span><br><span class="line">          file &quot;bootcode.bin&quot;</span><br><span class="line">          Vendor-rfc1048 Extensions</span><br><span class="line">            DHCP-Message Option 53, length 1: Offer</span><br><span class="line">            Server-ID Option 54, length 4: 192.168.1.1</span><br><span class="line">            Lease-Time Option 51, length 4: 86400</span><br><span class="line">            Subnet-Mask Option 1, length 4: 255.255.255.0</span><br><span class="line">            Default-Gateway Option 3, length 4: 192.168.1.1</span><br><span class="line">            Vendor-Option Option 43, length 20: 82.97.115.112.98.101.114.114.121.32.80.105.32.66.111.111.116.32.32.32</span><br><span class="line">            Vendor-Class Option 60, length 9: &quot;PXEClient&quot;</span><br><span class="line">            TFTP Option 66, length 12: &quot;192.168.1.60&quot;</span><br><span class="line">            BF Option 67, length 12: &quot;bootcode.bin&quot;</span><br></pre></td></tr></table></figure>
+
+<p>Of course in theory this can be further optimized to include the additional info only when vendor-class includes <code>PXEClient</code> but I omitted that part.</p>
+<p>With these in place, the Pi should now be stuck accessing the TFTP server. Congrats and we will cover that in the next part.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/linux/">linux</a> <a class="tag tag--primary tag--small t-link" href="/tags/network/">network</a> <a class="tag tag--primary tag--small t-link" href="/tags/raspberry/">raspberry</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/05/23/Why-Keeping-High-Standard-of-Shit-Is-Important/"
+                    data-tooltip="Why Keeping High Standards of Shit Is Important"
+                    aria-label="NEXT: Why Keeping High Standards of Shit Is Important"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                    title="global.share_on_linkedin"
+                    aria-label="global.share_on_linkedin"
+                >
+                    <i class="fab fa-linkedin" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 Shawn Xu. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/05/23/Why-Keeping-High-Standard-of-Shit-Is-Important/"
+                    data-tooltip="Why Keeping High Standards of Shit Is Important"
+                    aria-label="NEXT: Why Keeping High Standards of Shit Is Important"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                    title="global.share_on_linkedin"
+                    aria-label="global.share_on_linkedin"
+                >
+                    <i class="fab fa-linkedin" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/"
+                        aria-label="global.share_on_linkedin"
+                    >
+                        <i class="fab fa-linkedin" aria-hidden="true"></i><span>global.share_on_linkedin</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Shawn Xu</h4>
+        
+            <div id="about-card-bio"><p>Software Engineer in Bay Area</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-a5wszscostah6olx2wgfq7mglfmluysmmlvnxgmmszk3gwouxhlbwbsk0xkf.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/';
+              
+            this.page.identifier = '2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'xcorpion';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>
