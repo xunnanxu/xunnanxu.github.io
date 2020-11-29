@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Shawn&#39;s Pitstop">
-    <title>Archives - Shawn&#39;s Pitstop</title>
+    <title>Tag: raspberry - Shawn&#39;s Pitstop</title>
     <meta name="author" content="Shawn Xu">
     
     
@@ -18,7 +18,7 @@
     <script type="application/ld+json">{}</script>
     <meta property="og:type" content="blog">
 <meta property="og:title" content="Shawn&#39;s Pitstop">
-<meta property="og:url" content="https://xunnanxu.github.io/archives/page/2/index.html">
+<meta property="og:url" content="https://xunnanxu.github.io/tags/raspberry/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
 <meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary">
@@ -246,107 +246,41 @@
                     
                         <a
                             class="link-unstyled"
-                            href="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/"
-                            aria-label=": It&#39;s all about buffers: zero-copy, mmap and Java NIO"
+                            href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DNS-Setup/"
+                            aria-label=": PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DNS Setup"
                         >
-                            It&#39;s all about buffers: zero-copy, mmap and Java NIO
+                            PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DNS Setup
                         </a>
                     
                 </h1>
                 <div class="postShorten-meta">
-    <time datetime="2016-09-10T01:00:27-07:00">
+    <time datetime="2020-11-28T12:00:16-08:00">
 	
-		    Sep 10, 2016
+		    Nov 28, 2020
     	
     </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/OS/">OS</a>
-
-
     
 </div>
 
             </div>
             
                 <div class="postShorten-excerpt">
-                    <p>There are use cases where data need to be read from source to a sink without modification. In code this might look quite simple: for example in Java, you may read data from one <code>InputStream</code> chunk by chunk into a small buffer (typically 8KB), and feed them into the <code>OutputStream</code>, or even better, you could create a <code>PipedInputStream</code>, which is basically just a util that maintains that buffer for you. However, if low latency is crucial to your software, this might be quite expensive from the OS perspective and I shall explain.</p>
-<h2 id="What-happens-under-the-hood"><a href="#What-happens-under-the-hood" class="headerlink" title="What happens under the hood"></a>What happens under the hood</h2><p>Well, here’s what happens when the above code is used:</p>
-<img src="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/non_zero_copy.png">
+                    <p>Raspberry Pi 4 is shipped with a flahable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it’s thus worth writing down all the pitfalls through the path especially when it involves a non-“native” Linux distribution.</p>
+<p>One thing worth noting is that even though this post mentions “PXE” and so does the official document, the boot process isn’t entirely PXE compliant and thus regular PXE boot support setup process may not work at all or at least not directly.</p>
+<p>Here’s a diagram of the network topology I use for the setup:</p>
+<img src="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DNS-Setup/net-topo.png">
 
-<ol>
-<li>JVM sends read() syscall. </li>
-<li>OS context switches to kernel mode and reads data into the input socket buffer.</li>
-<li>OS kernel then copies data into user buffer, and context switches back to user mode. read() returns.</li>
-<li>JVM processes code logic and sends write() syscall.</li>
-<li>OS context switches to kernel mode and copies data from user buffer to output socket buffer.</li>
-<li>OS returns to user mode and logic in JVM continues.</li>
-</ol>
+<p>The Ubiquiti will also be serving as the DHCP server. The Synology NAS will be serving data via tftp (pxe boot) and nfs (post boot). Due to kernel limitation, my NAS cannot support overlayfs. But for newer version of NAS it might be possible.</p>
+<h2 id="Raspberry-Netboot-Sequence"><a href="#Raspberry-Netboot-Sequence" class="headerlink" title="Raspberry Netboot Sequence"></a>Raspberry Netboot Sequence</h2><p>The bootloader in EEPROM by default does not enable netboot so we’d need to enable that first.</p>
+<p>Once enabled, upon powering up, Pi will first send a DHCP request to ask for the TFTP server location and verify if netboot is supported.</p>
+<p>After that it will fetch the firmware (start4.elf), configs and kernel files (vmlinuz) from that tftp location. The bootloader has a config to specify the exact path for the current device. By default, that’s the last 9 chars of the serial number. This is important as certain config (like cmdline.txt) would tell the OS how to mount the root fs and thus needs to be separate.</p>
+<p>The kernel will later be loaded which takes over the boot process and eventually loads the rest of the system distribution.</p>
+<p>The official doc can be found <a href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/net.md" target="_blank" rel="noopener">here</a>.</p>
                     
                         <a
-                            href="/2016/09/10/It-s-all-about-buffers-zero-copy-mmap-and-Java-NIO/"
+                            href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DNS-Setup/"
                             class="postShorten-excerpt_link link"
-                            aria-label=": It&#39;s all about buffers: zero-copy, mmap and Java NIO"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-right">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2016/08/14/get-started-with-hexo-blogging-system/"
-                            aria-label=": Get Started with Hexo Blogging System"
-                        >
-                            Get Started with Hexo Blogging System
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2016-08-14T14:32:53-07:00">
-	
-		    Aug 14, 2016
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Hexo/">Hexo</a>
-
-
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-excerpt">
-                    <h1 id="You-should-read-this-if"><a href="#You-should-read-this-if" class="headerlink" title="You should read this if"></a>You should read this if</h1><ul>
-<li>You want to set up a personal blog</li>
-<li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank" rel="noopener">Markdown</a> is</li>
-<li>You don’t want to set up a heavy Wordpress environment</li>
-<li>You don’t want to set up any database just for the blog</li>
-<li>You either don’t have a VPS or want to host blog content in some easy-to-reach place.</li>
-<li>You still want a template/theme system.</li>
-</ul>
-<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>Github Pages + Hexo (what this site uses)</p>
-                    
-                        <a
-                            href="/2016/08/14/get-started-with-hexo-blogging-system/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": Get Started with Hexo Blogging System"
+                            aria-label=": PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (1): DNS Setup"
                         >
                             Continue reading
                         </a>
@@ -361,24 +295,12 @@
     <div class="pagination-bar">
     <ul class="pagination">
         
-          <li class="pagination-prev">
-            <a
-                class="btn btn--default btn--small"
-                href="/archives/"
-                aria-label="NEWER POSTS"
-            >
-              <i class="fa fa-angle-left text-base icon-mr"></i>
-              <span>NEWER POSTS</span>
-            </a>
-          </li>
         
-        
-        <li class="pagination-number">page 2 of 2</li>
+        <li class="pagination-number">page 1 of 1</li>
     </ul>
 </div>
 
 </section>
-
 
 
                 <footer id="footer" class="main-content-wrap">

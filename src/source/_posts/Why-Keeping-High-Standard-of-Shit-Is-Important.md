@@ -17,6 +17,8 @@ Does that then mean all services/software that fail to match expectation start w
 
 What makes things more complicated is that, often times, there are way too many factors that have impact on how we value software:
 
+<!-- more -->
+
 At high level, users' expectations may change, the overall world trend may evolve, or alternative software may leap forward.
 
 Under microscope, experienced maintainers may leave, tools/development environment may change, or simply resource priority may shift and the project may not be able to be taken care of for years.
