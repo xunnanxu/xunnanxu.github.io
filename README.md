@@ -12,5 +12,12 @@ $ source .nodeenv/bin/activate
 ```
 $ cd src
 $ npm install
-$ hexo server
+```
+
+### CLI
+
+```
+$ npm install hexo-cli@latest
+$ npx hexo version
+$ npx hexo server
 ```

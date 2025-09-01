@@ -4,10 +4,10 @@
   "description": "",
   "private": true,
   "hexo": {
-    "version": "3.9.0"
+    "version": "7.3.0"
   },
   "dependencies": {
-    "hexo": "^3.9.0",
+    "hexo": "^7.3.0",
     "hexo-cli": "^4.3.2",
     "hexo-generator-archive": "^1",
     "hexo-generator-category": "^1",
@@ -17,7 +17,9 @@
     "hexo-renderer-marked": "^1",
     "hexo-renderer-stylus": "^1",
     "hexo-server": "^1",
-    "hexo-tag-rage-face": "^1"
+    "hexo-tag-rage-face": "^1",
+    "jquery": "^3.7.1",
+    "jsdom": "^26.1.0"
   },
   "scripts": {
     "update": "node ./utils/update.js"

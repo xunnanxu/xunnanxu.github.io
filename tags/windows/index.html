@@ -20,9 +20,9 @@
 <meta property="og:title" content="Shawn&#39;s Pitstop">
 <meta property="og:url" content="https://xunnanxu.github.io/tags/windows/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="Shawn Xu">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shawn&#39;s Pitstop">
     
     
         
@@ -34,7 +34,9 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+    
+<link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+
     <!--STYLES END-->
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83953865-1"></script>
@@ -68,7 +70,7 @@
     <div class="header-title">
         <a
             class="header-title-link"
-            href="/ "
+            href="/%20"
             aria-label=""
         >
             Shawn&#39;s Pitstop
@@ -265,7 +267,7 @@
             </div>
             
                 <div class="postShorten-excerpt">
-                    <img src="/2018/05/13/Building-Linux-Workspace-on-Windows-10-via-WSL/title.png">
+                    <img src="/2018/05/13/Building-Linux-Workspace-on-Windows-10-via-WSL/title.png" class="">
 
 <p>I was not really a fan of Windows 10,<br>let alone Microsoft decided to ditch the most important feature I liked in Windows 7 - Aero.<br>In fact, I’d admit that in most cases I use Windows as an entertainment system<br>rather than a working platform.</p>
 <p>Don’t get me wrong, Windows is great, both in terms of the quality of the software<br>and the design/usability of the system by itself. It’s also particularly great of you are<br>a .NET developer, a webmaster using IIS, or a game developer heavily using DirectX.<br>However, it’s just cumbersome to use it as a daily OSS platform, namely there lacks the<br>general ecosystem and the tools are just different. Yes you can install node, java, maven,<br>gradle, and you can probably use powershell to write shell scripts, but at the end of the day,<br>the overall configuration just feels different and since most people don’t use Windows<br>for work on a day-to-day basis, it just takes too much time and effort to learn a set of<br>rules with different flavor, just to get the environment set up.</p>
@@ -273,16 +275,16 @@
 <p>The release of WSL (Windows Subsystem on Linux) in Windows 10 was like silent bomb.<br>It wasn’t really marketed to general public, but it implies the fundamental<br>change of attitude from Microsoft towards OSS community.</p>
 <p>WSL is not a virtual machine. In fact there’s no real linux kernel running.<br>Instead, there is a layer in between that translates linux system calls to<br>something that windows kernel can handle. Technically, this is seriously phenomenal,<br>as there’s certain things that there’s no direct equivalent in Windows.</p>
 <p>For example:</p>
-<p>Quoted from <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/08/wsl-system-calls/" target="_blank" rel="noopener">MSDN blog</a></p>
+<p>Quoted from <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/08/wsl-system-calls/">MSDN blog</a></p>
 <blockquote>
 <p>The Linux fork syscall has no documented equivalent for Windows.<br>When a fork syscall is made on WSL, lxss.sys does some of the initial work<br>to prepare for copying the process.<br>It then calls internal NT APIs to create the process with the correct semantics<br>and create a thread in the process with an identical register context.<br>Finally, it does some additional work to complete copying the process<br>and resumes the new process so it can begin executing.</p>
 </blockquote>
-<p>And another one regarding <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/15/wsl-file-system-support/" target="_blank" rel="noopener">WSL file system</a>:</p>
+<p>And another one regarding <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/15/wsl-file-system-support/">WSL file system</a>:</p>
 <blockquote>
 <p>The Windows Subsystem for Linux must translate various Linux file system operations<br>into NT kernel operations. WSL must provide a place where Linux system files can exist<br>with all the functionality required for that including Linux permissions,<br>symbolic links and other special files such as FIFOs;<br>it must provide access to the Windows volumes on your system;<br>and it must provide special file systems such as ProcFs.</p>
 </blockquote>
-<p>And now it even supports <a href="https://docs.microsoft.com/en-us/windows/wsl/interop" target="_blank" rel="noopener">interop</a><br>after the Fall Creators update. This means if you type in <code>notepad.exe</code>,<br>it would literally open notepad for you. Not very exciting but beyond that you could<br>do</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> copy stuff to clipboard</span><br><span class="line">echo 'foo bar' | clip.exe</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> open a file in windows using default associated program</span><br><span class="line">cmd.exe /C start image.png</span><br></pre></td></tr></table></figure>
+<p>And now it even supports <a href="https://docs.microsoft.com/en-us/windows/wsl/interop">interop</a><br>after the Fall Creators update. This means if you type in <code>notepad.exe</code>,<br>it would literally open notepad for you. Not very exciting but beyond that you could<br>do</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">copy stuff to clipboard</span></span><br><span class="line">echo &#x27;foo bar&#x27; | clip.exe</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">open a file <span class="keyword">in</span> windows using default associated program</span></span><br><span class="line">cmd.exe /C start image.png</span><br></pre></td></tr></table></figure>
 
 <p><strong>Awesome, but what’s our original topic?</strong></p>
                     
@@ -314,7 +316,7 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2020 Shawn Xu. All Rights Reserved.
+        Copyrights &copy; 2025 Shawn Xu. All Rights Reserved.
     </span>
 </footer>
 
@@ -357,7 +359,9 @@
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
+
 <script src="/assets/js/script-a5wszscostah6olx2wgfq7mglfmluysmmlvnxgmmszk3gwouxhlbwbsk0xkf.min.js"></script>
+
 <!--SCRIPTS END-->
 
 

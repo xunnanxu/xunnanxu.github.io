@@ -15,21 +15,22 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"},"articleBody":"\n\nRecently I’ve been writing quite a bit of front-end stuff and seen quite a few tricks from other people’s libraries. It turns out JavaScript is a pretty wonky and fked up interesting language, which tempts me to write a series about it and this is the first one. This is by no means supposed to show how to write JS but just to show some “wacky” stuff.\nHave you seen eval() written like this?(0, eval)(&apos;something&apos;);{% rage_face 'Are you fucking kidding me' style:width:200px %}\n\nRegular evalEval basically allows you to execute any script within the given context.\nFor example:\n{% codeblock lang:js %}\neval('console.log(\"123\");');            // prints out 123\n\n(function A() {\n    this.a = 1;\n\n    eval('console.log(this.a);');            // 1\n})();\n\n{% endcodeblock %}\n\nSo far everything is normal: eval runs inside the current scope. this is pointed to the instance of A.\nGlobal evalThings get interesting when you do this:\n{% codeblock lang:js %}\nvar someVar = 'outer';\n\n(function A() {\n    this.someVar = 'inner';\n\n    eval('console.log(someVar);');       // you may want 'outer' but this says 'inner'\n})();\n\n{% endcodeblock %}\n\nWell in this scenario eval cannot get the value of someVar in the global scope.\nHowever ECMA5 says, if you change eval() call to indirect, in other words, if you use it as a value rather than a function reference, then it will evaluate the input in the global scope.\nSo this would work:\n{% codeblock lang:js %}\nvar someVar = 'outer';\n\n(function A() {\n    var geval = eval;\n    this.someVar = 'inner';\n\n    geval('console.log(someVar);');       // 'outer'\n})();\n\n{% endcodeblock %}\n\nAlthough geval and eval call the exact same function, geval is a value and thus it becomes an indirect call according to ECMA5.\nBack to the original topicSo what the hell is (0, eval) then? Well a comma separated expression list evaluates to the last value, so it essentially is a shortcut to\nvar geval = eval;\ngeval(...);0 is only a puppet here. It could be any value.\n","dateCreated":"2016-10-01T16:03:31-07:00","dateModified":"2018-07-26T00:32:16-07:00","datePublished":"2016-10-01T16:03:31-07:00","description":"","headline":"You Don't Know JS - Eval","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://xunnanxu.github.io/2016/10/01/You-Don-t-Know-JS-Eval/"},"publisher":{"@type":"Organization","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg","logo":{"@type":"ImageObject","url":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"}},"url":"https://xunnanxu.github.io/2016/10/01/You-Don-t-Know-JS-Eval/","keywords":"javascript"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"},"articleBody":"\n\nRecently I’ve been writing quite a bit of front-end stuff and seen quite a few tricks from other people’s libraries. It turns out JavaScript is a pretty wonky and fked up interesting language, which tempts me to write a series about it and this is the first one. This is by no means supposed to show how to write JS but just to show some “wacky” stuff.\nHave you seen eval() written like this?(0, eval)(&apos;something&apos;);\n\nRegular evalEval basically allows you to execute any script within the given context.\nFor example:\n12345678eval(&#x27;console.log(&quot;123&quot;);&#x27;);            // prints out 123(function A() &#123;    this.a = 1;    eval(&#x27;console.log(this.a);&#x27;);            // 1&#125;)();\n\nSo far everything is normal: eval runs inside the current scope. this is pointed to the instance of A.\nGlobal evalThings get interesting when you do this:\n12345678var someVar = &#x27;outer&#x27;;(function A() &#123;    this.someVar = &#x27;inner&#x27;;    eval(&#x27;console.log(someVar);&#x27;);       // you may want &#x27;outer&#x27; but this says &#x27;inner&#x27;&#125;)();\n\nWell in this scenario eval cannot get the value of someVar in the global scope.\nHowever ECMA5 says, if you change eval() call to indirect, in other words, if you use it as a value rather than a function reference, then it will evaluate the input in the global scope.\nSo this would work:\n123456789var someVar = &#x27;outer&#x27;;(function A() &#123;    var geval = eval;    this.someVar = &#x27;inner&#x27;;    geval(&#x27;console.log(someVar);&#x27;);       // &#x27;outer&#x27;&#125;)();\n\nAlthough geval and eval call the exact same function, geval is a value and thus it becomes an indirect call according to ECMA5.\nBack to the original topicSo what the hell is (0, eval) then? Well a comma separated expression list evaluates to the last value, so it essentially is a shortcut to\nvar geval = eval;\ngeval(...);0 is only a puppet here. It could be any value.\n","dateCreated":"2016-10-01T16:03:31-07:00","dateModified":"2025-09-01T15:26:51-07:00","datePublished":"2016-10-01T16:03:31-07:00","description":"","headline":"You Don't Know JS - Eval","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://xunnanxu.github.io/2016/10/01/You-Don-t-Know-JS-Eval/"},"publisher":{"@type":"Organization","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg","logo":{"@type":"ImageObject","url":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"}},"url":"https://xunnanxu.github.io/2016/10/01/You-Don-t-Know-JS-Eval/","keywords":"javascript"}</script>
     <meta name="description" content="Recently I’ve been writing quite a bit of front-end stuff and seen quite a few tricks from other people’s libraries. It turns out JavaScript is a pretty wonky and fked up interesting language, which">
-<meta name="keywords" content="javascript">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="You Don&#39;t Know JS - Eval">
 <meta property="og:url" content="https://xunnanxu.github.io/2016/10/01/You-Don-t-Know-JS-Eval/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
 <meta property="og:description" content="Recently I’ve been writing quite a bit of front-end stuff and seen quite a few tricks from other people’s libraries. It turns out JavaScript is a pretty wonky and fked up interesting language, which">
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.memes.at/faces/are_you_fucking_kidding_me.jpg">
 <meta property="og:image" content="http://www.memes.at/faces/so_much_win.jpg">
-<meta property="og:updated_time" content="2018-07-26T07:32:16.740Z">
+<meta property="article:published_time" content="2016-10-01T23:03:31.000Z">
+<meta property="article:modified_time" content="2025-09-01T22:26:51.294Z">
+<meta property="article:author" content="Shawn Xu">
+<meta property="article:tag" content="javascript">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="You Don&#39;t Know JS - Eval">
-<meta name="twitter:description" content="Recently I’ve been writing quite a bit of front-end stuff and seen quite a few tricks from other people’s libraries. It turns out JavaScript is a pretty wonky and fked up interesting language, which">
-<meta name="twitter:image" content="http://www.memes.at/faces/so_much_win.jpg">
+<meta name="twitter:image" content="http://www.memes.at/faces/are_you_fucking_kidding_me.jpg">
     
     
         
@@ -41,7 +42,9 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+    
+<link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+
     <!--STYLES END-->
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83953865-1"></script>
@@ -77,7 +80,7 @@
     <div class="header-title">
         <a
             class="header-title-link"
-            href="/ "
+            href="/%20"
             aria-label=""
         >
             Shawn&#39;s Pitstop
@@ -278,48 +281,20 @@
             <h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Have-you-seen-eval-written-like-this"><span class="toc-text">Have you seen eval() written like this?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Regular-eval"><span class="toc-text">Regular eval</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Global-eval"><span class="toc-text">Global eval</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Back-to-the-original-topic"><span class="toc-text">Back to the original topic</span></a></li></ol>
 
 <p>Recently I’ve been writing quite a bit of front-end stuff and seen quite a few tricks from other people’s libraries. It turns out JavaScript is a pretty <del>wonky and fked up</del> interesting language, which tempts me to write a series about it and this is the first one. This is by no means supposed to show how to write JS but just to show some “wacky” stuff.</p>
-<h2 id="Have-you-seen-eval-written-like-this"><a href="#Have-you-seen-eval-written-like-this" class="headerlink" title="Have you seen eval() written like this?"></a>Have you seen eval() written like this?</h2><pre><code>(0, eval)(&apos;something&apos;);</code></pre>{% rage_face 'Are you fucking kidding me' style:width:200px %}
+<h2 id="Have-you-seen-eval-written-like-this"><a href="#Have-you-seen-eval-written-like-this" class="headerlink" title="Have you seen eval() written like this?"></a>Have you seen eval() written like this?</h2><pre><code>(0, eval)(&apos;something&apos;);</code></pre><img src="http://www.memes.at/faces/are_you_fucking_kidding_me.jpg" alt="Are you fucking kidding me" style="width:200px">
 
 <h2 id="Regular-eval"><a href="#Regular-eval" class="headerlink" title="Regular eval"></a>Regular eval</h2><p>Eval basically allows you to execute any script within the given context.</p>
 <p>For example:</p>
-{% codeblock lang:js %}
-eval('console.log("123");');            // prints out 123
-
-(function A() {
-    this.a = 1;
-
-    eval('console.log(this.a);');            // 1
-})();
-
-{% endcodeblock %}
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(<span class="string">&#x27;console.log(&quot;123&quot;);&#x27;</span>);            <span class="comment">// prints out 123</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">function</span> <span class="title function_">A</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">a</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">eval</span>(<span class="string">&#x27;console.log(this.a);&#x27;</span>);            <span class="comment">// 1</span></span><br><span class="line">&#125;)();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>So far everything is normal: eval runs inside the current scope. <code>this</code> is pointed to the instance of A.</p>
 <h2 id="Global-eval"><a href="#Global-eval" class="headerlink" title="Global eval"></a>Global eval</h2><p>Things get interesting when you do this:</p>
-{% codeblock lang:js %}
-var someVar = 'outer';
-
-(function A() {
-    this.someVar = 'inner';
-
-    eval('console.log(someVar);');       // you may want 'outer' but this says 'inner'
-})();
-
-{% endcodeblock %}
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> someVar = <span class="string">&#x27;outer&#x27;</span>;</span><br><span class="line"></span><br><span class="line">(<span class="keyword">function</span> <span class="title function_">A</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">someVar</span> = <span class="string">&#x27;inner&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">eval</span>(<span class="string">&#x27;console.log(someVar);&#x27;</span>);       <span class="comment">// you may want &#x27;outer&#x27; but this says &#x27;inner&#x27;</span></span><br><span class="line">&#125;)();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>Well in this scenario eval cannot get the value of someVar in the global scope.</p>
 <p>However ECMA5 says, if you change <code>eval()</code> call to indirect, in other words, if you use it as a value rather than a function reference, then it will evaluate the input in the global scope.</p>
 <p>So this would work:</p>
-{% codeblock lang:js %}
-var someVar = 'outer';
-
-(function A() {
-    var geval = eval;
-    this.someVar = 'inner';
-
-    geval('console.log(someVar);');       // 'outer'
-})();
-
-{% endcodeblock %}
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> someVar = <span class="string">&#x27;outer&#x27;</span>;</span><br><span class="line"></span><br><span class="line">(<span class="keyword">function</span> <span class="title function_">A</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> geval = <span class="built_in">eval</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">someVar</span> = <span class="string">&#x27;inner&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">geval</span>(<span class="string">&#x27;console.log(someVar);&#x27;</span>);       <span class="comment">// &#x27;outer&#x27;</span></span><br><span class="line">&#125;)();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>Although <code>geval</code> and <code>eval</code> call the exact same function, <code>geval</code> is a value and thus it becomes an indirect call according to ECMA5.</p>
 <h2 id="Back-to-the-original-topic"><a href="#Back-to-the-original-topic" class="headerlink" title="Back to the original topic"></a>Back to the original topic</h2><p>So what the hell is <code>(0, eval)</code> then? Well a comma separated expression list evaluates to the last value, so it essentially is a shortcut to</p>
@@ -336,7 +311,7 @@ geval(...);</code></pre><p>0 is only a puppet here. It could be any value.</p>
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/javascript/">javascript</a>
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/javascript/" rel="tag">javascript</a>
 
             </div>
         
@@ -463,7 +438,7 @@ geval(...);</code></pre><p>0 is only a puppet here. It could be any value.</p>
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2020 Shawn Xu. All Rights Reserved.
+        Copyrights &copy; 2025 Shawn Xu. All Rights Reserved.
     </span>
 </footer>
 
@@ -664,7 +639,9 @@ geval(...);</code></pre><p>0 is only a puppet here. It could be any value.</p>
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
+
 <script src="/assets/js/script-a5wszscostah6olx2wgfq7mglfmluysmmlvnxgmmszk3gwouxhlbwbsk0xkf.min.js"></script>
+
 <!--SCRIPTS END-->
 
 

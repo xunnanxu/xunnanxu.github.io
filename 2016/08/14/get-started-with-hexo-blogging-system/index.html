@@ -15,19 +15,20 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"},"articleBody":"You should read this if\nYou want to set up a personal blog\nYou know what Markdown is\nYou don’t want to set up a heavy Wordpress environment\nYou don’t want to set up any database just for the blog\nYou either don’t have a VPS or want to host blog content in some easy-to-reach place.\nYou still want a template/theme system.\n\nSolutionGithub Pages + Hexo (what this site uses)\n\n\nWhat is Hexo“Hexo is a fast, simple and powerful blog framework. You write posts in Markdown (or other languages) and Hexo generates static files with a beautiful theme in seconds.”\nIn other words, Hexo is a static blogging system. This means there is no need for database, node/php code to maintain like Wordpress or other dynamic blogging systems require. Awesome.\nHow on earth do things work\nYou write posts using Markdown language and preview them locally\nHexo generates the static htmls locally\nYou commit all static assets to Github\nAll content will be public via Github IO\nWhen you hit path that ends with /, Github will attempt to read index.html under that directory, i.e. for /foo/, the corresponding file is /foo/index.html\nFor URLs don’t end with / (except root), Github will try to read the corresponding file, i.e. for /foo, if file foo doesn’t exist, 404 will be returned.\nGenerally, Hexo’s path layout should be fine but if you use certain themes (like the default landscape), you might need to fix the URLs manually if they don’t end with / while they should.\n\n\n\nWhat this solution cannot doYou can think of Hexo as a lightweight templating system so most dynamic features that Wordpress offer don’t exist, including searching (provided by simple google search instead), comment system (you can use Disqus instead), dynamic widgets like top posts, permalink backend forwarding and so on.\nHowever, do you really need these?\nGet startedIf you’ve read this far, chances are you want to give it a try. Here are the steps:\n\nInstall node (required by Hexo): https://nodejs.org/en/download/\n\nInstall Hexo\nnpm install -g hexo-cli\n\n// this downloads the starter pack and sets up node modules under the directory &lt;name&gt; for you so it may take a while\nhexo init &lt;name&gt;\nOpen &lt;name&gt;/_config.yml and there may be a few things you want to set such as the name and author. The most important things are the url and root. The details can be found here\n\nBy default Hexo will generate the Hello world post for you. You can preview it by starting the local server:\nhexo server\nGenerate actual assets:\nhexo generate\nSet up Github page repo: https://pages.github.com/\n\n\nDepending on if you have a VPS, things maybe a bit different. Follow 7a if you do and 7b if not. The major difference is the directory structure in the repo.\n7a-1. Hexo by default publishes all static assets to public. However, Github by default expects stuff to be under root. That means, with this setup, the repo needs to be rooted at public:\ncd public\ngit init\ngit remote add origin &lt;repo url&gt;\ngit pull7a-2. Commit all assets:\ngit add --all\ngit commit -m &quot;...&quot;\ngit push7a-3. If you have a custom domain, set CNAME pointed to your.github.io and remember to disable https enforcement in Github (since SSL will verify host name). Also don’t forget to set the custom url in Github.\n\n7b-1. If you have a VPS then you can commit all the files and just use github as the storage area since you can do backend url forwarding.\nnginx.conf123456789server &#123;    listen       80;    server_name  xcorpion.tech;    location / &#123;        proxy_set_header Host xcorpion.tech;        proxy_pass http://your.github.io/public/;    &#125;&#125;\n\n7b-2. If you have a custom domain, set A record pointed to your server IP and similarily, remember to turn off https enforcement. Also don’t forget to set the custom url in Github.\nAnd that’s it! Let’s start writing!\nIn your hexo root directory, start a new post:\nhexo new post\nPreview your post with\nhexo server\nIn preview mode, Hexo will watch your files and automatically update the html. However, it will not publish any static assets (those eventually shown in your site). So run this to let hexo do it:\nhexo generate\nThen commit the changes to your repo (You can automate this with a shell script.)\n\n\n","dateCreated":"2016-08-14T14:32:53-07:00","dateModified":"2018-07-26T00:32:16-07:00","datePublished":"2016-08-14T14:32:53-07:00","description":"You should read this if\nYou want to set up a personal blog\nYou know what Markdown is\nYou don’t want to set up a heavy Wordpress environment\nYou don’t want to set up any database just for the blog\nYou either don’t have a VPS or want to host blog content in some easy-to-reach place.\nYou still want a template/theme system.\n\nSolutionGithub Pages + Hexo (what this site uses)","headline":"Get Started with Hexo Blogging System","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://xunnanxu.github.io/2016/08/14/get-started-with-hexo-blogging-system/"},"publisher":{"@type":"Organization","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg","logo":{"@type":"ImageObject","url":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"}},"url":"https://xunnanxu.github.io/2016/08/14/get-started-with-hexo-blogging-system/","keywords":"blog, hexo"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"},"articleBody":"You should read this if\nYou want to set up a personal blog\nYou know what Markdown is\nYou don’t want to set up a heavy Wordpress environment\nYou don’t want to set up any database just for the blog\nYou either don’t have a VPS or want to host blog content in some easy-to-reach place.\nYou still want a template/theme system.\n\nSolutionGithub Pages + Hexo (what this site uses)\n\n\nWhat is Hexo“Hexo is a fast, simple and powerful blog framework. You write posts in Markdown (or other languages) and Hexo generates static files with a beautiful theme in seconds.”\nIn other words, Hexo is a static blogging system. This means there is no need for database, node/php code to maintain like Wordpress or other dynamic blogging systems require. Awesome.\nHow on earth do things work\nYou write posts using Markdown language and preview them locally\nHexo generates the static htmls locally\nYou commit all static assets to Github\nAll content will be public via Github IO\nWhen you hit path that ends with /, Github will attempt to read index.html under that directory, i.e. for /foo/, the corresponding file is /foo/index.html\nFor URLs don’t end with / (except root), Github will try to read the corresponding file, i.e. for /foo, if file foo doesn’t exist, 404 will be returned.\nGenerally, Hexo’s path layout should be fine but if you use certain themes (like the default landscape), you might need to fix the URLs manually if they don’t end with / while they should.\n\n\n\nWhat this solution cannot doYou can think of Hexo as a lightweight templating system so most dynamic features that Wordpress offer don’t exist, including searching (provided by simple google search instead), comment system (you can use Disqus instead), dynamic widgets like top posts, permalink backend forwarding and so on.\nHowever, do you really need these?\nGet startedIf you’ve read this far, chances are you want to give it a try. Here are the steps:\n\nInstall node (required by Hexo): https://nodejs.org/en/download/\n\nInstall Hexo\nnpm install -g hexo-cli\n\n// this downloads the starter pack and sets up node modules under the directory &lt;name&gt; for you so it may take a while\nhexo init &lt;name&gt;\nOpen &lt;name&gt;/_config.yml and there may be a few things you want to set such as the name and author. The most important things are the url and root. The details can be found here\n\nBy default Hexo will generate the Hello world post for you. You can preview it by starting the local server:\nhexo server\nGenerate actual assets:\nhexo generate\nSet up Github page repo: https://pages.github.com/\n\n\nDepending on if you have a VPS, things maybe a bit different. Follow 7a if you do and 7b if not. The major difference is the directory structure in the repo.\n7a-1. Hexo by default publishes all static assets to public. However, Github by default expects stuff to be under root. That means, with this setup, the repo needs to be rooted at public:\ncd public\ngit init\ngit remote add origin &lt;repo url&gt;\ngit pull7a-2. Commit all assets:\ngit add --all\ngit commit -m &quot;...&quot;\ngit push7a-3. If you have a custom domain, set CNAME pointed to your.github.io and remember to disable https enforcement in Github (since SSL will verify host name). Also don’t forget to set the custom url in Github.\n\n7b-1. If you have a VPS then you can commit all the files and just use github as the storage area since you can do backend url forwarding.\nnginx.conf123456789server &#123;    listen       80;    server_name  xcorpion.tech;    location / &#123;        proxy_set_header Host xcorpion.tech;        proxy_pass http://your.github.io/public/;    &#125;&#125;\n\n7b-2. If you have a custom domain, set A record pointed to your server IP and similarily, remember to turn off https enforcement. Also don’t forget to set the custom url in Github.\nAnd that’s it! Let’s start writing!\nIn your hexo root directory, start a new post:\nhexo new post\nPreview your post with\nhexo server\nIn preview mode, Hexo will watch your files and automatically update the html. However, it will not publish any static assets (those eventually shown in your site). So run this to let hexo do it:\nhexo generate\nThen commit the changes to your repo (You can automate this with a shell script.)\n\n\n","dateCreated":"2016-08-14T14:32:53-07:00","dateModified":"2025-09-01T15:26:51-07:00","datePublished":"2016-08-14T14:32:53-07:00","description":"You should read this if\nYou want to set up a personal blog\nYou know what Markdown is\nYou don’t want to set up a heavy Wordpress environment\nYou don’t want to set up any database just for the blog\nYou either don’t have a VPS or want to host blog content in some easy-to-reach place.\nYou still want a template/theme system.\n\nSolutionGithub Pages + Hexo (what this site uses)","headline":"Get Started with Hexo Blogging System","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://xunnanxu.github.io/2016/08/14/get-started-with-hexo-blogging-system/"},"publisher":{"@type":"Organization","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg","logo":{"@type":"ImageObject","url":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"}},"url":"https://xunnanxu.github.io/2016/08/14/get-started-with-hexo-blogging-system/","keywords":"blog, hexo"}</script>
     <meta name="description" content="You should read this if You want to set up a personal blog You know what Markdown is You don’t want to set up a heavy Wordpress environment You don’t want to set up any database just for the blog You">
-<meta name="keywords" content="blog,hexo">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Get Started with Hexo Blogging System">
 <meta property="og:url" content="https://xunnanxu.github.io/2016/08/14/get-started-with-hexo-blogging-system/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
 <meta property="og:description" content="You should read this if You want to set up a personal blog You know what Markdown is You don’t want to set up a heavy Wordpress environment You don’t want to set up any database just for the blog You">
-<meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-07-26T07:32:16.738Z">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2016-08-14T21:32:53.000Z">
+<meta property="article:modified_time" content="2025-09-01T22:26:51.294Z">
+<meta property="article:author" content="Shawn Xu">
+<meta property="article:tag" content="blog">
+<meta property="article:tag" content="hexo">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Get Started with Hexo Blogging System">
-<meta name="twitter:description" content="You should read this if You want to set up a personal blog You know what Markdown is You don’t want to set up a heavy Wordpress environment You don’t want to set up any database just for the blog You">
     
     
         
@@ -39,7 +40,9 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+    
+<link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+
     <!--STYLES END-->
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83953865-1"></script>
@@ -75,7 +78,7 @@
     <div class="header-title">
         <a
             class="header-title-link"
-            href="/ "
+            href="/%20"
             aria-label=""
         >
             Shawn&#39;s Pitstop
@@ -275,16 +278,16 @@
         <div class="main-content-wrap">
             <h1 id="You-should-read-this-if"><a href="#You-should-read-this-if" class="headerlink" title="You should read this if"></a>You should read this if</h1><ul>
 <li>You want to set up a personal blog</li>
-<li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank" rel="noopener">Markdown</a> is</li>
+<li>You know what <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a> is</li>
 <li>You don’t want to set up a heavy Wordpress environment</li>
 <li>You don’t want to set up any database just for the blog</li>
 <li>You either don’t have a VPS or want to host blog content in some easy-to-reach place.</li>
 <li>You still want a template/theme system.</li>
 </ul>
 <h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>Github Pages + Hexo (what this site uses)</p>
-<a id="more"></a>
+<span id="more"></span>
 
-<h1 id="What-is-Hexo"><a href="#What-is-Hexo" class="headerlink" title="What is Hexo"></a>What is Hexo</h1><p>“<a href="https://hexo.io/docs/index.html" target="_blank" rel="noopener">Hexo</a> is a fast, simple and powerful blog framework. You write posts in Markdown (or other languages) and Hexo generates static files with a beautiful theme in seconds.”</p>
+<h1 id="What-is-Hexo"><a href="#What-is-Hexo" class="headerlink" title="What is Hexo"></a>What is Hexo</h1><p>“<a href="https://hexo.io/docs/index.html">Hexo</a> is a fast, simple and powerful blog framework. You write posts in Markdown (or other languages) and Hexo generates static files with a beautiful theme in seconds.”</p>
 <p>In other words, Hexo is a <strong>static</strong> blogging system. This means there is no need for database, node/php code to maintain like Wordpress or other dynamic blogging systems require. Awesome.</p>
 <h1 id="How-on-earth-do-things-work"><a href="#How-on-earth-do-things-work" class="headerlink" title="How on earth do things work"></a>How on earth do things work</h1><ul>
 <li>You write posts using Markdown language and preview them locally</li>
@@ -301,20 +304,20 @@
 <p>However, do you really need these?</p>
 <h1 id="Get-started"><a href="#Get-started" class="headerlink" title="Get started"></a>Get started</h1><p>If you’ve read this far, chances are you want to give it a try. Here are the steps:</p>
 <ol>
-<li><p>Install node (required by Hexo): <a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">https://nodejs.org/en/download/</a></p>
+<li><p>Install node (required by Hexo): <a href="https://nodejs.org/en/download/">https://nodejs.org/en/download/</a></p>
 </li>
 <li><p>Install Hexo</p>
 <pre><code>npm install -g hexo-cli
 
 // this downloads the starter pack and sets up node modules under the directory &lt;name&gt; for you so it may take a while
 hexo init &lt;name&gt;</code></pre></li>
-<li><p>Open <code>&lt;name&gt;/_config.yml</code> and there may be a few things you want to set such as the name and author. The most important things are the <code>url</code> and <code>root</code>. The details can be found <a href="https://hexo.io/docs/configuration.html" target="_blank" rel="noopener">here</a></p>
+<li><p>Open <code>&lt;name&gt;/_config.yml</code> and there may be a few things you want to set such as the name and author. The most important things are the <code>url</code> and <code>root</code>. The details can be found <a href="https://hexo.io/docs/configuration.html">here</a></p>
 </li>
 <li><p>By default Hexo will generate the Hello world post for you. You can preview it by starting the local server:</p>
 <pre><code>hexo server</code></pre></li>
 <li><p>Generate actual assets:</p>
 <pre><code>hexo generate</code></pre></li>
-<li><p>Set up Github page repo: <a href="https://pages.github.com/" target="_blank" rel="noopener">https://pages.github.com/</a></p>
+<li><p>Set up Github page repo: <a href="https://pages.github.com/">https://pages.github.com/</a></p>
 </li>
 </ol>
 <p>Depending on if you have a VPS, things maybe a bit different. Follow 7a if you do and 7b if not. The major difference is the directory structure in the repo.</p>
@@ -328,7 +331,7 @@ git commit -m &quot;...&quot;
 git push</code></pre><p>7a-3. If you have a custom domain, set CNAME pointed to your.github.io and remember to disable https enforcement in Github (since SSL will verify host name). Also don’t forget to set the custom url in Github.</p>
 <hr>
 <p>7b-1. If you have a VPS then you can commit all the files and just use github as the storage area since you can do backend url forwarding.</p>
-<figure class="highlight nginx"><figcaption><span>nginx.conf</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  xcorpion.tech;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host xcorpion.tech;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://your.github.io/public/;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><figcaption><span>nginx.conf</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  xcorpion.tech;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host xcorpion.tech;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://your.github.io/public/;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>7b-2. If you have a custom domain, set A record pointed to your server IP and similarily, remember to turn off https enforcement. Also don’t forget to set the custom url in Github.</p>
 <h1 id="And-that’s-it-Let’s-start-writing"><a href="#And-that’s-it-Let’s-start-writing" class="headerlink" title="And that’s it! Let’s start writing!"></a>And that’s it! Let’s start writing!</h1><ul>
@@ -352,7 +355,7 @@ git push</code></pre><p>7a-3. If you have a custom domain, set CNAME pointed to 
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/blog/">blog</a> <a class="tag tag--primary tag--small t-link" href="/tags/hexo/">hexo</a>
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/blog/" rel="tag">blog</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/hexo/" rel="tag">hexo</a>
 
             </div>
         
@@ -476,7 +479,7 @@ git push</code></pre><p>7a-3. If you have a custom domain, set CNAME pointed to 
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2020 Shawn Xu. All Rights Reserved.
+        Copyrights &copy; 2025 Shawn Xu. All Rights Reserved.
     </span>
 </footer>
 
@@ -674,7 +677,9 @@ git push</code></pre><p>7a-3. If you have a custom domain, set CNAME pointed to 
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
+
 <script src="/assets/js/script-a5wszscostah6olx2wgfq7mglfmluysmmlvnxgmmszk3gwouxhlbwbsk0xkf.min.js"></script>
+
 <!--SCRIPTS END-->
 
 

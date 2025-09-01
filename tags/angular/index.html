@@ -20,9 +20,9 @@
 <meta property="og:title" content="Shawn&#39;s Pitstop">
 <meta property="og:url" content="https://xunnanxu.github.io/tags/angular/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="Shawn Xu">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shawn&#39;s Pitstop">
     
     
         
@@ -34,7 +34,9 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+    
+<link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+
     <!--STYLES END-->
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83953865-1"></script>
@@ -68,7 +70,7 @@
     <div class="header-title">
         <a
             class="header-title-link"
-            href="/ "
+            href="/%20"
             aria-label=""
         >
             Shawn&#39;s Pitstop
@@ -277,12 +279,14 @@
 <br>
 If you have ever used Angular 1.x, you know there's a manual bootstrapping
 option which looks like:
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">angular.bootstrap(<span class="built_in">document</span>.querySelector(<span class="string">'#myApp'</span>), [<span class="string">'myModule'</span>])<span class="string">`</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">angular.<span class="title function_">bootstrap</span>(<span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#myApp&#x27;</span>), [<span class="string">&#x27;myModule&#x27;</span>])<span class="string">`</span></span><br></pre></td></tr></table></figure>
+This used to be pretty handy until Angular 2 comes in and changes the life.
+For some reason they decide to hide that option and ask people to just use
+`bootstrap` in `@NgModule`.
 
-<p>This used to be pretty handy until Angular 2 comes in and changes the life.<br>For some reason they decide to hide that option and ask people to just use<br><code>bootstrap</code> in <code>@NgModule</code>.</p>
 <p>I get that because for general users this is good enough,<br>especially if you are just building a general SPA.<br>However if you want to build something advanced like lazy loading,<br>or conditional rendering, then this seems a bit naive.</p>
 <p>This is especially annoying when in React its counterpart is as simple as</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ReactDOM.render(     </span><br><span class="line">  &lt;MyApp /&gt;,</span><br><span class="line">  <span class="built_in">document</span>.querySelector(<span class="string">'#myApp'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">ReactDOM</span>.<span class="title function_">render</span>(     </span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">MyApp</span> /&gt;</span></span>,</span><br><span class="line">  <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#myApp&#x27;</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
 <p>This alone won’t drive people away from Angular but it’s just one of the examples<br>that shows Angular wants to force people into its model rather than thinking about<br>use cases in the real world.</p>
 <p>Alright enough whining and let’s get to coding. After all, Angular seems excellent<br>especially it covers everything from development, testing, and packaging out of the box.<br>Let’s leave whining till next time.</p>
@@ -315,7 +319,7 @@ option which looks like:
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2020 Shawn Xu. All Rights Reserved.
+        Copyrights &copy; 2025 Shawn Xu. All Rights Reserved.
     </span>
 </footer>
 
@@ -358,7 +362,9 @@ option which looks like:
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
+
 <script src="/assets/js/script-a5wszscostah6olx2wgfq7mglfmluysmmlvnxgmmszk3gwouxhlbwbsk0xkf.min.js"></script>
+
 <!--SCRIPTS END-->
 
 

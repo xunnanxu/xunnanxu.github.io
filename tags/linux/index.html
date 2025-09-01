@@ -20,9 +20,9 @@
 <meta property="og:title" content="Shawn&#39;s Pitstop">
 <meta property="og:url" content="https://xunnanxu.github.io/tags/linux/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="Shawn Xu">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shawn&#39;s Pitstop">
     
     
         
@@ -34,7 +34,9 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+    
+<link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+
     <!--STYLES END-->
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83953865-1"></script>
@@ -68,7 +70,7 @@
     <div class="header-title">
         <a
             class="header-title-link"
-            href="/ "
+            href="/%20"
             aria-label=""
         >
             Shawn&#39;s Pitstop
@@ -270,7 +272,7 @@
 <h2 id="Enable-TFTP-on-the-Server-Side"><a href="#Enable-TFTP-on-the-Server-Side" class="headerlink" title="Enable TFTP on the Server Side"></a>Enable TFTP on the Server Side</h2><p>Here I will be using the Synology NAS server as the file system server.</p>
 <p>Synology offers tftp support in file sharing directly. On the other hand, it’s also fairly straightforward to set up a TFTP server using a Linux server. One thing important is to remember the tftp root directory. That will be used in the next step to copy over the boot files to.</p>
 <p>Under that directory create the Pi corresponding directory like</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;tftp root&gt;/123456789</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;tftp root&gt;/123456789</span><br></pre></td></tr></table></figure>
 
 <p><code>123456789</code> refers to last 9 chars of serial no. Pi’s bootloader by default will load from there.</p>
 <h2 id="Create-the-TFTP-boot-directory"><a href="#Create-the-TFTP-boot-directory" class="headerlink" title="Create the TFTP boot directory"></a>Create the TFTP boot directory</h2><p>We need to first grab the Linux distro from an image.</p>
@@ -324,14 +326,14 @@
                     <p>Raspberry Pi 4 is shipped with a flashable EEPROM and supports netbooting. However, the entire setup process is not that straightforward and it’s thus worth writing down all the pitfalls through the path especially when it involves a non-“native” Linux distribution.</p>
 <p>One thing worth noting is that even though this post mentions “PXE” and so does the official document, the boot process isn’t entirely PXE compliant and thus regular PXE boot support setup process may not work at all or at least not directly.</p>
 <p>Here’s a diagram of the network topology I use for the setup:</p>
-<img src="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/net-topo.png">
+<img src="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/net-topo.png" />
 
 <p>The Ubiquiti will also be serving as the DHCP server. The Synology NAS will be serving data via tftp (pxe boot) and nfs (post boot). Due to kernel limitation, my NAS cannot support overlayfs. But for newer version of NAS it might be possible.</p>
 <h2 id="Raspberry-Netboot-Sequence"><a href="#Raspberry-Netboot-Sequence" class="headerlink" title="Raspberry Netboot Sequence"></a>Raspberry Netboot Sequence</h2><p>The bootloader in EEPROM by default does not enable netboot so we’d need to enable that first.</p>
 <p>Once enabled, upon powering up, Pi will first send a DHCP request to ask for the TFTP server location and verify if netboot is supported.</p>
 <p>After that it will fetch the firmware (start4.elf), configs and kernel files (vmlinuz) from that tftp location. The bootloader has a config to specify the exact path for the current device. By default, that’s the last 9 chars of the serial number. This is important as certain config (like cmdline.txt) would tell the OS how to mount the root fs and thus needs to be separate.</p>
 <p>The kernel will later be loaded which takes over the boot process and eventually loads the rest of the system distribution.</p>
-<p>The official doc can be found <a href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/net.md" target="_blank" rel="noopener">here</a>.</p>
+<p>The official doc can be found <a href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/net.md">here</a>.</p>
 <h2 id="Flashing-the-EEPROM-to-Enable-Netboot"><a href="#Flashing-the-EEPROM-to-Enable-Netboot" class="headerlink" title="Flashing the EEPROM to Enable Netboot"></a>Flashing the EEPROM to Enable Netboot</h2><p>With the basic knowledge equipped, we can continue by first enabling the netboot in bootloader.</p>
 <p>To do that, we need to grab the updated version of bootcode.bin file which supports netboot and update the config.</p>
 <p>This also requires using the raspberry cli binary vcgencmd.</p>
@@ -382,7 +384,7 @@
             </div>
             
                 <div class="postShorten-excerpt">
-                    <img src="/2018/05/13/Building-Linux-Workspace-on-Windows-10-via-WSL/title.png">
+                    <img src="/2018/05/13/Building-Linux-Workspace-on-Windows-10-via-WSL/title.png" class="">
 
 <p>I was not really a fan of Windows 10,<br>let alone Microsoft decided to ditch the most important feature I liked in Windows 7 - Aero.<br>In fact, I’d admit that in most cases I use Windows as an entertainment system<br>rather than a working platform.</p>
 <p>Don’t get me wrong, Windows is great, both in terms of the quality of the software<br>and the design/usability of the system by itself. It’s also particularly great of you are<br>a .NET developer, a webmaster using IIS, or a game developer heavily using DirectX.<br>However, it’s just cumbersome to use it as a daily OSS platform, namely there lacks the<br>general ecosystem and the tools are just different. Yes you can install node, java, maven,<br>gradle, and you can probably use powershell to write shell scripts, but at the end of the day,<br>the overall configuration just feels different and since most people don’t use Windows<br>for work on a day-to-day basis, it just takes too much time and effort to learn a set of<br>rules with different flavor, just to get the environment set up.</p>
@@ -390,16 +392,16 @@
 <p>The release of WSL (Windows Subsystem on Linux) in Windows 10 was like silent bomb.<br>It wasn’t really marketed to general public, but it implies the fundamental<br>change of attitude from Microsoft towards OSS community.</p>
 <p>WSL is not a virtual machine. In fact there’s no real linux kernel running.<br>Instead, there is a layer in between that translates linux system calls to<br>something that windows kernel can handle. Technically, this is seriously phenomenal,<br>as there’s certain things that there’s no direct equivalent in Windows.</p>
 <p>For example:</p>
-<p>Quoted from <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/08/wsl-system-calls/" target="_blank" rel="noopener">MSDN blog</a></p>
+<p>Quoted from <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/08/wsl-system-calls/">MSDN blog</a></p>
 <blockquote>
 <p>The Linux fork syscall has no documented equivalent for Windows.<br>When a fork syscall is made on WSL, lxss.sys does some of the initial work<br>to prepare for copying the process.<br>It then calls internal NT APIs to create the process with the correct semantics<br>and create a thread in the process with an identical register context.<br>Finally, it does some additional work to complete copying the process<br>and resumes the new process so it can begin executing.</p>
 </blockquote>
-<p>And another one regarding <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/15/wsl-file-system-support/" target="_blank" rel="noopener">WSL file system</a>:</p>
+<p>And another one regarding <a href="https://blogs.msdn.microsoft.com/wsl/2016/06/15/wsl-file-system-support/">WSL file system</a>:</p>
 <blockquote>
 <p>The Windows Subsystem for Linux must translate various Linux file system operations<br>into NT kernel operations. WSL must provide a place where Linux system files can exist<br>with all the functionality required for that including Linux permissions,<br>symbolic links and other special files such as FIFOs;<br>it must provide access to the Windows volumes on your system;<br>and it must provide special file systems such as ProcFs.</p>
 </blockquote>
-<p>And now it even supports <a href="https://docs.microsoft.com/en-us/windows/wsl/interop" target="_blank" rel="noopener">interop</a><br>after the Fall Creators update. This means if you type in <code>notepad.exe</code>,<br>it would literally open notepad for you. Not very exciting but beyond that you could<br>do</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> copy stuff to clipboard</span><br><span class="line">echo 'foo bar' | clip.exe</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> open a file in windows using default associated program</span><br><span class="line">cmd.exe /C start image.png</span><br></pre></td></tr></table></figure>
+<p>And now it even supports <a href="https://docs.microsoft.com/en-us/windows/wsl/interop">interop</a><br>after the Fall Creators update. This means if you type in <code>notepad.exe</code>,<br>it would literally open notepad for you. Not very exciting but beyond that you could<br>do</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">copy stuff to clipboard</span></span><br><span class="line">echo &#x27;foo bar&#x27; | clip.exe</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">open a file <span class="keyword">in</span> windows using default associated program</span></span><br><span class="line">cmd.exe /C start image.png</span><br></pre></td></tr></table></figure>
 
 <p><strong>Awesome, but what’s our original topic?</strong></p>
                     
@@ -431,7 +433,7 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2020 Shawn Xu. All Rights Reserved.
+        Copyrights &copy; 2025 Shawn Xu. All Rights Reserved.
     </span>
 </footer>
 
@@ -474,7 +476,9 @@
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
+
 <script src="/assets/js/script-a5wszscostah6olx2wgfq7mglfmluysmmlvnxgmmszk3gwouxhlbwbsk0xkf.min.js"></script>
+
 <!--SCRIPTS END-->
 
 

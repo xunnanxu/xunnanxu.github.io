@@ -20,9 +20,9 @@
 <meta property="og:title" content="Shawn&#39;s Pitstop">
 <meta property="og:url" content="https://xunnanxu.github.io/tags/monitoring/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Pitstop">
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="Shawn Xu">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shawn&#39;s Pitstop">
     
     
         
@@ -34,7 +34,9 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+    
+<link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+
     <!--STYLES END-->
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83953865-1"></script>
@@ -68,7 +70,7 @@
     <div class="header-title">
         <a
             class="header-title-link"
-            href="/ "
+            href="/%20"
             aria-label=""
         >
             Shawn&#39;s Pitstop
@@ -273,13 +275,13 @@
                 <div class="postShorten-excerpt">
                     <p>Microservice architecture is typically useful to solve certain scaling problems where service decoupling/segregation is required to improve development velocity, make service more fault tolerant or handle performance hotspots.</p>
 <p>However, everything comes with a price and so does microservice. One typical issue is:</p>
-<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/ms-failure.png" style="width: 600px">
+<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/ms-failure.png" style="width: 600px" />
 
 <p>While this is half joking, monitoring and fault resilency are definitely more challenging in microservice world. While there are frameworks like Hystrix and resilience4j to handle circuit breaking, rate limiting and stuff like that, this post focuses on the first thing: how the heck are my services talking to each other?</p>
 <p>AWS X-Ray can fill the gap here by offering service mapping and tracing and thus you can see something like</p>
-<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png">
+<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/xray.png" class="">
 
-<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/tracing.png">
+<img src="/2018/11/25/Monitor-gRPC-Microservices-in-Kubernetes-with-Amazon-X-Ray/tracing.png" class="">
 
 <p>Compared to generic service monitoring,<br>X-Ray has some additional benefits around AWS ecosystem in that<br>it will auto expose your AWS resource write<br>(yes only write unfortunately) call insights when you use AWS SDK.<br>This applies to SQS, SNS and DynamoDB.</p>
                     
@@ -321,7 +323,7 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2020 Shawn Xu. All Rights Reserved.
+        Copyrights &copy; 2025 Shawn Xu. All Rights Reserved.
     </span>
 </footer>
 
@@ -364,7 +366,9 @@
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
+
 <script src="/assets/js/script-a5wszscostah6olx2wgfq7mglfmluysmmlvnxgmmszk3gwouxhlbwbsk0xkf.min.js"></script>
+
 <!--SCRIPTS END-->
 
 
