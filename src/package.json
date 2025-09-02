@@ -17,6 +17,7 @@
     "hexo-renderer-marked": "^1",
     "hexo-renderer-stylus": "^1",
     "hexo-server": "^1",
+    "hexo-tag-mermaid": "^1.0.0",
     "hexo-tag-rage-face": "^1",
     "jquery": "^3.7.1",
     "jsdom": "^26.1.0"
