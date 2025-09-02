@@ -89,6 +89,7 @@
         
         </a>
     
+    <script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';</script>
 </header>
 
             <!-- Define author's picture -->
@@ -237,6 +238,163 @@
                         hasCoverMetaIn
                         ">
                 <section class="postShorten-group main-content-wrap">
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                            aria-label=": The Spec Mess: Journey to Enable M1 Pro + 2 2K-monitors @ 100Hz over One Single Thunderbolt Cable"
+                        >
+                            The Spec Mess: Journey to Enable M1 Pro + 2 2K-monitors @ 100Hz over One Single Thunderbolt Cable
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2025-09-01T16:44:36-07:00">
+	
+		    Sep 01, 2025
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content">
+                    <p>Recently I’ve been looking into giving my WFH setup some upgrade.<br>
+I already have a 38inch AW3821DW monitor running <strong>3800x1600 @ 144Hz</strong>, connected to the <strong>M1 Pro Macbook Pro</strong> via a <strong>TB3 dock</strong> (StarTech TB3DOCK2DPPD that I bought years ago pre-pandemic). I’m trying to add a side monitor to it with likely a QHD spec <strong>(2560x1440) @ 100Hz</strong>.</p>
+<div class="mermaid">
+  graph TD;
+    M1[M1 Pro]-->TBDock[TB Dock]
+    TBDock-->AW3821DW[AW3821DW 3800x1600 @ 144Hz]
+    TBDock-->QHD[QHD 2560x1440 @ 100Hz]
+</div>
+
+<p>Then I suddenly realized one thing, if I want to keep my connection topology as is (wire up all devices to my dock and connect it to the Mac using a single TB cable) - would that work?</p>
+<p>It turns out it’s not that straightforward to average users. And here’s why.</p>
+<hr>
+<h2 id="1)-rgb-4%3A4%3A4-vs-ycbcr-4%3A2%3A2-chroma-subsampling" tabindex="-1">1) RGB 4:4:4 vs YCbCr 4:2:2 Chroma Subsampling</h2>
+<p>Before doing math, we first need to check the <em>signal</em> we want to drive:</p>
+<ul>
+<li><strong>RGB/YCbCr 4:4:4, 8-bit per channel (bpc)</strong> → <strong>24 bits/pixel</strong>. This is the “no-compromise” desktop signal—full chroma on every pixel. Text looks crisp.</li>
+<li><strong>YCbCr 4:2:2, 8-bpc</strong> → the chroma (Cb/Cr) is shared between two horizontal pixels, averaging <strong>16 bits/pixel</strong> (≈ 33% less data than 4:4:4). Saves bandwidth, but fine colored edges and UI text soften.</li>
+<li><strong>YCbCr 4:2:0, 8-bpc</strong> → <strong>12 bits/pixel</strong> (≈ 50% less than 4:4:4). Great for video, not for desktop use.</li>
+<li><strong>HDR / 10-bpc</strong> pushes each of those up by 25% (e.g., RGB 4:4:4 becomes <strong>30 bits/pixel</strong>).</li>
+</ul>
+<p>For SDR productivity monitors, we should <strong>ALWAYS</strong> prefer <strong>RGB 4:4:4</strong> (or YCbCr 4:4:4) at 8-bpc for clear text.<br>
+Anything doing chroma subsampling (422) is a no-go as text would have blurred/colored edges. Period.</p>
+<hr>
+<h2 id="2)-the-bandwidth-calculation" tabindex="-1">2) The bandwidth calculation</h2>
+<p>For uncompressed links (DisplayPort/HDMI without DSC), a solid back-of-the-envelope is:</p>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mrow><mtext mathvariant="bold">Signal</mtext><mtext> </mtext><mtext mathvariant="bold">rate</mtext></mrow><mo>≈</mo><mtext>(Horizontal px)</mtext><mo>×</mo><mtext>(Vertical px)</mtext><mo>×</mo><mtext>(Refresh Hz)</mtext><mo>×</mo><mtext>(bits/pixel)</mtext><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\textbf{Signal rate} \approx \text{(Horizontal px)} \times \text{(Vertical px)} \times \text{(Refresh Hz)} \times \text{(bits/pixel)}.
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord textbf">Signal rate</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(Horizontal px)</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(Vertical px)</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(Refresh Hz)</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(bits/pixel)</span></span><span class="mord">.</span></span></span></span></span></eqn></section><p>This yields the <strong>active video</strong> payload. Real links also carry blanking intervals and link-layer overhead. Using modern reduced-blanking timings, a <strong>5–10% headroom</strong> usually suffices for comparisons; standards bodies quote separate “link rates” that already include line coding overhead.</p>
+<p>Let’s compute the key cases (all at 8-bpc unless noted):</p>
+<ul>
+<li>
+<p><strong>One QHD (2560×1440) @ 100 Hz, 4:4:4</strong><br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>2560</mn><mo>×</mo><mn>1440</mn><mo>×</mo><mn>100</mn><mo>×</mo><mn>24</mn><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mrow><mn mathvariant="bold">8.85</mn><mtext> </mtext><mi mathvariant="bold">G</mi><mi mathvariant="bold">b</mi><mi mathvariant="bold">p</mi><mi mathvariant="bold">s</mi></mrow></mrow><annotation encoding="application/x-tex">2560 \times 1440 \times 100 \times 24 \;=\; \mathbf{8.85\ Gbps}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2560</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1440</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">100</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">24</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">8.85</span><span class="mspace"> </span><span class="mord mathbf">Gbps</span></span></span></span></span></span></eqn></section><br>
+With 10-bpc (30 bpp): <strong>11.06 Gbps</strong>.<br>
+With 4:2:2 (16 bpp): <strong>5.90 Gbps</strong>.</p>
+</li>
+<li>
+<p><strong>Your ultrawide (3840×1600), 4:4:4</strong></p>
+<ul>
+<li>@ <strong>100 Hz</strong><br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>3840</mn><mo>×</mo><mn>1600</mn><mo>×</mo><mn>100</mn><mo>×</mo><mn>24</mn><mo>=</mo><mrow><mn mathvariant="bold">14.75</mn><mtext> </mtext><mi mathvariant="bold">G</mi><mi mathvariant="bold">b</mi><mi mathvariant="bold">p</mi><mi mathvariant="bold">s</mi></mrow></mrow><annotation encoding="application/x-tex">3840 \times 1600 \times 100 \times 24 = \mathbf{14.75\ Gbps} </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">3840</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1600</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">100</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">24</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">14.75</span><span class="mspace"> </span><span class="mord mathbf">Gbps</span></span></span></span></span></span></eqn></section></li>
+<li>@ <strong>120 Hz</strong> <strong>17.69 Gbps</strong> (already nudging past DP 1.2’s effective limit once overhead is considered).</li>
+<li>@ <strong>144 Hz</strong>: <strong>21.23 Gbps</strong> (firmly beyond DP 1.2; needs DP 1.4/HBR3 and/or DSC support end-to-end).</li>
+</ul>
+</li>
+<li>
+<p><strong>Two monitors together</strong>:</p>
+<ul>
+<li><strong>3840×1600 @ 100 Hz</strong> + <strong>2560×1440 @ 100 Hz</strong> (both 8-bpc 4:4:4) →<br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>14.75</mn><mo>+</mo><mn>8.85</mn><mo>≈</mo><mrow><mn mathvariant="bold">23.6</mn><mtext> </mtext><mi mathvariant="bold">G</mi><mi mathvariant="bold">b</mi><mi mathvariant="bold">p</mi><mi mathvariant="bold">s</mi></mrow></mrow><annotation encoding="application/x-tex">14.75 + 8.85 \approx \mathbf{23.6\ Gbps}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">14.75</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">8.85</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">23.6</span><span class="mspace"> </span><span class="mord mathbf">Gbps</span></span></span></span></span></span></eqn></section><br>
+This is in the same ballpark as <strong>dual 4K60 8-bpc</strong> (≈ 23.9 Gbps active), which many Thunderbolt 3 docks explicitly support.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Interpreting against link limits</strong></p>
+<ul>
+<li><strong>DisplayPort 1.2 (HBR2)</strong>: Max <strong>17.28 Gbps</strong> payload per DP link. One 2560×1440@100 (8-bpc 4:4:4) fits comfortably. One 3840×1600@100 fits. <strong>3840×1600@120 does not</strong>, and @144 certainly does not.</li>
+<li><strong>DisplayPort 1.4 (HBR3)</strong>: Max <strong>25.92 Gbps</strong> payload per DP link. Enough for 3840×1600@120/144 uncompressed in many timing modes, or with DSC when needed.</li>
+</ul>
+<hr>
+<h2 id="3)-dp-1.4-vs-dp-1.2%E2%80%94and-how-that-relates-to-thunderbolt-versions" tabindex="-1">3) DP 1.4 vs DP 1.2—and how that relates to Thunderbolt versions</h2>
+<ul>
+<li><strong>DP 1.2 (HBR2)</strong> tops out at 5.4Gbps/lane x 4 - <strong>21.6 Gbps raw / 17.28 Gbps effective</strong> payload.</li>
+<li><strong>DP 1.4 (HBR3)</strong> increases the lane rate to 8.1Gbps/lane -&gt; <strong>32.4 Gbps raw / 25.92 Gbps effective</strong> and adds features like <strong>DSC 1.2</strong> for higher-than-link-rate modes.</li>
+<li><strong>Thunderbolt 3</strong> originally shipped on <strong>Alpine Ridge</strong> controllers that <strong>tunnel DP 1.2</strong> only. Later <strong>Titan Ridge</strong> TB3 silicon can <strong>tunnel DP 1.4</strong>.</li>
+<li><strong>Thunderbolt 4</strong> is built on <strong>USB4 v1</strong>; it <strong>mandates</strong> support for <strong>two 4K displays or one 8K display</strong>, functionally aligning with <strong>DP 1.4/HBR3</strong> tunneling end-to-end. (TB4 does not raise the nominal 40 Gbps link rate; it raises the <em>minimums</em> OEMs must deliver.)</li>
+</ul>
+<p>However, the <strong>StarTech TB3DOCK2DPPD</strong> is an older <strong>Alpine Ridge (JHL6540)</strong> design—i.e., <strong>DP 1.2-only</strong> on its display paths. It still handles <strong>dual-display</strong> by presenting <strong>two DP sinks</strong> to the host TB controller (one on the rear DisplayPort jack, and a <strong>downstream TB3 port</strong>). But each DP hop is capped at <strong>DP 1.2</strong> timings.</p>
+<hr>
+<h2 id="4)-m1-pro-limitations-and-why-a-downstream-thunderbolt-port-matters" tabindex="-1">4) M1 Pro limitations and why a <strong>downstream Thunderbolt port</strong> matters</h2>
+<p>At this moment, it’s roughly clear that a TB3 dock is not going to be sufficient bandwidth wise.</p>
+<p>However there’s a bit more nuance here (and why we actually need a higher-end dock with a <strong>downstream</strong> TB4 port):</p>
+<ul>
+<li><strong>M1 Pro MacBook Pro (2021)</strong> supports <strong>up to two external displays</strong> over Thunderbolt (each up to 6K60). That’s a <em>hard</em> GPU/display-engine limit on count, not just raw bandwidth.</li>
+<li>MacOS does not support DisplayPort MST for extended desktops. In plain English: you can’t split one DP lane group into two independent desktops via an MST hub and expect macOS to see two displays—it will mirror them.<br>
+<strong>Implication:</strong> to run <strong>two</strong> external monitors over <strong>one cable</strong>, we need a <strong>Thunderbolt dock</strong> that exposes <strong>two independent DP tunnels</strong> (e.g., one physical DP output <strong>plus</strong> a <strong>downstream TB</strong> port for the second display via USB-C→DP).</li>
+</ul>
+<p>The <strong>TB3DOCK2DPPD</strong> does exactly that: one native DP port <strong>and</strong> one <strong>downstream TB3</strong> port intended to carry the second display. The constraint, again, is that both of those hops are <strong>DP 1.2</strong> only.</p>
+<p>A lot of the lower-end docks, on the other hand, <strong>do NOT carry downstream TB ports</strong> and hence not suited for such setup.</p>
+<p><strong>Putting it together:</strong></p>
+<ul>
+<li>To keep the single-cable topology, we should use the dock’s <strong>DP</strong> for one monitor and the <strong>downstream TB3→USB-C/DP</strong> for the other.</li>
+<li>We also need a <strong>DP 1.4-capable TB3/TB4 dock</strong> (Titan Ridge, Goshen Ridge/TB4) to fulfill the bandwidth requirements for the 2 monitors at high refresh rate.</li>
+</ul>
+<hr>
+<h2 id="5)-summary" tabindex="-1">5) Summary</h2>
+<ul>
+<li><strong>Yes, the single-cable topology can work</strong>—with caveats. On the <strong>Alpine Ridge TB3 dock (DP 1.2)</strong>, run the <strong>AW3821DW at 100 Hz</strong> and the new <strong>2560×1440 at 100 Hz</strong>, both at <strong>8-bpc RGB 4:4:4</strong>.</li>
+<li>The dock will not do <strong>3840×1600 @ 144 Hz</strong> concurrently with a high-refresh second display; DP 1.2 per-link bandwidth is the blocker.</li>
+<li>Because <strong>macOS lacks MST-Extended</strong>, we also need to ensure the dock provides a <strong>downstream Thunderbolt port</strong>.</li>
+</ul>
+<hr>
+<h2 id="references" tabindex="-1">References</h2>
+<p>[1] Apple — <em>MacBook Pro (14-inch, 2021) Tech Specs</em> (external display support) – <a href="https://support.apple.com/en-us/111902">https://support.apple.com/en-us/111902</a><br>
+[2] Dell — <em>Alienware AW3821DW product page</em> (3840×1600 @ 144 Hz over DP) – <a href="https://www.dell.com/en-us/shop/alienware-38-curved-gaming-monitor-aw3821dw/apd/210-axvg/monitors-monitor-accessories">https://www.dell.com/en-us/shop/alienware-38-curved-gaming-monitor-aw3821dw/apd/210-axvg/monitors-monitor-accessories</a><br>
+[3] RTINGS — <em>Chroma Subsampling: 4:4:4 vs 4:2:2 vs 4:2:0</em> – <a href="https://www.rtings.com/tv/learn/chroma-subsampling">https://www.rtings.com/tv/learn/chroma-subsampling</a><br>
+[4] Eaton/Tripp Lite — <em>DisplayPort explained</em> (8b/10b vs 128b/132b; effective payloads) – <a href="https://www.eaton.com/us/en-us/products/backup-power-ups-surge-it-power-distribution/backup-power-ups-it-power-distribution-resources/cpdi-vertical-marketing/displayport-explained.html">https://www.eaton.com/us/en-us/products/backup-power-ups-surge-it-power-distribution/backup-power-ups-it-power-distribution-resources/cpdi-vertical-marketing/displayport-explained.html</a><br>
+[5] Cable Matters — <em>DisplayPort 1.4 vs 1.2: What’s the Difference?</em> (21.6 vs 32.4 Gbps raw; 17.28 vs 25.92 Gbps payload) – <a href="https://www.cablematters.com/Blog/DisplayPort/displayport-1-4-vs-1-2">https://www.cablematters.com/Blog/DisplayPort/displayport-1-4-vs-1-2</a><br>
+[6] Wikipedia — <em>DisplayPort</em> (TB3 Alpine Ridge DP 1.2 vs Titan Ridge DP 1.4) – <a href="https://en.wikipedia.org/wiki/DisplayPort">https://en.wikipedia.org/wiki/DisplayPort</a><br>
+[7] StarTech — <em>TB3DOCK2DPPD Manual</em> (identifies <strong>JHL6540 Alpine Ridge</strong> chipset, DP 1.2 heritage) – <a href="https://sgcdn.startech.com/005329/media/sets/tb3dock2dppd_manual/tb3dock2dppd_tb3dock2dppu_thunderbolt_3_dock.pdf">https://sgcdn.startech.com/005329/media/sets/tb3dock2dppd_manual/tb3dock2dppd_tb3dock2dppu_thunderbolt_3_dock.pdf</a><br>
+[8] StarTech — <em>TB3DOCK2DPPD Datasheet</em> (dual-4K60 via DP + downstream TB3) – <a href="https://media.startech.com/cms/pdfs/tb3dock2dppd_datasheet.pdf">https://media.startech.com/cms/pdfs/tb3dock2dppd_datasheet.pdf</a><br>
+[9] Plugable KB — <em>MST on macOS (Extended not supported)</em> – <a href="https://kb.plugable.com/understanding-mst-multi-display-setups-with-windows-macos-and-displayport">https://kb.plugable.com/understanding-mst-multi-display-setups-with-windows-macos-and-displayport</a><br>
+[10] Intel — <em>Thunderbolt 3 vs Thunderbolt 4</em> (TB4 mandates dual 4K or one 8K) – <a href="https://www.intel.com/content/www/us/en/architecture-and-technology/thunderbolt/thunderbolt-3-vs-4.html">https://www.intel.com/content/www/us/en/architecture-and-technology/thunderbolt/thunderbolt-3-vs-4.html</a><br>
+[11] Wikipedia — <em>USB4</em> (DP 1.4a tunneling in USB4 v1; DP 2.1 in USB4 v2) – <a href="https://en.wikipedia.org/wiki/USB4">https://en.wikipedia.org/wiki/USB4</a></p>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
+
+                    
+                        
+
+
+                    
+                    
+                        <p>
+                            <a
+                                href="/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/#post-footer"
+                                class="postShorten-excerpt_link link"
+                                aria-label=""
+                            >
+                                Comment and share
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
     
     
     <article class="postShorten postShorten--thumbnailimg-right">
@@ -1008,85 +1166,6 @@ if (foo) &#123;
                         <p>
                             <a
                                 href="/2016/10/03/You-Don-t-Know-JS-Equal-or-Not-Equal/#post-footer"
-                                class="postShorten-excerpt_link link"
-                                aria-label=""
-                            >
-                                Comment and share
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2016/10/01/You-Don-t-Know-JS-Eval/"
-                            aria-label=": You Don&#39;t Know JS - Eval"
-                        >
-                            You Don&#39;t Know JS - Eval
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2016-10-01T16:03:31-07:00">
-	
-		    Oct 01, 2016
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/You-Don-t-Know-JS/">You Don't Know JS</a>
-
-
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-content">
-                    <h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Have-you-seen-eval-written-like-this"><span class="toc-text">Have you seen eval() written like this?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Regular-eval"><span class="toc-text">Regular eval</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Global-eval"><span class="toc-text">Global eval</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Back-to-the-original-topic"><span class="toc-text">Back to the original topic</span></a></li></ol>
-
-<p>Recently I’ve been writing quite a bit of front-end stuff and seen quite a few tricks from other people’s libraries. It turns out JavaScript is a pretty <del>wonky and fked up</del> interesting language, which tempts me to write a series about it and this is the first one. This is by no means supposed to show how to write JS but just to show some “wacky” stuff.</p>
-<h2 id="Have-you-seen-eval-written-like-this"><a href="#Have-you-seen-eval-written-like-this" class="headerlink" title="Have you seen eval() written like this?"></a>Have you seen eval() written like this?</h2><pre><code>(0, eval)(&apos;something&apos;);</code></pre><img src="http://www.memes.at/faces/are_you_fucking_kidding_me.jpg" alt="Are you fucking kidding me" style="width:200px">
-
-<h2 id="Regular-eval"><a href="#Regular-eval" class="headerlink" title="Regular eval"></a>Regular eval</h2><p>Eval basically allows you to execute any script within the given context.</p>
-<p>For example:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(<span class="string">&#x27;console.log(&quot;123&quot;);&#x27;</span>);            <span class="comment">// prints out 123</span></span><br><span class="line"></span><br><span class="line">(<span class="keyword">function</span> <span class="title function_">A</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">a</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">eval</span>(<span class="string">&#x27;console.log(this.a);&#x27;</span>);            <span class="comment">// 1</span></span><br><span class="line">&#125;)();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>So far everything is normal: eval runs inside the current scope. <code>this</code> is pointed to the instance of A.</p>
-<h2 id="Global-eval"><a href="#Global-eval" class="headerlink" title="Global eval"></a>Global eval</h2><p>Things get interesting when you do this:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> someVar = <span class="string">&#x27;outer&#x27;</span>;</span><br><span class="line"></span><br><span class="line">(<span class="keyword">function</span> <span class="title function_">A</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">someVar</span> = <span class="string">&#x27;inner&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">eval</span>(<span class="string">&#x27;console.log(someVar);&#x27;</span>);       <span class="comment">// you may want &#x27;outer&#x27; but this says &#x27;inner&#x27;</span></span><br><span class="line">&#125;)();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>Well in this scenario eval cannot get the value of someVar in the global scope.</p>
-<p>However ECMA5 says, if you change <code>eval()</code> call to indirect, in other words, if you use it as a value rather than a function reference, then it will evaluate the input in the global scope.</p>
-<p>So this would work:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> someVar = <span class="string">&#x27;outer&#x27;</span>;</span><br><span class="line"></span><br><span class="line">(<span class="keyword">function</span> <span class="title function_">A</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> geval = <span class="built_in">eval</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">someVar</span> = <span class="string">&#x27;inner&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">geval</span>(<span class="string">&#x27;console.log(someVar);&#x27;</span>);       <span class="comment">// &#x27;outer&#x27;</span></span><br><span class="line">&#125;)();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>Although <code>geval</code> and <code>eval</code> call the exact same function, <code>geval</code> is a value and thus it becomes an indirect call according to ECMA5.</p>
-<h2 id="Back-to-the-original-topic"><a href="#Back-to-the-original-topic" class="headerlink" title="Back to the original topic"></a>Back to the original topic</h2><p>So what the hell is <code>(0, eval)</code> then? Well a comma separated expression list evaluates to the last value, so it essentially is a shortcut to</p>
-<pre><code>var geval = eval;
-geval(...);</code></pre><p>0 is only a puppet here. It could be any value.</p>
-<img src="http://www.memes.at/faces/so_much_win.jpg" alt="So much win" style="width:200px">
-                    
-                        
-
-
-                    
-                    
-                        <p>
-                            <a
-                                href="/2016/10/01/You-Don-t-Know-JS-Eval/#post-footer"
                                 class="postShorten-excerpt_link link"
                                 aria-label=""
                             >

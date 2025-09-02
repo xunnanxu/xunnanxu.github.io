@@ -1,0 +1,735 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Shawn&#39;s Pitstop">
+    <title>The Spec Mess: Journey to Enable M1 Pro + 2 2K-monitors @ 100Hz over One Single Thunderbolt Cable - Shawn&#39;s Pitstop</title>
+    <meta name="author" content="Shawn Xu">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"},"articleBody":"Recently I’ve been looking into giving my WFH setup some upgrade.\nI already have a 38inch AW3821DW monitor running 3800x1600 @ 144Hz, connected to the M1 Pro Macbook Pro via a TB3 dock (StarTech TB3DOCK2DPPD that I bought years ago pre-pandemic). I’m trying to add a side monitor to it with likely a QHD spec (2560x1440) @ 100Hz.\n\n  graph TD;\n    M1[M1 Pro]-->TBDock[TB Dock]\n    TBDock-->AW3821DW[AW3821DW 3800x1600 @ 144Hz]\n    TBDock-->QHD[QHD 2560x1440 @ 100Hz]\n\n\nThen I suddenly realized one thing, if I want to keep my connection topology as is (wire up all devices to my dock and connect it to the Mac using a single TB cable) - would that work?\nIt turns out it’s not that straightforward to average users. And here’s why.\n\n1) RGB 4:4:4 vs YCbCr 4:2:2 Chroma Subsampling\nBefore doing math, we first need to check the signal we want to drive:\n\nRGB/YCbCr 4:4:4, 8-bit per channel (bpc) → 24 bits/pixel. This is the “no-compromise” desktop signal—full chroma on every pixel. Text looks crisp.\nYCbCr 4:2:2, 8-bpc → the chroma (Cb/Cr) is shared between two horizontal pixels, averaging 16 bits/pixel (≈ 33% less data than 4:4:4). Saves bandwidth, but fine colored edges and UI text soften.\nYCbCr 4:2:0, 8-bpc → 12 bits/pixel (≈ 50% less than 4:4:4). Great for video, not for desktop use.\nHDR / 10-bpc pushes each of those up by 25% (e.g., RGB 4:4:4 becomes 30 bits/pixel).\n\nFor SDR productivity monitors, we should ALWAYS prefer RGB 4:4:4 (or YCbCr 4:4:4) at 8-bpc for clear text.\nAnything doing chroma subsampling (422) is a no-go as text would have blurred/colored edges. Period.\n\n2) The bandwidth calculation\nFor uncompressed links (DisplayPort/HDMI without DSC), a solid back-of-the-envelope is:\nSignal rate≈(Horizontal px)×(Vertical px)×(Refresh Hz)×(bits/pixel).\n\\textbf{Signal rate} \\approx \\text{(Horizontal px)} \\times \\text{(Vertical px)} \\times \\text{(Refresh Hz)} \\times \\text{(bits/pixel)}.\nSignal rate≈(Horizontal px)×(Vertical px)×(Refresh Hz)×(bits/pixel).This yields the active video payload. Real links also carry blanking intervals and link-layer overhead. Using modern reduced-blanking timings, a 5–10% headroom usually suffices for comparisons; standards bodies quote separate “link rates” that already include line coding overhead.\nLet’s compute the key cases (all at 8-bpc unless noted):\n\n\nOne QHD (2560×1440) @ 100 Hz, 4:4:4\n2560×1440×100×24  =  8.85 Gbps2560 \\times 1440 \\times 100 \\times 24 \\;=\\; \\mathbf{8.85\\ Gbps}2560×1440×100×24=8.85 Gbps\nWith 10-bpc (30 bpp): 11.06 Gbps.\nWith 4:2:2 (16 bpp): 5.90 Gbps.\n\n\nYour ultrawide (3840×1600), 4:4:4\n\n@ 100 Hz\n3840×1600×100×24=14.75 Gbps3840 \\times 1600 \\times 100 \\times 24 = \\mathbf{14.75\\ Gbps} 3840×1600×100×24=14.75 Gbps\n@ 120 Hz 17.69 Gbps (already nudging past DP 1.2’s effective limit once overhead is considered).\n@ 144 Hz: 21.23 Gbps (firmly beyond DP 1.2; needs DP 1.4/HBR3 and/or DSC support end-to-end).\n\n\n\nTwo monitors together:\n\n3840×1600 @ 100 Hz + 2560×1440 @ 100 Hz (both 8-bpc 4:4:4) →\n14.75+8.85≈23.6 Gbps14.75 + 8.85 \\approx \\mathbf{23.6\\ Gbps}14.75+8.85≈23.6 Gbps\nThis is in the same ballpark as dual 4K60 8-bpc (≈ 23.9 Gbps active), which many Thunderbolt 3 docks explicitly support.\n\n\n\nInterpreting against link limits\n\nDisplayPort 1.2 (HBR2): Max 17.28 Gbps payload per DP link. One 2560×1440@100 (8-bpc 4:4:4) fits comfortably. One 3840×1600@100 fits. 3840×1600@120 does not, and @144 certainly does not.\nDisplayPort 1.4 (HBR3): Max 25.92 Gbps payload per DP link. Enough for 3840×1600@120/144 uncompressed in many timing modes, or with DSC when needed.\n\n\n3) DP 1.4 vs DP 1.2—and how that relates to Thunderbolt versions\n\nDP 1.2 (HBR2) tops out at 5.4Gbps/lane x 4 - 21.6 Gbps raw / 17.28 Gbps effective payload.\nDP 1.4 (HBR3) increases the lane rate to 8.1Gbps/lane -&gt; 32.4 Gbps raw / 25.92 Gbps effective and adds features like DSC 1.2 for higher-than-link-rate modes.\nThunderbolt 3 originally shipped on Alpine Ridge controllers that tunnel DP 1.2 only. Later Titan Ridge TB3 silicon can tunnel DP 1.4.\nThunderbolt 4 is built on USB4 v1; it mandates support for two 4K displays or one 8K display, functionally aligning with DP 1.4/HBR3 tunneling end-to-end. (TB4 does not raise the nominal 40 Gbps link rate; it raises the minimums OEMs must deliver.)\n\nHowever, the StarTech TB3DOCK2DPPD is an older Alpine Ridge (JHL6540) design—i.e., DP 1.2-only on its display paths. It still handles dual-display by presenting two DP sinks to the host TB controller (one on the rear DisplayPort jack, and a downstream TB3 port). But each DP hop is capped at DP 1.2 timings.\n\n4) M1 Pro limitations and why a downstream Thunderbolt port matters\nAt this moment, it’s roughly clear that a TB3 dock is not going to be sufficient bandwidth wise.\nHowever there’s a bit more nuance here (and why we actually need a higher-end dock with a downstream TB4 port):\n\nM1 Pro MacBook Pro (2021) supports up to two external displays over Thunderbolt (each up to 6K60). That’s a hard GPU/display-engine limit on count, not just raw bandwidth.\nMacOS does not support DisplayPort MST for extended desktops. In plain English: you can’t split one DP lane group into two independent desktops via an MST hub and expect macOS to see two displays—it will mirror them.\nImplication: to run two external monitors over one cable, we need a Thunderbolt dock that exposes two independent DP tunnels (e.g., one physical DP output plus a downstream TB port for the second display via USB-C→DP).\n\nThe TB3DOCK2DPPD does exactly that: one native DP port and one downstream TB3 port intended to carry the second display. The constraint, again, is that both of those hops are DP 1.2 only.\nA lot of the lower-end docks, on the other hand, do NOT carry downstream TB ports and hence not suited for such setup.\nPutting it together:\n\nTo keep the single-cable topology, we should use the dock’s DP for one monitor and the downstream TB3→USB-C/DP for the other.\nWe also need a DP 1.4-capable TB3/TB4 dock (Titan Ridge, Goshen Ridge/TB4) to fulfill the bandwidth requirements for the 2 monitors at high refresh rate.\n\n\n5) Summary\n\nYes, the single-cable topology can work—with caveats. On the Alpine Ridge TB3 dock (DP 1.2), run the AW3821DW at 100 Hz and the new 2560×1440 at 100 Hz, both at 8-bpc RGB 4:4:4.\nThe dock will not do 3840×1600 @ 144 Hz concurrently with a high-refresh second display; DP 1.2 per-link bandwidth is the blocker.\nBecause macOS lacks MST-Extended, we also need to ensure the dock provides a downstream Thunderbolt port.\n\n\nReferences\n[1] Apple — MacBook Pro (14-inch, 2021) Tech Specs (external display support) – https://support.apple.com/en-us/111902\n[2] Dell — Alienware AW3821DW product page (3840×1600 @ 144 Hz over DP) – https://www.dell.com/en-us/shop/alienware-38-curved-gaming-monitor-aw3821dw/apd/210-axvg/monitors-monitor-accessories\n[3] RTINGS — Chroma Subsampling: 4:4:4 vs 4:2:2 vs 4:2:0 – https://www.rtings.com/tv/learn/chroma-subsampling\n[4] Eaton/Tripp Lite — DisplayPort explained (8b/10b vs 128b/132b; effective payloads) – https://www.eaton.com/us/en-us/products/backup-power-ups-surge-it-power-distribution/backup-power-ups-it-power-distribution-resources/cpdi-vertical-marketing/displayport-explained.html\n[5] Cable Matters — DisplayPort 1.4 vs 1.2: What’s the Difference? (21.6 vs 32.4 Gbps raw; 17.28 vs 25.92 Gbps payload) – https://www.cablematters.com/Blog/DisplayPort/displayport-1-4-vs-1-2\n[6] Wikipedia — DisplayPort (TB3 Alpine Ridge DP 1.2 vs Titan Ridge DP 1.4) – https://en.wikipedia.org/wiki/DisplayPort\n[7] StarTech — TB3DOCK2DPPD Manual (identifies JHL6540 Alpine Ridge chipset, DP 1.2 heritage) – https://sgcdn.startech.com/005329/media/sets/tb3dock2dppd_manual/tb3dock2dppd_tb3dock2dppu_thunderbolt_3_dock.pdf\n[8] StarTech — TB3DOCK2DPPD Datasheet (dual-4K60 via DP + downstream TB3) – https://media.startech.com/cms/pdfs/tb3dock2dppd_datasheet.pdf\n[9] Plugable KB — MST on macOS (Extended not supported) – https://kb.plugable.com/understanding-mst-multi-display-setups-with-windows-macos-and-displayport\n[10] Intel — Thunderbolt 3 vs Thunderbolt 4 (TB4 mandates dual 4K or one 8K) – https://www.intel.com/content/www/us/en/architecture-and-technology/thunderbolt/thunderbolt-3-vs-4.html\n[11] Wikipedia — USB4 (DP 1.4a tunneling in USB4 v1; DP 2.1 in USB4 v2) – https://en.wikipedia.org/wiki/USB4\n\n\n","dateCreated":"2025-09-01T16:44:36-07:00","dateModified":"2025-09-01T17:57:29-07:00","datePublished":"2025-09-01T16:44:36-07:00","description":"","headline":"The Spec Mess: Journey to Enable M1 Pro + 2 2K-monitors @ 100Hz over One Single Thunderbolt Cable","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"},"publisher":{"@type":"Organization","name":"Shawn Xu","sameAs":["https://github.com/xunnanxu"],"image":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg","logo":{"@type":"ImageObject","url":"https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"}},"url":"https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/","keywords":"pcparts, setup"}</script>
+    <meta name="description" content="Recently I’ve been looking into giving my WFH setup some upgrade. I already have a 38inch AW3821DW monitor running 3800x1600 @ 144Hz, connected to the M1 Pro Macbook Pro via a TB3 dock (StarTech TB3DO">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="The Spec Mess: Journey to Enable M1 Pro + 2 2K-monitors @ 100Hz over One Single Thunderbolt Cable">
+<meta property="og:url" content="https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Pitstop">
+<meta property="og:description" content="Recently I’ve been looking into giving my WFH setup some upgrade. I already have a 38inch AW3821DW monitor running 3800x1600 @ 144Hz, connected to the M1 Pro Macbook Pro via a TB3 dock (StarTech TB3DO">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-09-01T23:44:36.000Z">
+<meta property="article:modified_time" content="2025-09-02T00:57:29.629Z">
+<meta property="article:author" content="Shawn Xu">
+<meta property="article:tag" content="pcparts">
+<meta property="article:tag" content="setup">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-yvywglw62lgxwz25dsjvepo05oagkygdd7st7xfdzhmmxwqoijtiy3ngabtp.min.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83953865-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-83953865-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Shawn&#39;s Pitstop
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+    <script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';</script>
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Shawn Xu</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>Software Engineer in Bay Area</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="Categories"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="Tags"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="Archives"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="#about"
+                            
+                            rel="noopener"
+                            title="About"
+                        >
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/xunnanxu"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/atom.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            The Spec Mess: Journey to Enable M1 Pro + 2 2K-monitors @ 100Hz over One Single Thunderbolt Cable
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2025-09-01T16:44:36-07:00">
+	
+		    Sep 01, 2025
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>Recently I’ve been looking into giving my WFH setup some upgrade.<br>
+I already have a 38inch AW3821DW monitor running <strong>3800x1600 @ 144Hz</strong>, connected to the <strong>M1 Pro Macbook Pro</strong> via a <strong>TB3 dock</strong> (StarTech TB3DOCK2DPPD that I bought years ago pre-pandemic). I’m trying to add a side monitor to it with likely a QHD spec <strong>(2560x1440) @ 100Hz</strong>.</p>
+<div class="mermaid">
+  graph TD;
+    M1[M1 Pro]-->TBDock[TB Dock]
+    TBDock-->AW3821DW[AW3821DW 3800x1600 @ 144Hz]
+    TBDock-->QHD[QHD 2560x1440 @ 100Hz]
+</div>
+
+<p>Then I suddenly realized one thing, if I want to keep my connection topology as is (wire up all devices to my dock and connect it to the Mac using a single TB cable) - would that work?</p>
+<p>It turns out it’s not that straightforward to average users. And here’s why.</p>
+<hr>
+<h2 id="1)-rgb-4%3A4%3A4-vs-ycbcr-4%3A2%3A2-chroma-subsampling" tabindex="-1">1) RGB 4:4:4 vs YCbCr 4:2:2 Chroma Subsampling</h2>
+<p>Before doing math, we first need to check the <em>signal</em> we want to drive:</p>
+<ul>
+<li><strong>RGB/YCbCr 4:4:4, 8-bit per channel (bpc)</strong> → <strong>24 bits/pixel</strong>. This is the “no-compromise” desktop signal—full chroma on every pixel. Text looks crisp.</li>
+<li><strong>YCbCr 4:2:2, 8-bpc</strong> → the chroma (Cb/Cr) is shared between two horizontal pixels, averaging <strong>16 bits/pixel</strong> (≈ 33% less data than 4:4:4). Saves bandwidth, but fine colored edges and UI text soften.</li>
+<li><strong>YCbCr 4:2:0, 8-bpc</strong> → <strong>12 bits/pixel</strong> (≈ 50% less than 4:4:4). Great for video, not for desktop use.</li>
+<li><strong>HDR / 10-bpc</strong> pushes each of those up by 25% (e.g., RGB 4:4:4 becomes <strong>30 bits/pixel</strong>).</li>
+</ul>
+<p>For SDR productivity monitors, we should <strong>ALWAYS</strong> prefer <strong>RGB 4:4:4</strong> (or YCbCr 4:4:4) at 8-bpc for clear text.<br>
+Anything doing chroma subsampling (422) is a no-go as text would have blurred/colored edges. Period.</p>
+<hr>
+<h2 id="2)-the-bandwidth-calculation" tabindex="-1">2) The bandwidth calculation</h2>
+<p>For uncompressed links (DisplayPort/HDMI without DSC), a solid back-of-the-envelope is:</p>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mrow><mtext mathvariant="bold">Signal</mtext><mtext> </mtext><mtext mathvariant="bold">rate</mtext></mrow><mo>≈</mo><mtext>(Horizontal px)</mtext><mo>×</mo><mtext>(Vertical px)</mtext><mo>×</mo><mtext>(Refresh Hz)</mtext><mo>×</mo><mtext>(bits/pixel)</mtext><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\textbf{Signal rate} \approx \text{(Horizontal px)} \times \text{(Vertical px)} \times \text{(Refresh Hz)} \times \text{(bits/pixel)}.
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord textbf">Signal rate</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(Horizontal px)</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(Vertical px)</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(Refresh Hz)</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(bits/pixel)</span></span><span class="mord">.</span></span></span></span></span></eqn></section><p>This yields the <strong>active video</strong> payload. Real links also carry blanking intervals and link-layer overhead. Using modern reduced-blanking timings, a <strong>5–10% headroom</strong> usually suffices for comparisons; standards bodies quote separate “link rates” that already include line coding overhead.</p>
+<p>Let’s compute the key cases (all at 8-bpc unless noted):</p>
+<ul>
+<li>
+<p><strong>One QHD (2560×1440) @ 100 Hz, 4:4:4</strong><br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>2560</mn><mo>×</mo><mn>1440</mn><mo>×</mo><mn>100</mn><mo>×</mo><mn>24</mn><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mrow><mn mathvariant="bold">8.85</mn><mtext> </mtext><mi mathvariant="bold">G</mi><mi mathvariant="bold">b</mi><mi mathvariant="bold">p</mi><mi mathvariant="bold">s</mi></mrow></mrow><annotation encoding="application/x-tex">2560 \times 1440 \times 100 \times 24 \;=\; \mathbf{8.85\ Gbps}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2560</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1440</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">100</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">24</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">8.85</span><span class="mspace"> </span><span class="mord mathbf">Gbps</span></span></span></span></span></span></eqn></section><br>
+With 10-bpc (30 bpp): <strong>11.06 Gbps</strong>.<br>
+With 4:2:2 (16 bpp): <strong>5.90 Gbps</strong>.</p>
+</li>
+<li>
+<p><strong>Your ultrawide (3840×1600), 4:4:4</strong></p>
+<ul>
+<li>@ <strong>100 Hz</strong><br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>3840</mn><mo>×</mo><mn>1600</mn><mo>×</mo><mn>100</mn><mo>×</mo><mn>24</mn><mo>=</mo><mrow><mn mathvariant="bold">14.75</mn><mtext> </mtext><mi mathvariant="bold">G</mi><mi mathvariant="bold">b</mi><mi mathvariant="bold">p</mi><mi mathvariant="bold">s</mi></mrow></mrow><annotation encoding="application/x-tex">3840 \times 1600 \times 100 \times 24 = \mathbf{14.75\ Gbps} </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">3840</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1600</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">100</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">24</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">14.75</span><span class="mspace"> </span><span class="mord mathbf">Gbps</span></span></span></span></span></span></eqn></section></li>
+<li>@ <strong>120 Hz</strong> <strong>17.69 Gbps</strong> (already nudging past DP 1.2’s effective limit once overhead is considered).</li>
+<li>@ <strong>144 Hz</strong>: <strong>21.23 Gbps</strong> (firmly beyond DP 1.2; needs DP 1.4/HBR3 and/or DSC support end-to-end).</li>
+</ul>
+</li>
+<li>
+<p><strong>Two monitors together</strong>:</p>
+<ul>
+<li><strong>3840×1600 @ 100 Hz</strong> + <strong>2560×1440 @ 100 Hz</strong> (both 8-bpc 4:4:4) →<br>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>14.75</mn><mo>+</mo><mn>8.85</mn><mo>≈</mo><mrow><mn mathvariant="bold">23.6</mn><mtext> </mtext><mi mathvariant="bold">G</mi><mi mathvariant="bold">b</mi><mi mathvariant="bold">p</mi><mi mathvariant="bold">s</mi></mrow></mrow><annotation encoding="application/x-tex">14.75 + 8.85 \approx \mathbf{23.6\ Gbps}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">14.75</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">8.85</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">23.6</span><span class="mspace"> </span><span class="mord mathbf">Gbps</span></span></span></span></span></span></eqn></section><br>
+This is in the same ballpark as <strong>dual 4K60 8-bpc</strong> (≈ 23.9 Gbps active), which many Thunderbolt 3 docks explicitly support.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Interpreting against link limits</strong></p>
+<ul>
+<li><strong>DisplayPort 1.2 (HBR2)</strong>: Max <strong>17.28 Gbps</strong> payload per DP link. One 2560×1440@100 (8-bpc 4:4:4) fits comfortably. One 3840×1600@100 fits. <strong>3840×1600@120 does not</strong>, and @144 certainly does not.</li>
+<li><strong>DisplayPort 1.4 (HBR3)</strong>: Max <strong>25.92 Gbps</strong> payload per DP link. Enough for 3840×1600@120/144 uncompressed in many timing modes, or with DSC when needed.</li>
+</ul>
+<hr>
+<h2 id="3)-dp-1.4-vs-dp-1.2%E2%80%94and-how-that-relates-to-thunderbolt-versions" tabindex="-1">3) DP 1.4 vs DP 1.2—and how that relates to Thunderbolt versions</h2>
+<ul>
+<li><strong>DP 1.2 (HBR2)</strong> tops out at 5.4Gbps/lane x 4 - <strong>21.6 Gbps raw / 17.28 Gbps effective</strong> payload.</li>
+<li><strong>DP 1.4 (HBR3)</strong> increases the lane rate to 8.1Gbps/lane -&gt; <strong>32.4 Gbps raw / 25.92 Gbps effective</strong> and adds features like <strong>DSC 1.2</strong> for higher-than-link-rate modes.</li>
+<li><strong>Thunderbolt 3</strong> originally shipped on <strong>Alpine Ridge</strong> controllers that <strong>tunnel DP 1.2</strong> only. Later <strong>Titan Ridge</strong> TB3 silicon can <strong>tunnel DP 1.4</strong>.</li>
+<li><strong>Thunderbolt 4</strong> is built on <strong>USB4 v1</strong>; it <strong>mandates</strong> support for <strong>two 4K displays or one 8K display</strong>, functionally aligning with <strong>DP 1.4/HBR3</strong> tunneling end-to-end. (TB4 does not raise the nominal 40 Gbps link rate; it raises the <em>minimums</em> OEMs must deliver.)</li>
+</ul>
+<p>However, the <strong>StarTech TB3DOCK2DPPD</strong> is an older <strong>Alpine Ridge (JHL6540)</strong> design—i.e., <strong>DP 1.2-only</strong> on its display paths. It still handles <strong>dual-display</strong> by presenting <strong>two DP sinks</strong> to the host TB controller (one on the rear DisplayPort jack, and a <strong>downstream TB3 port</strong>). But each DP hop is capped at <strong>DP 1.2</strong> timings.</p>
+<hr>
+<h2 id="4)-m1-pro-limitations-and-why-a-downstream-thunderbolt-port-matters" tabindex="-1">4) M1 Pro limitations and why a <strong>downstream Thunderbolt port</strong> matters</h2>
+<p>At this moment, it’s roughly clear that a TB3 dock is not going to be sufficient bandwidth wise.</p>
+<p>However there’s a bit more nuance here (and why we actually need a higher-end dock with a <strong>downstream</strong> TB4 port):</p>
+<ul>
+<li><strong>M1 Pro MacBook Pro (2021)</strong> supports <strong>up to two external displays</strong> over Thunderbolt (each up to 6K60). That’s a <em>hard</em> GPU/display-engine limit on count, not just raw bandwidth.</li>
+<li>MacOS does not support DisplayPort MST for extended desktops. In plain English: you can’t split one DP lane group into two independent desktops via an MST hub and expect macOS to see two displays—it will mirror them.<br>
+<strong>Implication:</strong> to run <strong>two</strong> external monitors over <strong>one cable</strong>, we need a <strong>Thunderbolt dock</strong> that exposes <strong>two independent DP tunnels</strong> (e.g., one physical DP output <strong>plus</strong> a <strong>downstream TB</strong> port for the second display via USB-C→DP).</li>
+</ul>
+<p>The <strong>TB3DOCK2DPPD</strong> does exactly that: one native DP port <strong>and</strong> one <strong>downstream TB3</strong> port intended to carry the second display. The constraint, again, is that both of those hops are <strong>DP 1.2</strong> only.</p>
+<p>A lot of the lower-end docks, on the other hand, <strong>do NOT carry downstream TB ports</strong> and hence not suited for such setup.</p>
+<p><strong>Putting it together:</strong></p>
+<ul>
+<li>To keep the single-cable topology, we should use the dock’s <strong>DP</strong> for one monitor and the <strong>downstream TB3→USB-C/DP</strong> for the other.</li>
+<li>We also need a <strong>DP 1.4-capable TB3/TB4 dock</strong> (Titan Ridge, Goshen Ridge/TB4) to fulfill the bandwidth requirements for the 2 monitors at high refresh rate.</li>
+</ul>
+<hr>
+<h2 id="5)-summary" tabindex="-1">5) Summary</h2>
+<ul>
+<li><strong>Yes, the single-cable topology can work</strong>—with caveats. On the <strong>Alpine Ridge TB3 dock (DP 1.2)</strong>, run the <strong>AW3821DW at 100 Hz</strong> and the new <strong>2560×1440 at 100 Hz</strong>, both at <strong>8-bpc RGB 4:4:4</strong>.</li>
+<li>The dock will not do <strong>3840×1600 @ 144 Hz</strong> concurrently with a high-refresh second display; DP 1.2 per-link bandwidth is the blocker.</li>
+<li>Because <strong>macOS lacks MST-Extended</strong>, we also need to ensure the dock provides a <strong>downstream Thunderbolt port</strong>.</li>
+</ul>
+<hr>
+<h2 id="references" tabindex="-1">References</h2>
+<p>[1] Apple — <em>MacBook Pro (14-inch, 2021) Tech Specs</em> (external display support) – <a href="https://support.apple.com/en-us/111902">https://support.apple.com/en-us/111902</a><br>
+[2] Dell — <em>Alienware AW3821DW product page</em> (3840×1600 @ 144 Hz over DP) – <a href="https://www.dell.com/en-us/shop/alienware-38-curved-gaming-monitor-aw3821dw/apd/210-axvg/monitors-monitor-accessories">https://www.dell.com/en-us/shop/alienware-38-curved-gaming-monitor-aw3821dw/apd/210-axvg/monitors-monitor-accessories</a><br>
+[3] RTINGS — <em>Chroma Subsampling: 4:4:4 vs 4:2:2 vs 4:2:0</em> – <a href="https://www.rtings.com/tv/learn/chroma-subsampling">https://www.rtings.com/tv/learn/chroma-subsampling</a><br>
+[4] Eaton/Tripp Lite — <em>DisplayPort explained</em> (8b/10b vs 128b/132b; effective payloads) – <a href="https://www.eaton.com/us/en-us/products/backup-power-ups-surge-it-power-distribution/backup-power-ups-it-power-distribution-resources/cpdi-vertical-marketing/displayport-explained.html">https://www.eaton.com/us/en-us/products/backup-power-ups-surge-it-power-distribution/backup-power-ups-it-power-distribution-resources/cpdi-vertical-marketing/displayport-explained.html</a><br>
+[5] Cable Matters — <em>DisplayPort 1.4 vs 1.2: What’s the Difference?</em> (21.6 vs 32.4 Gbps raw; 17.28 vs 25.92 Gbps payload) – <a href="https://www.cablematters.com/Blog/DisplayPort/displayport-1-4-vs-1-2">https://www.cablematters.com/Blog/DisplayPort/displayport-1-4-vs-1-2</a><br>
+[6] Wikipedia — <em>DisplayPort</em> (TB3 Alpine Ridge DP 1.2 vs Titan Ridge DP 1.4) – <a href="https://en.wikipedia.org/wiki/DisplayPort">https://en.wikipedia.org/wiki/DisplayPort</a><br>
+[7] StarTech — <em>TB3DOCK2DPPD Manual</em> (identifies <strong>JHL6540 Alpine Ridge</strong> chipset, DP 1.2 heritage) – <a href="https://sgcdn.startech.com/005329/media/sets/tb3dock2dppd_manual/tb3dock2dppd_tb3dock2dppu_thunderbolt_3_dock.pdf">https://sgcdn.startech.com/005329/media/sets/tb3dock2dppd_manual/tb3dock2dppd_tb3dock2dppu_thunderbolt_3_dock.pdf</a><br>
+[8] StarTech — <em>TB3DOCK2DPPD Datasheet</em> (dual-4K60 via DP + downstream TB3) – <a href="https://media.startech.com/cms/pdfs/tb3dock2dppd_datasheet.pdf">https://media.startech.com/cms/pdfs/tb3dock2dppd_datasheet.pdf</a><br>
+[9] Plugable KB — <em>MST on macOS (Extended not supported)</em> – <a href="https://kb.plugable.com/understanding-mst-multi-display-setups-with-windows-macos-and-displayport">https://kb.plugable.com/understanding-mst-multi-display-setups-with-windows-macos-and-displayport</a><br>
+[10] Intel — <em>Thunderbolt 3 vs Thunderbolt 4</em> (TB4 mandates dual 4K or one 8K) – <a href="https://www.intel.com/content/www/us/en/architecture-and-technology/thunderbolt/thunderbolt-3-vs-4.html">https://www.intel.com/content/www/us/en/architecture-and-technology/thunderbolt/thunderbolt-3-vs-4.html</a><br>
+[11] Wikipedia — <em>USB4</em> (DP 1.4a tunneling in USB4 v1; DP 2.1 in USB4 v2) – <a href="https://en.wikipedia.org/wiki/USB4">https://en.wikipedia.org/wiki/USB4</a></p>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/pcparts/" rel="tag">pcparts</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/setup/" rel="tag">setup</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-2-Config-TFTP-and-NFS-mounts/"
+                    data-tooltip="PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (2): Config TFTP and NFS mounts"
+                    aria-label="NEXT: PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (2): Config TFTP and NFS mounts"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                    title="global.share_on_linkedin"
+                    aria-label="global.share_on_linkedin"
+                >
+                    <i class="fab fa-linkedin" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Shawn Xu. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-2-Config-TFTP-and-NFS-mounts/"
+                    data-tooltip="PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (2): Config TFTP and NFS mounts"
+                    aria-label="NEXT: PXE Boot Diskless Raspberry Pi 4 With Ubuntu, Ubiquiti and Synology (2): Config TFTP and NFS mounts"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                    title="global.share_on_linkedin"
+                    aria-label="global.share_on_linkedin"
+                >
+                    <i class="fab fa-linkedin" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/"
+                        aria-label="global.share_on_linkedin"
+                    >
+                        <i class="fab fa-linkedin" aria-hidden="true"></i><span>global.share_on_linkedin</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://miro.medium.com/fit/c/90/90/1*7cPXDgvy2_tKMHR4SEd-yQ.jpeg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Shawn Xu</h4>
+        
+            <div id="about-card-bio"><p>Software Engineer in Bay Area</p>
+</div>
+        
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-a5wszscostah6olx2wgfq7mglfmluysmmlvnxgmmszk3gwouxhlbwbsk0xkf.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://xunnanxu.github.io/2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/';
+              
+            this.page.identifier = '2025/09/01/Journey-to-enable-M1-pro-single-thunderbolt/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'xcorpion';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    </body>
+</html>
